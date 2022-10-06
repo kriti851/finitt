@@ -1,0 +1,430 @@
+/*************** NEW STEP FORM HTML CSS 1 OCT ******************/
+.new-step-container {
+    width: 95%!important;
+}
+.newstep-form {
+    padding: 30px 0px;
+    font-family: 'Josefin Sans', sans-serif;
+}
+.form-newalign {
+	align-items: center;
+    justify-content: flex-end;
+    display: flex;
+}
+.newstep-form h1 {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: normal;
+}
+.checiocn {
+	padding-left:0px;display: flex;
+	margin-bottom:15px;
+}
+.checiocn li {
+    list-style: none;
+    display: flex;
+    list-style: none;
+    align-items: flex-start;
+    width: 100%;
+}
+.checiocn li img {
+	margin-right: 15px;
+}
+.checiocn li span {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    position: relative;
+    top: -4px;
+}
+.checiocn li span small {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    display: block;
+    position: relative;
+    top: -5px;
+}
+
+.apply-now-btn {
+    background: #112F7B;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    display: table;
+    margin: 0px auto;
+    padding: 10px 40px;
+    color: white !important;
+    text-align: center;
+	font-family: 'Josefin Sans', sans-serif;
+	transition: all 0.3s linear;
+    -webkit-transition: all 0.3s linear;
+	border:none;
+}
+.apply-now-btn:hover {
+    background: #FF9000;
+}	
+.new-mt50 {
+	margin-top: 50px;
+}
+
+.stepform-newdesign input {
+    height: 50px;
+    width: 100%;
+    padding: 5px 15px;
+    border: 1px solid #B9B9B9;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: 'Josefin Sans';
+    font-weight: 400;
+    color: #424141;
+	margin-bottom: 15px;
+}
+.stepform-newdesign input:focus {
+    border: 1px solid #FF9000;
+    outline: none;
+}
+.stepform-newdesign a.resentotp {
+	color: #FF9000;
+}
+.mb-0 {
+	margin-bottom:0px;
+}
+.ui-step-content {
+    padding: 0px;
+    border: none;
+}
+.ui-step-content h6 {
+	    font-size: 16px;
+    font-weight: 400;
+    font-family: 'Josefin Sans';
+    color: #A2A2A2;
+    margin-top: 5px;
+}
+.unstyled {
+	list-style: none;
+    padding-left: 0px;
+    margin-top: 0px;
+}
+.styled-checkbox {
+  position: absolute;
+  opacity: 0;
+}
+.styled-checkbox + label {
+    position: relative;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+.styled-checkbox + label a {
+    color: #FF9000;
+}
+.styled-checkbox + label:before {
+    content: "";
+    margin-right: 10px;
+    display: inline-block;
+    vertical-align: text-top;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border: 1px solid #707070;
+}
+.styled-checkbox:hover + label:before {
+  background: #FF9000;
+  border: 1px solid #FF9000;
+}
+.styled-checkbox:focus + label:before {
+  box-shadow: none;
+}
+.styled-checkbox:checked + label:before {
+  background: #FF9000;
+  border: 1px solid #FF9000;
+}
+.styled-checkbox:disabled + label {
+  color: #b8b8b8;
+  cursor: auto;
+}
+.styled-checkbox:disabled + label:before {
+  box-shadow: none;
+  background: #ddd;
+}
+.styled-checkbox:checked + label:after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 9px;
+  background: white;
+  width: 2px;
+  height: 2px;
+  box-shadow: 2px 0 0 white, 4px 0 0 white, 4px -2px 0 white, 4px -4px 0 white, 4px -6px 0 white, 4px -8px 0 white;
+  transform: rotate(45deg);
+}
+
+
+
+
+#msform {
+    text-align: center;
+    position: relative;
+    margin-top: 0px
+}
+
+#msform fieldset {
+    background: white;
+    border: 0 none;
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding-bottom: 20px;
+    position: relative;
+}
+#msform fieldset:not(:first-of-type) {
+    display: none
+}
+
+#msform fieldset {
+    text-align: left;
+}
+.previous {
+	color:#FF9000;
+	background:transparent;
+	border:none;
+	font-weight: 400;
+    font-family: 'Josefin Sans';
+	font-size:14px;
+	margin-bottom:15px;
+}
+.ml-00 {
+	margin-left: 0px !important;
+}
+.mt-5 {
+	margin-top:20px;
+}
+
+.radio {
+    margin: 0px;
+    display: inline-block;
+    width: 50%;
+    float: left;
+}
+.radio input[type=radio] {
+  position: absolute;
+  opacity: 0;
+}
+.radio input[type=radio] + .radio-label:before {
+        content: "";
+    background: #fff;
+    border-radius: 100%;
+    border: 1px solid #707070;
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    position: relative;
+    top: 2px;
+    margin-right: 5px;
+    vertical-align: top;
+    cursor: pointer;
+    text-align: center;
+    transition: all 250ms ease;
+}
+.radio input[type=radio]:checked + .radio-label:before {
+  background: #FF9000;
+    box-shadow: inset 0 0 0 4px #f4f4f4;
+    border: 1px solid #FF9000;
+}
+.radio input[type=radio]:focus + .radio-label:before {
+  outline: none;
+  border-color: #707070;
+}
+.radio input[type=radio]:disabled + .radio-label:before {
+  box-shadow: inset 0 0 0 4px #f4f4f4;
+  border-color: #b4b4b4;
+  background: #b4b4b4;
+}
+.mb-33 {
+	margin-bottom:5px;
+}
+.radio-label {
+	font-size:14px;
+}
+.docutxt + label:before {
+    width: 50px;
+}
+.mb-10 {
+	margin-bottom: 10px;
+}
+
+
+.custom-file-upload-hidden {
+  display: none;
+  visibility: hidden;
+  position: absolute;
+  left: -9999px;
+}
+
+.custom-file-upload {
+  display: block;
+  width: auto;
+  font-size: 16px;
+     margin-top: 5px;
+}
+.custom-file-upload label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.file-upload-wrapper {
+    position: relative;
+    margin-bottom: 0px;
+    display: flex;
+    width: 100%;
+}
+
+.file-upload-input {
+  width: 400px !important;
+  font-size: 16px !important;
+  -moz-transition: all 0.2s ease-in;
+  -o-transition: all 0.2s ease-in;
+  -webkit-transition: all 0.2s ease-in;
+  transition: all 0.2s ease-in;
+   background: #E8E8E8 !important;
+   color: #000 !important;
+   border: 1px solid #B9B9B9 !important;
+   border-radius: 4px !important;
+   padding: 10px 20px!important;
+   max-width: 75% !important;
+   height: 50px !important;
+  
+  
+}
+.file-upload-input:hover, .file-upload-input:focus {
+    background-color: white;
+    outline: none;
+    border: 1px solid #ff9000;
+}
+
+.file-upload-button {
+   cursor: pointer;
+    display: inline-block;
+    color: #fff;
+    font-size: 16px;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border: none;
+    margin-left: 5px;
+    background-color: #112F7B;
+    /* float: left; */
+    -moz-transition: all 0.2s ease-in;
+    -o-transition: all 0.2s ease-in;
+    -webkit-transition: all 0.2s ease-in;
+    transition: all 0.2s ease-in;
+    height: 50px;
+    position: relative;
+        top: 0px;
+    border-radius: 4px;
+}
+.file-upload-button:hover {
+  background-color: #ff9000;
+}
+
+
+.logo-static {
+	width: 250px;
+    margin-top: 30px;
+}
+.righimg {
+	max-width: 100%;
+}
+
+
+@media only screen and (max-width: 767px) {
+.newstep-form {
+    padding: 20px 0px;
+    font-family: 'Josefin Sans', sans-serif;
+}	
+.new-step-container {
+    width: 100%!important;
+}	
+.form-newalign {
+    align-items: center;
+    justify-content: flex-end;
+    display: block;
+    flex-wrap: unset;
+    width: auto;
+}
+.newstep-form h1 {
+    font-size: 24px;
+}
+.checiocn li span {
+    font-size: 16px;
+    top: -2px;
+}
+.checiocn li span small {
+    font-size: 12px;;
+}
+.styled-checkbox + label a {
+    color: #FF9000;
+    display: contents;
+}
+.radio {
+    margin-bottom: 15px;
+}
+.docutxt + label:before {
+    width: 100px;
+}
+.file-upload-input {
+    width: 100% !important;
+}
+}
+
+
+@media (min-width: 768px) and (max-width: 991px) {
+.newstep-form {
+    padding: 20px 0px;
+    font-family: 'Josefin Sans', sans-serif;
+}	
+.new-step-container {
+    width: 100%!important;
+}	
+.form-newalign {
+    align-items: center;
+    justify-content: flex-end;
+    display: block;
+    flex-wrap: unset;
+    width: auto;
+}
+.newstep-form h1 {
+    font-size: 24px;
+}
+.checiocn li span {
+    font-size: 18px;
+    top: -3px;
+}
+.checiocn li span small {
+    font-size: 14px;;
+}
+.styled-checkbox + label a {
+    color: #FF9000;
+    display: contents;
+}
+.radio {
+    margin-bottom: 15px;
+}
+.docutxt + label:before {
+    width: 45px;
+}
+.file-upload-input {
+    width: 100% !important;
+}
+}
+
+
+@media (min-width: 1440px) and (max-width: 3000px) {
+.docutxt + label:before {
+       width: 30px;
+}
+}
