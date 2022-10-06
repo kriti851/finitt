@@ -5,6 +5,10 @@ import {
     Routes,
     Route,
   } from "react-router-dom";
+
+import '../assets/css/bootstrap.css';
+import '../assets/css/newstep-form.css';
+import '../assets/css/custom.css';
 const AppRoutes = () => {
   return (
     <BrowserRouter>

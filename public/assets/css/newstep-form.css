@@ -1,0 +1,541 @@
+/*************** NEW STEP FORM HTML CSS 1 OCT ******************/
+.new-step-container {
+    width: 95%!important;
+}
+.newstep-form {
+    padding: 30px 0px;
+    font-family: 'Josefin Sans', sans-serif;
+}
+.form-newalign {
+	align-items: center;
+    justify-content: flex-end;
+    display: flex;
+}
+.newstep-form h1 {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: normal;
+}
+.checiocn {
+	padding-left:0px;display: flex;
+	margin-bottom:15px;
+}
+.checiocn li {
+    list-style: none;
+    display: flex;
+    list-style: none;
+    align-items: flex-start;
+    width: 100%;
+}
+.checiocn li img {
+	margin-right: 15px;
+}
+.checiocn li span {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    position: relative;
+    top: -4px;
+}
+.checiocn li span small {
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    display: block;
+    position: relative;
+    top: -5px;
+}
+
+.apply-now-btn {
+    background: #112F7B;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    display: table;
+    margin: 0px auto;
+    padding: 10px 40px;
+    color: white !important;
+    text-align: center;
+	font-family: 'Josefin Sans', sans-serif;
+	transition: all 0.3s linear;
+    -webkit-transition: all 0.3s linear;
+	border:none;
+}
+.apply-now-btn:hover {
+    background: #FF9000;
+}	
+.new-mt50 {
+	margin-top: 50px;
+}
+
+.stepform-newdesign input {
+    height: 50px;
+    width: 100%;
+    padding: 5px 15px;
+    border: 1px solid #B9B9B9;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: 'Josefin Sans';
+    font-weight: 400;
+    color: #424141;
+	margin-bottom: 15px;
+}
+.stepform-newdesign input:focus {
+    border: 1px solid #FF9000;
+    outline: none;
+}
+.stepform-newdesign select {
+    height: 50px;
+    width: 100%;
+    padding: 5px 15px;
+    border: 1px solid #B9B9B9;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: 'Josefin Sans';
+    font-weight: 400;
+    color: #424141;
+	margin-bottom: 15px;
+}
+.stepform-newdesign select:focus {
+    border: 1px solid #FF9000;
+    outline: none;
+}
+
+
+.stepform-newdesign a.resentotp {
+	color: #FF9000;
+}
+.mb-0 {
+	margin-bottom:0px !important;
+}
+.md-4 {
+	margin-bottom:15px !important;
+}
+.ui-step-content {
+    padding: 0px;
+    border: none;
+}
+.ui-step-content h6 {
+	    font-size: 16px;
+    font-weight: 400;
+    font-family: 'Josefin Sans';
+    color: #A2A2A2;
+    margin-top: 5px;
+}
+.unstyled {
+	list-style: none;
+    padding-left: 0px;
+    margin-top: 0px;
+}
+.styled-checkbox {
+  position: absolute;
+  opacity: 0;
+}
+.styled-checkbox + label {
+    position: relative;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+.styled-checkbox + label a {
+    color: #FF9000;
+}
+.styled-checkbox + label:before {
+    content: "";
+    margin-right: 10px;
+    display: inline-block;
+    vertical-align: text-top;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border: 1px solid #707070;
+}
+.styled-checkbox:hover + label:before {
+  background: #FF9000;
+  border: 1px solid #FF9000;
+}
+.styled-checkbox:focus + label:before {
+  box-shadow: none;
+}
+.styled-checkbox:checked + label:before {
+  background: #FF9000;
+  border: 1px solid #FF9000;
+}
+.styled-checkbox:disabled + label {
+  color: #b8b8b8;
+  cursor: auto;
+}
+.styled-checkbox:disabled + label:before {
+  box-shadow: none;
+  background: #ddd;
+}
+.styled-checkbox:checked + label:after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 9px;
+  background: white;
+  width: 2px;
+  height: 2px;
+  box-shadow: 2px 0 0 white, 4px 0 0 white, 4px -2px 0 white, 4px -4px 0 white, 4px -6px 0 white, 4px -8px 0 white;
+  transform: rotate(45deg);
+}
+#msform {
+    text-align: center;
+    position: relative;
+    margin-top: 0px
+}
+
+#msform fieldset {
+    background: white;
+    border: 0 none;
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding-bottom: 20px;
+    position: relative;
+}
+#msform fieldset:not(:first-of-type) {
+    display: none
+}
+
+#msform fieldset {
+    text-align: left;
+}
+.previous {
+	color:#FF9000;
+	background:transparent;
+	border:none;
+	font-weight: 400;
+    font-family: 'Josefin Sans';
+	font-size:14px;
+	margin-bottom: 0px;
+	padding: 0px;
+}
+.text-right {
+	text-align:right;
+}
+.ml-00 {
+	margin-left: 0px !important;
+}
+.mt-5 {
+	margin-top:20px;
+}
+
+.radio {
+    margin: 0px;
+    display: inline-block;
+    width: 50%;
+    float: left;
+}
+.radio input[type=radio] {
+  position: absolute;
+  opacity: 0;
+}
+.radio input[type=radio] + .radio-label:before {
+        content: "";
+    background: #fff;
+    border-radius: 100%;
+    border: 1px solid #707070;
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    position: relative;
+    top: 2px;
+    margin-right: 5px;
+    vertical-align: top;
+    cursor: pointer;
+    text-align: center;
+    transition: all 250ms ease;
+}
+.radio input[type=radio]:checked + .radio-label:before {
+  background: #FF9000;
+    box-shadow: inset 0 0 0 4px #f4f4f4;
+    border: 1px solid #FF9000;
+}
+.radio input[type=radio]:focus + .radio-label:before {
+  outline: none;
+  border-color: #707070;
+}
+.radio input[type=radio]:disabled + .radio-label:before {
+  box-shadow: inset 0 0 0 4px #f4f4f4;
+  border-color: #b4b4b4;
+  background: #b4b4b4;
+}
+.mb-33 {
+	margin-bottom:5px;
+}
+.radio-label {
+	font-size:14px;
+}
+.docutxt + label:before {
+    width: 50px;
+}
+.mb-10 {
+	margin-bottom: 10px;
+}
+
+.imgupload-box {
+  position: relative;
+  background: #ffffff;
+  width: 100%;
+}
+
+.box-header {
+    position: absolute;
+    right: 0px;
+    z-index: 3;
+}
+
+.box-tools {
+  position: absolute;
+    right: 5px;
+    top: 5px;
+}
+.box-tools button {
+    background: #ff9000;
+    color: white;
+    border: none;
+    padding: 0px;
+    width: 25px;
+    height: 25px;
+    line-height: 30px;
+    text-align: center;
+    font-size: 14px;
+}
+.box-body {
+    position: absolute;
+    width: 100%;
+    height: 130px;
+    object-fit: contain;
+    z-index: 1;
+}
+
+.box-body img {
+    width: 100%;
+    height: 130px;
+    object-fit: contain;
+    background: white;
+    border: 2px dashed #91b0b3;
+}
+.box-body p {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    background: #112f7b;
+    color: white;
+    margin-bottom: 0px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 3px 15px;
+    font-size: 12px;
+}
+.dropzone-wrapper {
+    border: 2px dashed #91b0b3;
+    color: #92b0b3;
+    position: relative;
+    height: 130px;
+    margin-bottom: 15px;
+}
+.dropzone-desc {
+    position: absolute;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+    width: 85%;
+    top: 45px;
+    font-size: 14px;
+}
+.dropzone, .dropzone:focus {
+    position: absolute;
+    outline: none !important;
+    width: 100%;
+    height: 130px !important;
+    cursor: pointer;
+    opacity: 0;
+    padding: 0px !important;
+    margin-bottom: 0px !important;
+}
+.dropzone-wrapper:hover,
+.dropzone-wrapper.dragover {
+  background: #ecf0f5;
+}
+
+.preview-zone {
+  text-align: center;
+}
+
+.preview-zone .box {
+  box-shadow: none;
+  border-radius: 0;
+  margin-bottom: 0;
+}
+
+
+.logo-static {
+	width: 250px;
+    margin-top: 30px;
+}
+.righimg {
+	max-width: 100%;
+}
+.mt-1 {
+	margin-top:0px;
+}
+
+.success-animation {
+    margin: 35px auto;
+    margin-top: 0px;
+}
+
+.checkmark {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: block;
+    stroke-width: 2;
+    stroke: #4bb71b;
+    stroke-miterlimit: 10;
+    box-shadow: inset 0px 0px 0px #4bb71b;
+    animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+    position:relative;
+    top: 5px;
+    right: 5px;
+   margin: 0 auto;
+}
+.checkmark__circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-width: 2;
+    stroke-miterlimit: 10;
+    stroke: #4bb71b;
+    fill: #fff;
+    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+ 
+}
+
+.checkmark__check {
+    transform-origin: 50% 50%;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+@keyframes stroke {
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes scale {
+    0%, 100% {
+        transform: none;
+    }
+
+    50% {
+        transform: scale3d(1.1, 1.1, 1);
+    }
+}
+
+@keyframes fill {
+    100% {
+        box-shadow: inset 0px 0px 0px 30px #4bb71b;
+    }
+}
+
+
+
+
+@media only screen and (max-width: 767px) {
+.newstep-form {
+    padding: 20px 0px;
+    font-family: 'Josefin Sans', sans-serif;
+}	
+.new-step-container {
+    width: 100%!important;
+}	
+.form-newalign {
+    align-items: center;
+    justify-content: flex-end;
+    display: block;
+    flex-wrap: unset;
+    width: auto;
+}
+.newstep-form h1 {
+    font-size: 24px;
+}
+.checiocn li span {
+    font-size: 16px;
+    top: -2px;
+}
+.checiocn li span small {
+    font-size: 12px;;
+}
+.styled-checkbox + label a {
+    color: #FF9000;
+    display: contents;
+}
+.radio {
+    margin-bottom: 15px;
+}
+.docutxt + label:before {
+    width: 100px;
+}
+.file-upload-input {
+    width: 100% !important;
+}
+}
+
+
+@media (min-width: 768px) and (max-width: 991px) {
+.newstep-form {
+    padding: 20px 0px;
+    font-family: 'Josefin Sans', sans-serif;
+}	
+.new-step-container {
+    width: 100%!important;
+}	
+.form-newalign {
+    align-items: center;
+    justify-content: flex-end;
+    display: block;
+    flex-wrap: unset;
+    width: auto;
+}
+.newstep-form h1 {
+    font-size: 24px;
+}
+.checiocn li span {
+    font-size: 18px;
+    top: -3px;
+}
+.checiocn li span small {
+    font-size: 14px;;
+}
+.styled-checkbox + label a {
+    color: #FF9000;
+    display: contents;
+}
+.radio {
+    margin-bottom: 15px;
+}
+.docutxt + label:before {
+    width: 45px;
+}
+.file-upload-input {
+    width: 100% !important;
+}
+}
+
+
+@media (min-width: 1440px) and (max-width: 3000px) {
+.docutxt + label:before {
+       width: 30px;
+}
+}
