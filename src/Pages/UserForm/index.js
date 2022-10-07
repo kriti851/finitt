@@ -139,9 +139,7 @@ const StepOne = (props) => {
       <section className="newstep-form"> 
 	     <div className="container new-step-container">
             <div className="row form-newalign">
-                <div className="col-md-12 col-lg-6">
-                   
-				   
+                <div className="col-md-12 col-lg-6">				   
 				   <form id="msform" onSubmit={form.handleSubmit}>
                             
                        <fieldset className="ui-step-content" style={currentStep==0?{display:"block"}:{display:"none"}}>
@@ -188,8 +186,8 @@ const StepOne = (props) => {
 									</span>
 								   </li>
 							   </ul>
-							   <input type="button" name="next" class="next action-button apply-now-btn ml-00 leftfloat-withmr-1" value="Apply Now" />
-                               {/* <a href="javascript:void(0)" data-toggle="modal" data-target="#check-status" class="apply-now-btn ml-00 mymodalonline">Check Status</a> */}
+							   <input type="submit" name="next" className="next action-button apply-now-btn ml-00 leftfloat-withmr-1" value="Apply Now" />
+                               {/* <a href="javascript:void(0)" data-toggle="modal" data-target="#check-status" className="apply-now-btn ml-00 mymodalonline">Check Status</a> */}
 
 					</fieldset>
 					   
@@ -433,12 +431,12 @@ const BusinessForm = (props) => {
 					relationship: yup.string().required("Please enter co-applicant relationship"),
 				}),
 			) : '',
-			pan_number:currentStep==2?yup.string().required('Required amount filed is required.'):'',
-			pancard_image:currentStep==2?yup.string().required('Required amount filed is required.'):'',
-			gst_number:currentStep==2?yup.string().required('Required amount filed is required.'):'',
-			gstproof_image:currentStep==2?yup.string().required('Required amount filed is required.'):'',
-			business_address:currentStep==2?yup.string().required('Required amount filed is required.'):'',
-			business_address_proof:currentStep==2?yup.string().required('Required amount filed is required.'):'',
+			pan_number:currentStep==2?yup.string().required('Please enter pan card number.'):'',
+			pancard_image:currentStep==2?yup.string().required('Please upload pan card image.'):'',
+			gst_number:currentStep==2?yup.string().required('Please enter valid gst number.'):'',
+			gstproof_image:currentStep==2?yup.string().required('Please upload valid gst image.'):'',
+			business_address:currentStep==2?yup.string().required('Please enter valid business address.'):'',
+			business_address_proof:currentStep==2?yup.string().required('Please enter business address proof image.'):'',
 			// business_address:currentStep==2?yup.string().required('Required amount filed is required.'):'',
 			// business_address_proof:currentStep==2?yup.string().required('Required amount filed is required.'):'',
 			
@@ -861,7 +859,7 @@ const PersonalForm = (props) => {
 		initialValues: props.data.personal_info,
 		enableReinitialize: true,
 		validationSchema: yup.object({
-			email: currentStep==0?yup.string().required('Please enter  email address.'):'',
+			email: currentStep==0?yup.string().required('Please enter valid email address.'):'',
 			father_name : currentStep==0?yup.string().required('Please enter father name.'):'',
 			gender :  currentStep==0?yup.string().required('Please select gender.'):'',
 			qualification : currentStep==0?yup.string().required('Please select qualification.'):'',
@@ -870,25 +868,25 @@ const PersonalForm = (props) => {
 			vehicle_type : currentStep==0?yup.string().required('Please select vehicle type.'):'',
 			residence_building :  currentStep==0?yup.string().required('Please enter Flat No./Building No./Street No.'):'',
 			residence_area : currentStep==0?yup.string().required('Please enter residence area .'):'',
-			residence_state : currentStep==0?yup.string().required('Please select  residence state.'):'',
-			residence_city :  currentStep==0?yup.string().required('Please select residence city.'):'',
-			residence_pincode :  currentStep==0?yup.string().required('Please select residence pincode.'):'',
+			residence_state : currentStep==0?yup.string().required('Please select state.'):'',
+			residence_city :  currentStep==0?yup.string().required('Please select city.'):'',
+			residence_pincode :  currentStep==0?yup.string().required('Please select pincode.'):'',
 
-			employer_name : currentStep==1?yup.string().required('Please enter name.'):'',
-			designation :currentStep==1?yup.string().required('Please enter designation.'):'',
+			employer_name : currentStep==1?yup.string().required('Please enter employer name.'):'',
+			designation :currentStep==1?yup.string().required('Please enter your designation.'):'',
 			organization :currentStep==1?yup.string().required('Please enter organization.'):'',
 			organization_type :currentStep==1?yup.string().required('Please select organization.'):'',
 			total_experience :currentStep==1?yup.string().required('Please select total experience.'):'',
 			required_amount :currentStep==1?yup.string().required('Please enter required amount.'):'',
 			company_building :currentStep==1?yup.string().required('Please enter Flat No./Building No./Street No.'):'',
-			company_area :currentStep==1?yup.string().required('Please enter company area.'):'',
-			company_state :currentStep==1?yup.string().required('Please select company state.'):'',
-			company_city :currentStep==1?yup.string().required('Please select company city.'):'',
-			company_pincode :currentStep==1?yup.string().required('Please select company pincode.'):'',
-			company_website :currentStep==1?yup.string().required('Please enter company website.'):'',
-			company_email :currentStep==1?yup.string().required('Please enter company email.'):'',
-			salery_inhand :currentStep==1?yup.string().required('Please enter salery inhand'):'',
-			salary_mode :currentStep==1?yup.string().required('Please select salery mode'):'',
+			company_area :currentStep==1?yup.string().required('Please enter area.'):'',
+			company_state :currentStep==1?yup.string().required('Please select state.'):'',
+			company_city :currentStep==1?yup.string().required('Please select city.'):'',
+			company_pincode :currentStep==1?yup.string().required('Please select pincode.'):'',
+			company_website :currentStep==1?yup.string().required('Please enter website.'):'',
+			company_email :currentStep==1?yup.string().required('Please enter valid company email.'):'',
+			salery_inhand :currentStep==1?yup.string().required('Please enter salary detail'):'',
+			salary_mode :currentStep==1?yup.string().required('Please select salary mode'):'',
 			bank_name :currentStep==1?yup.string().required('Please enter bank name.'):'',
 
 			
@@ -896,13 +894,6 @@ const PersonalForm = (props) => {
 			aadhar_image : currentStep==2?yup.string().required('Please upload aadhar image.'):'',
 			bank_statement : currentStep==2?yup.string().required('Please upload bank statement.'):'',
 			salery_slip : currentStep==2?yup.string().required('Please upload salary slip.'):''
-
-
-
-
-
-
-
 		}),
 		onSubmit:values=>{
 			if(currentStep==2){
@@ -928,9 +919,7 @@ const PersonalForm = (props) => {
 		<section className="newstep-form"> 
 			<div className="container new-step-container">
 				<div className="row form-newalign">
-					<div className="col-md-12 col-lg-6">
-					
-					
+					<div className="col-md-12 col-lg-6">					
 					<form id="msform" onSubmit={form.handleSubmit}>
 								
 						<fieldset className="ui-step-content" style={currentStep==0?{display:"block"}:{display:"none"}}>
