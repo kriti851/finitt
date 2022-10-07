@@ -36,43 +36,7 @@ const UserForm = () => {
 			gstproof_image:'',
 			business_address:'',
 			business_address_proof:'',
-		},
-		personal_info : {
-			email:'',
-			father_name :'',
-			gender : '',
-			qualification :'',
-			marital_status :'',
-			number_of_kids : '',
-			vehicle_type :'',
-			residence_building : '',
-			residence_area :'',
-			residence_state :'',
-			residence_city : '',
-			residence_pincode :'',
-			employer_name :'',
-			designation :'',
-			organization :'',
-			organization_type :'',
-			total_experience :'',
-			required_amount :'',
-			company_building :'',
-			company_area :'',
-			company_state :'',
-			company_city :'',
-			company_pincode :'',
-			company_website :'',
-			company_email :'',
-			salery_inhand :'',
-			salary_mode :'',
-			bank_name :'',
-			pancard_image :'',
-			aadhar_image : '',
-			bank_statement : '',
-			salery_slip : ''
 		}
-
-
 
   })
 
@@ -95,7 +59,7 @@ const UserForm = () => {
  
 
   //Normal Form 
-//   steps.push(<StepOne next={handleNextStep}  prev={handlePrevStep} setData={setData} data={data} setCurrentStep={setCurrentStep}/>) 
+  steps.push(<StepOne next={handleNextStep}  prev={handlePrevStep} setData={setData} data={data} setCurrentStep={setCurrentStep}/>) 
   // Personal Form
   steps.push(<PersonalForm next={handleNextStep}  prev={handlePrevStep} setData={setData} data={data} />) 
   // Business Form
@@ -189,13 +153,16 @@ const StepOne = (props) => {
 									</span>
 								   </li>
 							   </ul>
-					    <input type="button" name="next" className="next action-button apply-now-btn ml-00" value="Apply Now" onClick={()=>setCurrentStep(1)}/>
+							   <input type="button" name="next" class="next action-button apply-now-btn ml-00 leftfloat-withmr-1" value="Apply Now" />
+
+                               <a href="javascript:void(0)" data-toggle="modal" data-target="#check-status" class="apply-now-btn ml-00 mymodalonline">Check Status</a>
 					</fieldset>
 					   
 				   
 				   <fieldset className="ui-step-content" style={currentStep==1?{display:"block"}:{display:"none"}}>
 					  <h1 className="mb-0">Apply in 3 easy steps</h1>
 							<h6>let's start with your basic info</h6>
+							
 							
 							<div className="stepform-newdesign">
 							   <div className="row">
@@ -411,18 +378,18 @@ const BusinessForm = (props) => {
 		initialValues: props.data.business_info,
 		enableReinitialize: true,
 		validationSchema: yup.object({
-			company_name:currentStep==0?yup.string().required('Company name is required.'):'',
-			legal_name :currentStep==0?yup.string().required('legal name is required.'):'',
-			state : currentStep==0?yup.string().required('State field is required.'):'',
-			city : currentStep==0?yup.string().required('City filed is required.'):'',
-			houseno : currentStep==0?yup.string().required('Building name/Flat no is required.'):'',
-			pincode : currentStep==0?yup.string().required('Pincode filed is required.'):'',
-			business_type : currentStep==0?yup.string().required('Business type filed is required.'):'',
-			type_of_nature : currentStep==0?yup.string().required('Nature of business filed is required.'):'',
+			company_name:currentStep==0?yup.string().required('Please enter business name.'):'',
+			legal_name :currentStep==0?yup.string().required('Please enter legal name of your business.'):'',
+			state : currentStep==0?yup.string().required('Please select state.'):'',
+			city : currentStep==0?yup.string().required('Please select city.'):'',
+			houseno : currentStep==0?yup.string().required('Please Enter Building name/flat no.'):'',
+			pincode : currentStep==0?yup.string().required('Please select pincode.'):'',
+			business_type : currentStep==0?yup.string().required('Please select Business type.'):'',
+			type_of_nature : currentStep==0?yup.string().required('Please select nature type of your business.'):'',
 			vintage : currentStep==0?yup.string().required('Vintage filed is required.'):'',
-			turn_over : currentStep==0?yup.string().required('Business turn over filed is required.'):'',
-			desired_amount : currentStep==0?yup.string().required('Desired loan amount filed is required.'):'',
-			required_amount : currentStep==0?yup.string().required('Required amount filed is required.'):'',
+			turn_over : currentStep==0?yup.string().required('Please select Business turn over.'):'',
+			desired_amount : currentStep==0?yup.string().required('Please select desired loan amount.'):'',
+			required_amount : currentStep==0?yup.string().required('please enter required amount.'):'',
 			co_application: currentStep==1?yup.array().of(
 				yup.object({
 					name: yup.string().required("Please enter co-applicant name!"),
@@ -431,14 +398,14 @@ const BusinessForm = (props) => {
 					relationship: yup.string().required("Please enter co-applicant relationship"),
 				}),
 			) : '',
-			pan_number:currentStep==2?yup.string().required('Required amount filed is required.'):'',
-			pancard_image:currentStep==2?yup.string().required('Required amount filed is required.'):'',
-			gst_number:currentStep==2?yup.string().required('Required amount filed is required.'):'',
-			gstproof_image:currentStep==2?yup.string().required('Required amount filed is required.'):'',
-			business_address:currentStep==2?yup.string().required('Required amount filed is required.'):'',
-			business_address_proof:currentStep==2?yup.string().required('Required amount filed is required.'):'',
-			// business_address:currentStep==2?yup.string().required('Required amount filed is required.'):'',
-			// business_address_proof:currentStep==2?yup.string().required('Required amount filed is required.'):'',
+			pan_number:currentStep==2?yup.string().required('Please enter Pan Number.'):'',
+			pancard_image:currentStep==2?yup.string().required('Please upload pancard image.'):'',
+			gst_number:currentStep==2?yup.string().required('Please enter gst number.'):'',
+			gstproof_image:currentStep==2?yup.string().required('please upload gst image proof.'):'',
+			business_address:currentStep==2?yup.string().required('Please enter business address detail.'):'',
+			business_address_proof:currentStep==2?yup.string().required('Please enter business address proof.'):'',
+			bank_statement:currentStep==2?yup.string().required('Please upload bank statement.'):'',
+			itr_doc:currentStep==2?yup.string().required('Please upload itr.'):'',
 			
 		}),
 		onSubmit:values=>{
@@ -854,52 +821,17 @@ const BusinessForm = (props) => {
 }
 
 const PersonalForm = (props) => {
-	const [currentStep, setCurrentStep] = useState(2);
+	const [currentStep, setCurrentStep] = useState(0);
 	const form=useFormik({
-		initialValues: props.data.personal_info,
+		initialValues: props.data,
 		enableReinitialize: true,
 		validationSchema: yup.object({
-			email: currentStep==0?yup.string().required('Please enter  email address.'):'',
-			father_name : currentStep==0?yup.string().required('Please enter father name.'):'',
-			gender :  currentStep==0?yup.string().required('Please select gender.'):'',
-			qualification : currentStep==0?yup.string().required('Please select qualification.'):'',
-			marital_status : currentStep==0?yup.string().required('Please select marital status'):'',
-			number_of_kids :  currentStep==0?yup.string().required('Please enter number of kids.'):'',
-			vehicle_type : currentStep==0?yup.string().required('Please select vehicle type.'):'',
-			residence_building :  currentStep==0?yup.string().required('Please enter Flat No./Building No./Street No.'):'',
-			residence_area : currentStep==0?yup.string().required('Please enter residence area .'):'',
-			residence_state : currentStep==0?yup.string().required('Please select  residence state.'):'',
-			residence_city :  currentStep==0?yup.string().required('Please select residence city.'):'',
-			residence_pincode :  currentStep==0?yup.string().required('Please select residence pincode.'):'',
-
-			employer_name : currentStep==1?yup.string().required('Please enter name.'):'',
-			designation :currentStep==1?yup.string().required('Please enter designation.'):'',
-			organization :currentStep==1?yup.string().required('Please enter organization.'):'',
-			organization_type :currentStep==1?yup.string().required('Please select organization.'):'',
-			total_experience :currentStep==1?yup.string().required('Please select total experience.'):'',
-			required_amount :currentStep==1?yup.string().required('Please enter required amount.'):'',
-			company_building :currentStep==1?yup.string().required('Please enter Flat No./Building No./Street No.'):'',
-			company_area :currentStep==1?yup.string().required('Please enter company area.'):'',
-			company_state :currentStep==1?yup.string().required('Please select company state.'):'',
-			company_city :currentStep==1?yup.string().required('Please select company city.'):'',
-			company_pincode :currentStep==1?yup.string().required('Please select company pincode.'):'',
-			company_website :currentStep==1?yup.string().required('Please enter company website.'):'',
-			company_email :currentStep==1?yup.string().required('Please enter company email.'):'',
-			salery_inhand :currentStep==1?yup.string().required('Please enter salery inhand'):'',
-			salary_mode :currentStep==1?yup.string().required('Please select salery mode'):'',
-			bank_name :currentStep==1?yup.string().required('Please enter bank name.'):'',
-
-			
-			pancard_image : currentStep==2?yup.string().required('Please upload pan card image.'):'',
-			aadhar_image : currentStep==2?yup.string().required('Please upload aadhar image.'):'',
-			bank_statement : currentStep==2?yup.string().required('Please upload bank statement.'):'',
-			salery_slip : currentStep==2?yup.string().required('Please upload salary slip.'):''
-
-
-
-
-
-
+			mobile_number:currentStep==1?yup.string().required('Mobile number is required.'):'',
+			is_agree :currentStep==1?yup.boolean().required('Please selected terms and conditions.').oneOf([true],'Please selected terms and conditions.'):'',
+			otp_verified : currentStep==2?yup.string().required('Please enter OTP.'):'',
+			pan_number : currentStep==3?yup.string().required('Please enter pan card number.'):'',
+			loan_type : currentStep==3?yup.string().required('Please select loan type.'):'',
+			employee_type : currentStep==3?yup.string().required('Please select employee type.'):''
 
 		}),
 		onSubmit:values=>{
@@ -911,15 +843,6 @@ const PersonalForm = (props) => {
 			}
 		}
 	});
-
-	const acceptedFiles  = (e,path) => {
-		// 	   setloading(true);
-		var formData = new FormData();
-		formData.append('image', e.target.files[0])
-        console.log(e.target.files[0])
-		form.setFieldValue(path,true);
-	}
-
 	return (
 		<>
 		<section className="newstep-form"> 
@@ -928,7 +851,7 @@ const PersonalForm = (props) => {
 					<div className="col-md-12 col-lg-6">
 					
 					
-					<form id="msform" onSubmit={form.handleSubmit}>
+					<form id="msform">
 								
 						<fieldset className="ui-step-content" style={currentStep==0?{display:"block"}:{display:"none"}}>
 								<h1 className="mb-0">Personal Info</h1>
@@ -937,97 +860,47 @@ const PersonalForm = (props) => {
 								<div className="row">
 										<div className="col-12 col-md-10">
 										<label>Email Address</label>
-										<input type="text" name="email" {...form.getFieldProps("email")}  className="" placeholder="Enter email"/>
-										{form.touched.email && form.errors.email ? <div  className="text-danger">{form.errors.email}</div> : ''}
+										<input type="text" className="" placeholder="Enter email"/>
 										</div>
 										<div className="col-12 col-md-10">
 										<label>Father's Name</label>
-										<input type="text" name="father_name" {...form.getFieldProps("father_name")}  className="" placeholder="Enter name"/>
-										{form.touched.father_name && form.errors.father_name ? <div  className="text-danger">{form.errors.father_name}</div> : ''}
+										<input type="text" className="" placeholder="Enter name"/>
 										</div>
 										<div className="col-xs-12 col-md-5">
 											<label>Gender</label>
-											<select name="gender"  onChange={(e) => form.setFieldValue('gender',e.target.value)} >
-												<option>Select Gender</option>
-												<option value="Male" >Male</option>
-												<option value="Female">Female</option>
-												<option value="Other">Other</option>
-												<option value="Prefer not to disclose">Prefer not to disclose</option>
-											</select>
-											{form.touched.gender && form.errors.gender ? <div  className="text-danger">{form.errors.gender}</div> : ''}
+											<input type="text" className="" placeholder="Enter gender"/>
 										</div>
 										<div className="col-xs-12 col-md-5">
 											<label>Qualification</label>
-											<select name="qualification" onChange={(e) => form.setFieldValue('qualification',e.target.value)}>
-												<option>Select Qualification</option>
-												<option value="Under Graduate" >Under Graduate</option>
-												<option value="Graduate">Graduate</option>
-												<option value="Post Graduate">Post Graduate</option>
-											</select>
-											{form.touched.qualification && form.errors.qualification ? <div  className="text-danger">{form.errors.qualification}</div> : ''}
+											<select><option>Select Your Qualification</option></select>
 										</div>
 										<div className="col-xs-12 col-md-5">
 											<label>Marital Status</label>
-											<select  name="marital_status"  onChange={(e) => form.setFieldValue('marital_status',e.target.value)} >
-												<option value="">Select Marital Status</option>
-												<option value="Married" >Married</option>
-												<option value="Single">Single</option>
-												<option value="Prefer Not to Say">Prefer Not to Say</option>
-											</select>
-											{form.touched.marital_status && form.errors.marital_status ? <div  className="text-danger">{form.errors.marital_status}</div> : ''}
+											<input type="text" className="" placeholder="Enter status"/>
 										</div>
 										<div className="col-xs-12 col-md-5">
 											<label>Number of Kids</label>
-											<input type="text" name="number_of_kids" {...form.getFieldProps("number_of_kids")}  className="" placeholder="Enter kids number"/>
-											{form.touched.number_of_kids && form.errors.number_of_kids ? <div  className="text-danger">{form.errors.number_of_kids}</div> : ''}
+											<input type="text" className="" placeholder="Enter kids number"/>
 										</div>
 									<div className="col-xs-12 col-md-5">
 											<label>Vehicle Type</label>
-											<select name="vehicle_type"   onChange={(e) => form.setFieldValue('vehicle_type',e.target.value)} >
-												 <option>Select Vehicle Type</option>
-												<option value="2 wheeler">2 wheeler</option>
-												<option value="4 wheeler" >4 wheeler</option>
-												<option value="None">None</option>
-											</select>
-											{form.touched.vehicle_type && form.errors.vehicle_type ? <div  className="text-danger">{form.errors.vehicle_type}</div> : ''}
+											<select><option>Select Your Vehicle</option></select>
 										</div>
 										<div className="col-xs-12 col-md-5">
 											<label>Flat No./Building No./Street No.</label>
-											<input type="text" name="residence_building" {...form.getFieldProps("residence_building")}  className="" placeholder="Enter House No."/>
-											{form.touched.residence_building && form.errors.residence_building ? <div  className="text-danger">{form.errors.residence_building}</div> : ''}
+											<input type="text" className="" placeholder="Enter House No."/>
 										</div>
-									    <div className="col-xs-12 col-md-5">
+									<div className="col-xs-12 col-md-5">
 											<label>State</label>
-											<select  name="residence_state"  onChange={(e) => form.setFieldValue('residence_state',e.target.value)} >
-												<option>Select State</option>
-											<option value="1">Select State</option>
-											</select>
-											{form.touched.residence_state && form.errors.residence_state ? <div  className="text-danger">{form.errors.residence_state}</div> : ''}
+											<select><option>Select Your State</option></select>
 										</div>
 										<div className="col-xs-12 col-md-5">
 											<label>City</label>
-											<select name="residence_city"  onChange={(e) => form.setFieldValue('residence_city',e.target.value)} >
-												<option>Select City</option>
-												<option value="1">Select Your City</option>
-											</select>
-											{form.touched.residence_city && form.errors.residence_city ? <div  className="text-danger">{form.errors.residence_city}</div> : ''}
-										</div>
-										<div className="col-xs-12 col-md-5">
-											<label>Locality/Area</label>
-											<input type="text" name="residence_area" {...form.getFieldProps("residence_area")}  className="" placeholder="Enter Locality/Area"/>
-											{form.touched.residence_area && form.errors.residence_area ? <div  className="text-danger">{form.errors.residence_area}</div> : ''}
-										</div>
-										<div className="col-xs-12 col-md-5">
-											<label>Pincode</label>
-											<select name="residence_pincode"  onChange={(e) => form.setFieldValue('residence_pincode',e.target.value)} >
-												<option>Select Pincode</option>
-												<option value="1">Select Pincode</option>
-											</select>
-											{form.touched.residence_pincode && form.errors.residence_pincode ? <div  className="text-danger">{form.errors.residence_pincode}</div> : ''}
+											<input type="text" className="" placeholder="Enter city"/>
 										</div>
 									</div>
 								</div>
-							<input type="submit" name="next" className="next action-button apply-now-btn ml-00" value="Continue" />
+							<input type="button" name="next" className="next action-button apply-now-btn ml-00" value="Continue" />
 						</fieldset>
 						
 					
@@ -1039,160 +912,72 @@ const PersonalForm = (props) => {
 								<div className="row">
 										<div className="col-12 col-md-5">
 										<label>Name of current employer</label>
-										<input type="text" name="employer_name"  {...form.getFieldProps("employer_name")} className="" placeholder="Enter name"/>
-										{form.touched.employer_name && form.errors.employer_name ? <div  className="text-danger">{form.errors.employer_name}</div> : ''}
-
+										<input type="text" className="" placeholder="Enter name"/>
 										</div>
 										<div className="col-12 col-md-5">
 										<label>Designation</label>
-										<input type="text" className=""  name="designation"  {...form.getFieldProps("designation")} placeholder="Enter designation"/>
-										{form.touched.designation && form.errors.designation ? <div  className="text-danger">{form.errors.designation}</div> : ''}
-
+										<input type="text" className="" placeholder="Enter designation"/>
 										</div>
 										<div className="col-xs-12 col-md-5">
 											<label>No. of years in current organization</label>
-											<input type="text" className=""  name="organization"  {...form.getFieldProps("organization")} placeholder="Enter year"/>
-											{form.touched.organization && form.errors.organization ? <div  className="text-danger">{form.errors.organization}</div> : ''}
-
+											<input type="text" className="" placeholder="Enter year"/>
 										</div>
 										<div className="col-xs-12 col-md-5">
 											<label>Type of organization </label>
-											<select  name="organization_type" onChange={(e) => form.setFieldValue('organization_type',e.target.value)}  >
-												<option value="">TYPE OF ORGANIZATION</option>
-												<option value="Proprietorship" >Proprietorship</option>
-												<option value="Partnership">Partnership</option>
-												<option value="Private Limited">Private Limited</option>
-												<option value="Public Limited">Public Limited</option>
-												<option value="Government">Government</option>
-												<option value="Other">OTHER</option>
-											</select>
-											{form.touched.organization_type && form.errors.organization_type ? <div  className="text-danger">{form.errors.organization_type}</div> : ''}
-
+											<select><option>Select Your organization</option></select>
 										</div>
 										<div className="col-xs-12 col-md-5">
 											<label>Total Experience (In Year) </label>
-											<select  name="total_experience"   onChange={(e) => form.setFieldValue('total_experience',e.target.value)}  >
-												<option value="">TOTAL EXPERIENCE (IN YEAR)</option>
-												<option value="Less than 1">Less than Year</option>
-												<option value="1" >1</option>
-												<option value="2">2</option>
-												<option value="3">3</option>
-												<option value="4">4</option>
-												<option value="5">5</option>
-												<option value="6">6</option>
-												<option value="7">7</option>
-												<option value="8">8</option>
-												<option value="9">9</option>
-												<option value="10">10</option>
-												<option value="11">11</option>
-												<option value="12">12</option>
-												<option value="13">13</option>
-												<option value="14">14</option>
-												<option value="15">15</option>
-												<option value="16">16</option>
-												<option value="17">17</option>
-												<option value="18">18</option>
-												<option value="19">19</option>
-												<option value="20">20</option>
-												<option value="21">21</option>
-												<option value="22">22</option>
-												<option value="23">23</option>
-												<option value="24">24</option>
-												<option value="25">25</option>
-												<option value="26">26</option>
-												<option value="27">27</option>
-												<option value="28">28</option>
-												<option value="29">29</option>
-												<option value="30">30</option>
-												<option value="Greater than 30">Greater than 30</option>
-											</select>
-											{form.touched.total_experience && form.errors.total_experience ? <div  className="text-danger">{form.errors.total_experience}</div> : ''}
-
+											<select><option>Select Your exp. year</option></select>
+										</div>
+										<div className="col-xs-12 col-md-5">
+											<label>Number of Kids</label>
+											<input type="text" className="" placeholder="Enter kids number"/>
 										</div>
 										<div className="col-xs-12 col-md-5">
 											<label>Required Amount</label>
-											<input type="text"   name="required_amount"  {...form.getFieldProps("required_amount")} className="" placeholder="Enter amount"/>
-											{form.touched.required_amount && form.errors.required_amount ? <div  className="text-danger">{form.errors.required_amount}</div> : ''}
-
+											<input type="text" className="" placeholder="Enter amount"/>
 										</div>
 										<div className="col-xs-12 col-md-5">
 											<label>Building No./Plot No.</label>
-											<input type="text"  name="company_building"  {...form.getFieldProps("company_building")} className="" placeholder="Enter house no."/>
-											{form.touched.company_building && form.errors.company_building ? <div  className="text-danger">{form.errors.company_building}</div> : ''}
-
+											<input type="text" className="" placeholder="Enter house no."/>
 										</div>
 										<div className="col-xs-12 col-md-5">
 											<label>State</label>
-											<select  name="company_state" onChange={(e) => form.setFieldValue('company_state',e.target.value)} >
-												<option>Select Your State</option>
-												<option value="1">Select Your State</option>
-											</select>
-											{form.touched.company_state && form.errors.company_state ? <div  className="text-danger">{form.errors.company_state}</div> : ''}
-
+											<select><option>Select Your State</option></select>
 										</div>
 										<div className="col-xs-12 col-md-5">
 											<label>City</label>
-											<select  name="company_city" onChange={(e) => form.setFieldValue('company_city',e.target.value)} >
-												<option>Select City</option>
-												<option value="1">Select City</option>
-											</select>					
-											{form.touched.company_city && form.errors.company_city ? <div  className="text-danger">{form.errors.company_city}</div> : ''}
-
-										</div>
-										<div className="col-xs-12 col-md-5">
-											<label>Locality/Area </label>
-											<input type="text"  name="company_area"  {...form.getFieldProps("company_area")} className="" placeholder="Enter area."/>
-											{form.touched.company_area && form.errors.company_area ? <div  className="text-danger">{form.errors.company_area}</div> : ''}
-
+											<input type="text" className="" placeholder="Enter city"/>
 										</div>
 										<div className="col-xs-12 col-md-5">
 											<label>Pincode </label>
-											<select  name="company_pincode" onChange={(e) => form.setFieldValue('company_pincode',e.target.value)} >
-												<option>Select Pincode</option>
-												<option value="1">Select Pincode</option>
-											</select>	
-											{form.touched.company_pincode && form.errors.company_pincode ? <div  className="text-danger">{form.errors.company_pincode}</div> : ''}
-
+											<input type="text" className="" placeholder="Enter area pincode"/>
 										</div>
 										<div className="col-xs-12 col-md-5">
 											<label>Company Website</label>
-											<input type="text"    name="company_website"  {...form.getFieldProps("company_website")} className="" placeholder="Enter website URL"/>
-											{form.touched.company_website && form.errors.company_website ? <div  className="text-danger">{form.errors.company_website}</div> : ''}
-
+											<input type="text" className="" placeholder="Enter website URL"/>
 										</div>
 										<div className="col-xs-12 col-md-5">
 											<label>Official Email Address</label>
-											<input type="text"  name="company_email"  {...form.getFieldProps("company_email")} className="" placeholder="Enter official email"/>
-											{form.touched.company_email && form.errors.company_email ? <div  className="text-danger">{form.errors.company_email}</div> : ''}
-
+											<input type="text" className="" placeholder="Enter official email"/>
 										</div>
 										<div className="col-xs-12 col-md-5">
 											<label>Monthly take home</label>
-											<input type="text"  name="salery_inhand"  {...form.getFieldProps("salery_inhand")} className="" placeholder="Enter monthly income"/>
-											{form.touched.salery_inhand && form.errors.salery_inhand ? <div  className="text-danger">{form.errors.salery_inhand}</div> : ''}
-
+											<input type="text" className="" placeholder="Enter monthly income"/>
 										</div>
 										<div className="col-xs-12 col-md-5">
 											<label>Mode of receiving salary</label>
-											<select  name="salary_mode"   onChange={(e) => form.setFieldValue('salary_mode',e.target.value)} >
-												<option value="">MODE OF RECEIVING SALARY</option>
-												<option value="Bank account transfer">Bank account transfer</option>
-												<option value="Cheque" >Cheque</option>
-												<option value="Cash">Cash</option>
-											</select>
-											{form.touched.salary_mode && form.errors.salary_mode ? <div  className="text-danger">{form.errors.salary_mode}</div> : ''}
-
+											<select><option>Select Your salary mode</option></select>
 										</div>
 										<div className="col-xs-12 col-md-5">
 											<label>Bank Name</label>
-											<input type="text"  name="bank_name"  {...form.getFieldProps("bank_name")}  className="" placeholder="Enter your bank name"/>
-											{form.touched.bank_name && form.errors.bank_name ? <div  className="text-danger">{form.errors.bank_name}</div> : ''}
-
+											<input type="text" className="" placeholder="Enter your bank name"/>
 										</div>
 										
 									</div>
 								</div>
-							<input type="submit" name="next" className="next action-button apply-now-btn ml-00" value="Continue" />
+							<input type="button" name="next" className="next action-button apply-now-btn ml-00" value="Continue" />
 						</fieldset>
 						
 						
@@ -1221,11 +1006,8 @@ const PersonalForm = (props) => {
 											<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
 											<p className="mt-1">Upload Your Pan Card</p>
 										</div>
-										<input type="file" name="img_logo" className="dropzone"  onChange={(e) => acceptedFiles(e,'pancard_image') }/>
-										
+										<input type="file" name="img_logo" className="dropzone" />
 										</div>
-										{form.touched.pancard_image && form.errors.pancard_image ? <div  className="text-danger">{form.errors.pancard_image}</div> : ''}
-
 									</div>
 									<div className="col-12 col-md-6 col-lg-5">
 									<p className="mb-0">Upload Pan Aadhar Card</p>
@@ -1246,10 +1028,8 @@ const PersonalForm = (props) => {
 											<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
 											<p className="mt-1">Upload Aadhar</p>
 										</div>
-										<input type="file" name="img_logo" className="dropzone" onChange={(e) => acceptedFiles(e,'aadhar_image') } />
+										<input type="file" name="img_logo" className="dropzone" />
 										</div>
-										{form.touched.aadhar_image && form.errors.aadhar_image ? <div  className="text-danger">{form.errors.aadhar_image}</div> : ''}
-
 									</div>
 								</div>
 								<div className="row">
@@ -1272,10 +1052,8 @@ const PersonalForm = (props) => {
 											<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
 											<p className="mt-1">Upload PDF,Document</p>
 										</div>
-										<input type="file" name="img_logo" className="dropzone" onChange={(e) => acceptedFiles(e,'bank_statement') }/>
+										<input type="file" name="img_logo" className="dropzone"/>
 										</div>
-										{form.touched.bank_statement && form.errors.bank_statement ? <div  className="text-danger">{form.errors.bank_statement}</div> : ''}
-
 									</div>
 									<div className="col-12 col-md-6 col-lg-5">
 										<p className="mb-0">Upload latest 3 months salary slips</p>
@@ -1291,15 +1069,13 @@ const PersonalForm = (props) => {
 												<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
 												<p className="mt-1">Upload PDF,Document</p>
 											
-											<input type="file" name="img_logo" className="dropzone" onChange={(e) => acceptedFiles(e,'salery_slip') }/>
+											<input type="file" name="img_logo" className="dropzone"/>
 											</div>
-											{form.touched.salery_slip && form.errors.salery_slip ? <div  className="text-danger">{form.errors.salery_slip}</div> : ''}
-
 										</div>
 									</div>
 								</div>
 							</div>
-						<input type="submit" name="next" className="next action-button apply-now-btn mt-5 ml-00" value="Verify & Proceed" />
+						<input type="button" name="next" className="next action-button apply-now-btn mt-5 ml-00" value="Verify & Proceed" />
 						</fieldset>
 						
 						<fieldset className="ui-step-content" style={currentStep==3?{display:"block",textAlign:"center"}:{display:"none"}}>
@@ -1310,14 +1086,14 @@ const PersonalForm = (props) => {
 							<h6 className="mb-0">Your application has been successfully received. You may choose to note down the file number for further tracking of the case!</h6>
 							<p><b>File ID:</b> :FTM0005330</p>
 							<p><b>Password:</b> vbvb8964</p>
-						{/* <input type="submit" name="submit" className="submit action-button apply-now-btn" value="Continue" /> */}
+						<input type="submit" name="submit" className="submit action-button apply-now-btn" value="Continue" />
 						</fieldset>
 					
 					</form>
 					</div>
 					
 					<div className="col-md-12 col-lg-6">
-					<img src="/assets/img/loanright-personal.png" alt="" className="righimg" />
+					<img src="assets/img/loanright-personal.png" alt="" className="righimg" />
 					</div>
 					
 				</div>
