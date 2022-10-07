@@ -5,36 +5,69 @@ import {useFormik} from 'formik';
 import * as yup from 'yup';
 
 
-
-
 const UserForm = () => {
 
   const [data, setData] = useState({
+		mobile_number : '',
+		is_agree : false,
+		otp_verified : '',
+		pan_number : '',
+		loan_type : 0,
+		employee_type : 0,
+        business_info : {
+		    company_name:'',
+			legal_name :'',
+			state : '',
+			city :'',
+			houseno :'',
+			pincode : '',
+			business_type :'',
+			type_of_nature : '',
+			vintage :'',
+			turn_over :'',
+			desired_amount : '',
+			required_amount : '',
+			co_application: [
+				{ name: "", pan_number: "", pancard_image: "", relationship : ""}
+			],
+			pan_number:'',
+			pancard_image:'',
+			gst_number:'',
+			gstproof_image:'',
+			business_address:'',
+			business_address_proof:'',
+		}
 
   })
+
+  let steps = [];
+
   const [currentStep, setCurrentStep] = useState(0);
-  
-  
   const handleNextStep = (newData, final = false) => {
     setData((prev) => ({ ...prev, ...newData }));
     if (final) {
       // makeRequest(newData);
       return;
     }
-    setCurrentStep((prev) => prev + 1);
   };
   const handlePrevStep = (newData) => {
     
     setData((prev) => ({ ...prev, ...newData }));
     setCurrentStep((prev) => prev - 1);
   };
-  let steps = [];
 
-  steps.push(<StepOne next={handleNextStep}  prev={handlePrevStep} />) 
+ 
 
+  //Normal Form 
+  steps.push(<StepOne next={handleNextStep}  prev={handlePrevStep} setData={setData} data={data} setCurrentStep={setCurrentStep}/>) 
+  // Personal Form
+  steps.push(<PersonalForm next={handleNextStep}  prev={handlePrevStep} setData={setData} data={data} />) 
+  // Business Form
+  steps.push(<BusinessForm next={handleNextStep}  prev={handlePrevStep} setData={setData} data={data} />) 
   return (
     <>
         <Header></Header>
+		{steps.length}
         {steps[currentStep]}
     </>
   )
@@ -42,40 +75,29 @@ const UserForm = () => {
 
 const StepOne = (props) => {
 
-  const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+    const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+    const [currentStep, setCurrentStep] = useState(0);
+	const form=useFormik({
+		initialValues: props.data,
+		enableReinitialize: true,
+		validationSchema: yup.object({
+			mobile_number:currentStep==1?yup.string().required('Mobile number is required.').matches(phoneRegExp, 'Mobile number is not valid'):'',
+			is_agree :currentStep==1?yup.boolean().required('Please selected terms and conditions.').oneOf([true],'Please selected terms and conditions.'):'',
+			otp_verified : currentStep==2?yup.string().required('Please enter OTP.'):'',
+			pan_number : currentStep==3?yup.string().required('Please enter pan card number.'):'',
+			loan_type : currentStep==3?yup.string().required('Please select loan type.'):'',
+			employee_type : currentStep==3?yup.string().required('Please select employee type.'):''
 
-  const [currentStep, setCurrentStep] = useState(0);
-  const form=useFormik({
-    initialValues: {
-        mobile_number : '',
-        is_agree : false,
-        otp_verified : '',
-        pan_number : '',
-    },
-    enableReinitialize: true,
-    validationSchema: yup.object({
-        mobile_number:currentStep==1?yup.string().required('Mobile number is required.').matches(phoneRegExp, 'Mobile number is not valid'):'',
-        is_agree :currentStep==1?yup.boolean().required('Please selected terms and conditions.').oneOf([true],'Please selected terms and conditions.'):'',
-        otp_verified : currentStep==2?yup.string().required('Please enter OTP.'):'',
-        pan_number : currentStep==3?yup.string().required('Please enter pan card number.'):''
-
-    }),
-    onSubmit:values=>{
-
-        console.log(currentStep)
-        if(currentStep==7){
-          console.log(values)
-        } else {
-          setCurrentStep(currentStep+1)
-        }
-        // if(fourStepform.values.item_old == 1) {
-        //     props.data.items[fourStepform.values.item_index]=values;
-        // } else {
-        //     props.data.items.push(values);
-        // }
-        // props.next(props.data,false);  
-    }
-});
+		}),
+		onSubmit:values=>{
+			if(currentStep==4){
+				props.next(props.data,false);
+				props.setCurrentStep(values.loan_type)
+			} else {
+				setCurrentStep(currentStep+1)
+			}
+		}
+	});
 
   return (
     <>
@@ -199,15 +221,15 @@ const StepOne = (props) => {
 							<div className="row">
 								{/* <div className="col-xs-12 col-md-5">
 								    <label>First Name</label>
-								    <input type="" className="" placeholder="Name as per PAN"/>
+								    <input type="text" className="" placeholder="Name as per PAN"/>
 								</div>
 								<div className="col-xs-12 col-md-5">
 								    <label>Last Name</label>
-								    <input type="" className="" placeholder="Name as per PAN"/>
+								    <input type="text" className="" placeholder="Name as per PAN"/>
 								</div> */}
 								<div className="col-xs-12 col-md-8">
 								    <label>Pan Card Number</label>
-								    <input type="" className="" placeholder="Enter pan card number"  name="pan_number" {...form.getFieldProps("pan_number")}   />
+								    <input type="text" className="" placeholder="Enter pan card number"  name="pan_number" {...form.getFieldProps("pan_number")}   />
                     {form.touched.pan_number && form.errors.pan_number ? <div  className="text-danger">{form.errors.pan_number}</div> : ''}
 
 								</div>
@@ -230,11 +252,11 @@ const StepOne = (props) => {
 								<div className="col-xs-12 col-md-5">
 								  <p className="mb-33">Loan Type </p>
 								  <div className="radio">
-									<input id="radio-3" name="loan_type" type="radio" />
+									<input id="radio-3" name="loan_type" type="radio" value="1" onChange={(e) => form.setFieldValue('loan_type', e.target.value)} checked={form.values.loan_type==1} />
 									<label htmlFor="radio-3" className="radio-label">Personal</label>
 								  </div>
 								  <div className="radio">
-									<input id="radio-4" name="loan_type" type="radio" checked readOnly />
+									<input id="radio-4" name="loan_type" type="radio"  value="2" onChange={(e) => form.setFieldValue('loan_type', e.target.value)} checked={form.values.loan_type==2} />
 									<label htmlFor="radio-4" className="radio-label">Business</label>
 								  </div>
 								</div>
@@ -251,7 +273,7 @@ const StepOne = (props) => {
 							<div className="row">
 								<div className="col-12 col-md-10">
 								    <label>Mobile Number</label>
-								    <input type="" className="" placeholder="" value="9009312345" disabled/>
+								    <input type="text" className="" placeholder="" value="9009312345" disabled/>
 								</div>
 								   <div className="col-md-12">
 								     <ul className="unstyled centered">
@@ -280,7 +302,7 @@ const StepOne = (props) => {
 							<div className="row">
 								<div className="col-12 col-md-10">
 								    <label>Enter OTP</label>
-								    <input type="" className="" placeholder="Enter 6 Digit OTP"/>
+								    <input type="text" className="" placeholder="Enter 6 Digit OTP"/>
 								</div>
 								<div className="col-xs-6 col-md-5">
 								     <a href="" className="resentotp">Resend OTP</a>
@@ -303,7 +325,7 @@ const StepOne = (props) => {
 							<div className="row">
 								<div className="col-12 col-md-10">
 								    <label>The One Time Password is sent to 90093****. Please enter the One Time Password.false</label>
-								    <input type="" className="" placeholder="Enter one time password"/>
+								    <input type="text" className="" placeholder="Enter one time password"/>
 								</div>
 							</div>
 						</div>
@@ -326,9 +348,9 @@ const StepOne = (props) => {
 						</div> */}
 						
 					
-					   {/* <input type="submit" name="submit" className="submit action-button apply-now-btn ml-00" value="Submit Your Details" />
+					   <input type="submit" name="submit" className="submit action-button apply-now-btn ml-00" value="Submit Your Details" />
 					   
-					   <Link to="" className="apply-now-btn ml-00" style={{display:"none"}}>Start New Application</Link> */}
+					   <Link to="" className="apply-now-btn ml-00" style={{display:"none"}}>Start New Application</Link>
 					   
 					</fieldset>
           </form>
@@ -344,6 +366,738 @@ const StepOne = (props) => {
 	  </section>
     </>
   );
-};
+}
+
+
+const BusinessForm = (props) => {
+	const [currentStep, setCurrentStep] = useState(1);
+	const form=useFormik({
+		initialValues: props.data.business_info,
+		enableReinitialize: true,
+		validationSchema: yup.object({
+			company_name:currentStep==0?yup.string().required('Company name is required.'):'',
+			legal_name :currentStep==0?yup.string().required('legal name is required.'):'',
+			state : currentStep==0?yup.string().required('State field is required.'):'',
+			city : currentStep==0?yup.string().required('City filed is required.'):'',
+			houseno : currentStep==0?yup.string().required('Building name/Flat no is required.'):'',
+			pincode : currentStep==0?yup.string().required('Pincode filed is required.'):'',
+			business_type : currentStep==0?yup.string().required('Business type filed is required.'):'',
+			type_of_nature : currentStep==0?yup.string().required('Nature of business filed is required.'):'',
+			vintage : currentStep==0?yup.string().required('Vintage filed is required.'):'',
+			turn_over : currentStep==0?yup.string().required('Business turn over filed is required.'):'',
+			desired_amount : currentStep==0?yup.string().required('Desired loan amount filed is required.'):'',
+			required_amount : currentStep==0?yup.string().required('Required amount filed is required.'):'',
+			co_application: currentStep==1?yup.array().of(
+				yup.object({
+					name: yup.string().required("Please enter co-applicant name!"),
+					pan_number: yup.string().required("Please enter co-applicant pan card number"),
+					pancard_image: yup.string().required("Please upload co-applicant pan card image"),
+					relationship: yup.string().required("Please enter co-applicant relationship"),
+				}),
+			) : '',
+			pan_number:currentStep==2?yup.string().required('Required amount filed is required.'):'',
+			pancard_image:currentStep==2?yup.string().required('Required amount filed is required.'):'',
+			gst_number:currentStep==2?yup.string().required('Required amount filed is required.'):'',
+			gstproof_image:currentStep==2?yup.string().required('Required amount filed is required.'):'',
+			business_address:currentStep==2?yup.string().required('Required amount filed is required.'):'',
+			business_address_proof:currentStep==2?yup.string().required('Required amount filed is required.'):'',
+			// business_address:currentStep==2?yup.string().required('Required amount filed is required.'):'',
+			// business_address_proof:currentStep==2?yup.string().required('Required amount filed is required.'):'',
+			
+		}),
+		onSubmit:values=>{
+			if(currentStep==2){
+				console.log(values)
+				setCurrentStep(currentStep+1)
+			} else {
+			  setCurrentStep(currentStep+1)
+			}
+
+		}
+	});
+
+	const acceptedFiles  = (e,path) => {
+		// 	   setloading(true);
+		var formData = new FormData();
+		formData.append('image', e.target.files[0])
+        console.log(e.target.files[0])
+		form.setFieldValue(path,true);
+		// api.postApi('upload-images',formData,true).then(response => { 
+		// 	multiItemform.setFieldValue("item_photos", [...multiItemform.values.item_photos,...response.data]);
+		// 	setloading(false);
+		// 	 e.target.value = ''
+		// }).catch(error => {
+		// 	setloading(false);
+		// 	 toast.error(error.message);
+		// 	  e.target.value = ''
+		// }); 
+	}
+
+	return (
+		<>
+		<section  className="newstep-form"> 
+			<div  className="container new-step-container">
+				<div  className="row form-newalign">
+					<div  className="col-md-12 col-lg-6">
+					
+					
+					<form id="msform" onSubmit={form.handleSubmit}>
+								
+					<fieldset  className="ui-step-content"  style={currentStep==0?{display:"block"}:{display:"none"}}>
+							<h1  className="mb-0">Business Info</h1>
+							<p  className="mt-1">Instant Business & Personal Loan</p>
+							<div  className="stepform-newdesign">
+							<div  className="row">
+									<div  className="col-12 col-md-10">
+									<label>Business Name</label>
+									<input type="text" name="company_name" {...form.getFieldProps("company_name")}    className="" placeholder="Enter name"/>
+									{form.touched.company_name && form.errors.company_name ? <div  className="text-danger">{form.errors.company_name}</div> : ''}
+									</div>
+									<div  className="col-12 col-md-10">
+									<label>Legal Name</label>
+									<input type="text" name="legal_name" {...form.getFieldProps("legal_name")}  className="" placeholder="Enter name"/>
+									{form.touched.legal_name && form.errors.legal_name ? <div  className="text-danger">{form.errors.legal_name}</div> : ''}
+									</div>
+									<div  className="col-xs-12 col-md-5">
+										<label>State</label>
+										<select name="state"  onChange={(e) => form.setFieldValue('state',e.target.value)} >
+											<option>Select Your State</option>
+											<option value="1">Select Your State</option>
+										</select>
+										{form.touched.state && form.errors.state ? <div  className="text-danger">{form.errors.state}</div> : ''}
+									</div>
+									<div  className="col-xs-12 col-md-5">
+										<label>City</label>
+										<select name="city"  onChange={(e) => form.setFieldValue('city',e.target.value)} >
+											<option>Select Your City</option>
+											<option value="1">Select Your City</option>
+										</select>
+										{form.touched.city && form.errors.city ? <div  className="text-danger">{form.errors.city}</div> : ''}
+									</div>
+									<div  className="col-xs-12 col-md-5">
+										<label>Flat No./building no./street no.</label>
+										<input type="text" name="houseno" {...form.getFieldProps("houseno")}   className="" placeholder="Enter House No."/>
+										{form.touched.houseno && form.errors.houseno ? <div  className="text-danger">{form.errors.houseno}</div> : ''}
+									</div>
+									<div  className="col-xs-12 col-md-5">
+										<label>Pin Code</label>
+										<select name="pincode"  onChange={(e) => form.setFieldValue('pincode',e.target.value)} >
+											<option>Select Your Pin Code</option>
+											<option value="1">Select Your Pin Code</option>
+										</select>
+										{form.touched.pincode && form.errors.pincode ? <div  className="text-danger">{form.errors.pincode}</div> : ''}
+									</div>
+									<div  className="col-xs-12 col-md-5">
+										<label>Type of Firm</label>
+										<select name="business_type" onChange={(e) => form.setFieldValue('business_type',e.target.value)}>
+											<option value="">TYPE OF FIRM</option>
+											<option value="Individual">Individual</option>
+											<option value="Proprietorship">Proprietorship</option>
+											<option value="Partnership">Partnership</option>
+											<option value="PVT .ltd">PVT .ltd</option>
+										</select>
+										{form.touched.business_type && form.errors.business_type ? <div  className="text-danger">{form.errors.business_type}</div> : ''}
+									</div>
+									<div  className="col-xs-12 col-md-5">
+										<label>Nature of Business</label>
+										<select  name="type_of_nature" onChange={(e) => form.setFieldValue('type_of_nature',e.target.value)}>
+											<option value="">NATURE OF BUSINESS</option>
+											<option value="Retail">Retail</option>
+											<option value="Manufacturing">Manufacturing</option>
+											<option value="Service">Service</option>
+											<option value="Wholesale" >Wholesale</option>
+										</select>
+										{form.touched.type_of_nature && form.errors.type_of_nature ? <div  className="text-danger">{form.errors.type_of_nature}</div> : ''}
+									</div>
+									<div  className="col-xs-12 col-md-5">
+										<label>No. of years in Business</label>
+										<input type="text" name="vintage" {...form.getFieldProps("vintage")}   className="" placeholder="Enter year"/>
+										{form.touched.vintage && form.errors.vintage ? <div  className="text-danger">{form.errors.vintage}</div> : ''}
+									</div>
+									<div  className="col-xs-12 col-md-5">
+										<label>Monthly Turnover</label>
+										<select  name="turn_over" onChange={(e) => form.setFieldValue('turn_over',e.target.value)}>
+											<option value="">MONTHLY TURNOVER</option>
+											<option value="0.5 - 0.75 lac">0.5 - 0.75 lac</option>
+											<option value="0.75 - 1 lac">0.75 - 1 lac</option>
+											<option value="1 - 5 lac">1 - 5 lac</option>
+											<option value="5 - 10 lac">5 - 10 lac</option>
+											<option value="10 - 15 lac">10 - 15 lac</option>
+											<option value="15 - 20 lac">15 - 20 lac</option>
+											<option value="20 - 25 lac">20 - 25 lac</option>
+											<option value="25 - 30 lac">25 - 30 lac</option>
+											<option value="30 - 35 lac">30 - 35 lac</option>
+											<option value="35 - 40 lac">35 - 40 lac</option>
+											<option value="40 - 45 lac">40 - 45 lac</option>
+											<option value="45 - 50 lac">45 - 50 lac</option>
+											<option value="50 - 55 lac">50 - 55 lac</option>
+											<option value="55 - 60 lac">55 - 60 lac</option>
+											<option value="60 - 65 lac">60 - 65 lac</option>
+											<option value="65 - 70 lac" >65 - 70 lac</option>
+											<option value="70 - 75 lac">70 - 75 lac</option>
+											<option value="75 - 80 lac">75 - 80 lac</option>
+											<option value="80 - 85 lac">80 - 85 lac</option>
+											<option value="85 - 90 lac">85 - 90 lac</option>
+											<option value="90 - 95 lac">90 - 95 lac</option>
+											<option value="95 - 99 lac">95 - 99 lac</option>
+											<option value="99 above">99 above</option>
+										</select>
+										{form.touched.turn_over && form.errors.turn_over ? <div  className="text-danger">{form.errors.turn_over}</div> : ''}
+									</div>
+									<div  className="col-xs-12 col-md-5">
+										<label>Desired Loan Amount</label>
+										<select  name="desired_amount" onChange={(e) => form.setFieldValue('desired_amount',e.target.value)}>
+										<option value="">DESIRED LOAN AMOUNT</option>
+											<option value="0.5 - 0.75 lac">0.5 - 0.75 lac</option>
+											<option value="0.75 - 1 lac">0.75 - 1 lac</option>
+											<option value="1 - 5 lac">1 - 5 lac</option>
+											<option value="5 - 10 lac">5 - 10 lac</option>
+											<option value="10 - 15 lac">10 - 15 lac</option>
+											<option value="15 - 20 lac">15 - 20 lac</option>
+											<option value="20 - 25 lac">20 - 25 lac</option>
+											<option value="25 - 30 lac">25 - 30 lac</option>
+											<option value="30 - 35 lac">30 - 35 lac</option>
+											<option value="35 - 40 lac">35 - 40 lac</option>
+											<option value="40 - 45 lac">40 - 45 lac</option>
+											<option value="45 - 50 lac">45 - 50 lac</option>
+											<option value="50 - 55 lac">50 - 55 lac</option>
+											<option value="55 - 60 lac">55 - 60 lac</option>
+											<option value="60 - 65 lac">60 - 65 lac</option>
+											<option value="65 - 70 lac">65 - 70 lac</option>
+											<option value="70 - 75 lac" >70 - 75 lac</option>
+											<option value="75 - 80 lac">75 - 80 lac</option>
+											<option value="80 - 85 lac">80 - 85 lac</option>
+											<option value="85 - 90 lac">85 - 90 lac</option>
+											<option value="90 - 95 lac">90 - 95 lac</option>
+											<option value="95 - 99 lac">95 - 99 lac</option>
+											<option value="99 above">99 above</option>
+										</select>
+										{form.touched.desired_amount && form.errors.desired_amount ? <div  className="text-danger">{form.errors.desired_amount}</div> : ''}
+									</div>
+									<div  className="col-xs-12 col-md-5">
+										<label>Required Amount</label>
+										<input type="text"  name="required_amount" {...form.getFieldProps("required_amount")}  className="" placeholder="Enter amount"/>
+										{form.touched.required_amount && form.errors.required_amount ? <div  className="text-danger">{form.errors.required_amount}</div> : ''}
+									</div>
+								</div>
+							</div>
+						<input type="submit" name="next"  className="next action-button apply-now-btn ml-00" value="Continue" />
+					</fieldset>
+						
+					
+					<fieldset  className="ui-step-content"  style={currentStep==1?{display:"block"}:{display:"none"}}>
+							<button type="button" name="previous"  className="previous action-button-previous" ><i  className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button>
+							<h1  className="mb-0 mt-1">Co-Applicants</h1>
+								<p  className="mt-1">Instant Business & Personal Loan {props.data.business_info.co_application.length}</p>
+								<div  className="stepform-newdesign">
+								   {form.values.co_application.length > 0 && form.values.co_application.map((co, index) => 
+									
+										<div  className="row" key={index}>
+											<div  className="col-12 col-md-5">
+											<label>Name</label>
+											<input type="text" name={`form.values.co_application.${index}.name`}  {...form.getFieldProps(`co_application.${index}.name`)}   className="" placeholder="Enter name" />
+											
+												{form.touched['co_application']?.[index]?.['name'] && form.errors['co_application']?.[index]?.['name'] ? <div  className="text-danger">{form.errors['co_application']?.[index]?.['name']}</div> : ''}
+												</div>
+											<div  className="col-12 col-md-5">  
+											<label>Relationship</label>
+											<input type="text" name={`form.values..co_application.${index}.relationship`} {...form.getFieldProps(`co_application.${index}.relationship`)} className="" placeholder="Enter relationship"/>
+											{form.touched['co_application']?.[index]?.['relationship'] && form.errors['co_application']?.[index]?.['relationship'] ? <div  className="text-danger">{form.errors['co_application']?.[index]?.['relationship']}</div> : ''}
+											</div>
+											<div  className="col-xs-12 col-md-10">
+												<label>Pan Card Number </label>
+												<input type="text" name={`form.values..co_application.${index}.pan_number`}  {...form.getFieldProps(`co_application.${index}.pan_number`)}  className="mb-0" placeholder="Enter Number"/>
+												{form.touched['co_application']?.[index]?.['pan_number'] && form.errors['co_application']?.[index]?.['pan_number'] ? <div  className="text-danger">{form.errors['co_application']?.[index]?.['pan_number']}</div> : ''}
+											</div>
+											<div  className="col-12 col-md-6 col-lg-5">
+											<p  className="mb-0">Upload Co-Applicants Pan Card</p>
+											<div  className="preview-zone hidden">
+												<div  className="imgupload-box box-solid">
+													<div  className="box-header with-border">
+													<div  className="box-tools pull-right">
+														<button type="button"  className="btn btn-danger btn-xs remove-preview">
+														<i  className="fa-solid fa-trash fa-fw"></i>
+														</button>
+													</div>
+													</div>
+													<div  className="box-body"></div>
+												</div>
+												</div>
+												<div  className="dropzone-wrapper">
+												<div  className="dropzone-desc">
+													<i  className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+													<p  className="mt-1">Upload Your Pan Card</p>
+												</div>
+												<input type="file" name="img_logo"  className="dropzone" accept="image/png, image/gif, image/jpeg"  onChange={(e) => acceptedFiles(e,`co_application.${index}.pancard_image`) }/>
+												</div>
+												{form.touched['co_application']?.[index]?.['pancard_image'] && form.errors['co_application']?.[index]?.['pancard_image'] ? <div  className="text-danger">{form.errors['co_application']?.[index]?.['pancard_image']}</div> : ''}
+
+											</div>
+										</div>
+								   )}
+								</div>
+							<input type="submit" name="next"  className="next action-button apply-now-btn ml-00" value="Continue" />
+						</fieldset>
+						
+						
+						<fieldset  className="ui-step-content"  style={currentStep==2?{display:"block"}:{display:"none"}}>
+							<button type="button" name="previous"  className="previous action-button-previous" ><i  className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button>
+							<h1  className="mb-0 mt-1">Upload Doc</h1>
+							<p  className="mt-1">Instant Business & Personal Loan</p>
+							<div  className="stepform-newdesign">
+								<div  className="row md-4">
+									<div  className="col-xs-12 col-md-10">
+										<label>Firm Pan Number </label>
+										<input type="text" name="pan_number" {...form.getFieldProps('pan_number')}  className="mb-0" placeholder="Enter Number"/>
+										{form.touched.pan_number && form.errors.pan_number ? <div  className="text-danger">{form.errors.pan_number}</div> : ''}
+
+									</div>
+									<div  className="col-12 col-md-6 col-lg-5">
+									<p  className="mb-0">Upload Firm Pan Card</p>
+									<div  className="preview-zone hidden">
+										<div  className="imgupload-box box-solid">
+											<div  className="box-header with-border">
+											<div  className="box-tools pull-right">
+												<button type="button"  className="btn btn-danger btn-xs remove-preview">
+												<i  className="fa-solid fa-trash fa-fw"></i>
+												</button>
+											</div>
+											</div>
+											<div  className="box-body"></div>
+										</div>
+										</div>
+										<div  className="dropzone-wrapper">
+										<div  className="dropzone-desc">
+											<i  className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+											<p  className="mt-1">Upload Card</p>
+										</div>
+										<input type="file" name="img_logo" onChange={(e) => acceptedFiles(e,'pancard_image') } className="dropzone"/>
+
+										</div>
+										{form.touched.pancard_image && form.errors.pancard_image ? <div  className="text-danger">{form.errors.pancard_image}</div> : ''}
+
+									</div>
+								</div>
+								<div  className="row">
+									<div  className="col-xs-12 col-md-10">
+										<label>Firm GST Number </label>
+										<input type="text" name="gst_number" {...form.getFieldProps('gst_number')} className="" placeholder="Enter Number"/>
+										{form.touched.gst_number && form.errors.gst_number ? <div  className="text-danger">{form.errors.gst_number}</div> : ''}
+
+									</div>
+									<div  className="col-12 col-md-6 col-lg-5">
+									<p  className="mb-0">Upload GST Registration</p>
+									<div  className="preview-zone hidden">
+										<div  className="imgupload-box box-solid">
+											<div  className="box-header with-border">
+											<div  className="box-tools pull-right">
+												<button type="button"  className="btn btn-danger btn-xs remove-preview">
+												<i  className="fa-solid fa-trash fa-fw"></i>
+												</button>
+											</div>
+											</div>
+											<div  className="box-body"></div>
+										</div>
+										</div>
+										<div  className="dropzone-wrapper">
+										<div  className="dropzone-desc">
+											<i  className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+											<p  className="mt-1">Upload Registration</p>
+										</div>
+										<input type="file" name="img_logo"  onChange={(e) => acceptedFiles(e,'gstproof_image') } className="dropzone"/>
+										</div>
+										{form.touched.gstproof_image && form.errors.gstproof_image ? <div  className="text-danger">{form.errors.gstproof_image}</div> : ''}
+
+									</div>
+								</div>
+								<div  className="row md-4">
+									<div  className="col-xs-12 col-md-10">
+										<label>Business Address </label>
+										<input type="text"  name="business_address"  {...form.getFieldProps('business_address')} className="mb-0" placeholder="Enter address"/>
+										{form.touched.business_address && form.errors.business_address ? <div  className="text-danger">{form.errors.business_address}</div> : ''}
+
+									</div>
+									<div  className="col-12 col-md-6 col-lg-5">
+									<p  className="mb-0">Upload Address Proof</p>
+									<div  className="preview-zone hidden">
+										<div  className="imgupload-box box-solid">
+											<div  className="box-header with-border">
+											<div  className="box-tools pull-right">
+												<button type="button"  className="btn btn-danger btn-xs remove-preview">
+												<i  className="fa-solid fa-trash fa-fw"></i>
+												</button>
+											</div>
+											</div>
+											<div  className="box-body"></div>
+										</div>
+										</div>
+										<div  className="dropzone-wrapper">
+										<div  className="dropzone-desc">
+											<i  className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+											<p  className="mt-1">Upload business address</p>
+										</div>
+										<input type="file" name="img_logo"  onChange={(e) => acceptedFiles(e,'business_address_proof') } className="dropzone"/>
+										</div>
+										{form.touched.business_address_proof && form.errors.business_address_proof ? <div  className="text-danger">{form.errors.business_address_proof}</div> : ''}
+
+									</div>
+								</div>
+								<div  className="row">
+									<div  className="col-12 col-md-6 col-lg-5">
+									<p  className="mb-0">One Year Latest Bank Statement</p>
+									<div  className="preview-zone hidden">
+										<div  className="imgupload-box box-solid">
+											<div  className="box-header with-border">
+											<div  className="box-tools pull-right">
+												<button type="button"  className="btn btn-danger btn-xs remove-preview">
+												<i  className="fa-solid fa-trash fa-fw"></i>
+												</button>
+											</div>
+											</div>
+											<div  className="box-body"></div>
+										</div>
+										</div>
+										<div  className="dropzone-wrapper">
+										<div  className="dropzone-desc">
+											<i  className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+											<p  className="mt-1">Upload PDF,Document</p>
+										</div>
+										<input type="file" name="img_logo"  className="dropzone"/>
+										</div>
+									</div>
+									<div  className="col-12 col-md-6 col-lg-5">
+									<p  className="mb-0">Upload ITR <small>Optional</small></p>
+									<div  className="preview-zone hidden">
+										<div  className="imgupload-box box-solid">
+											<div  className="box-header with-border">
+											<div  className="box-tools pull-right">
+												<button type="button"  className="btn btn-danger btn-xs remove-preview">
+												<i  className="fa-solid fa-trash fa-fw"></i>
+												</button>
+											</div>
+											</div>
+											<div  className="box-body"></div>
+										</div>
+										</div>
+										<div  className="dropzone-wrapper">
+										<div  className="dropzone-desc">
+											<i  className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+											<p  className="mt-1">Upload PDF,Document</p>
+										</div>
+										<input type="file" name="img_logo"  className="dropzone" />
+										</div>
+									</div>
+								</div>
+								
+							</div>
+						<input type="submit" name="next"  className="next action-button apply-now-btn mt-5 ml-00" value="Verify & Proceed" />
+						</fieldset>
+						
+						<fieldset  className="ui-step-content"  style={currentStep==3?{display:"block",textAlign:"center"}:{display:"none"}} >
+							<div  className="success-animation">
+							<svg  className="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle  className="checkmark__circle" cx="26" cy="26" r="25" fill="none" /><path  className="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" /></svg>
+							</div>
+							<h1  className="mb-0">Thank you!</h1>
+							<h6  className="mb-0">Your application has been successfully received. You may choose to note down the file number for further tracking of the case!</h6>
+							<p><b>File ID:</b> :FTM0005330</p>
+							<p><b>Password:</b> vbvb8964</p>
+					     	{/* <input type="submit" name="submit"  className="submit action-button apply-now-btn" value="Continue" /> */}
+						</fieldset>
+					</form>	
+					</div>
+					
+					<div  className="col-md-12 col-lg-6">
+					<img src="/assets/img/loanright.png" alt=""  className="righimg" />
+					</div>
+					
+				</div>
+			</div> 
+		</section>
+		</>
+	)
+}
+
+const PersonalForm = (props) => {
+	const [currentStep, setCurrentStep] = useState(0);
+	const form=useFormik({
+		initialValues: props.data,
+		enableReinitialize: true,
+		validationSchema: yup.object({
+			mobile_number:currentStep==1?yup.string().required('Mobile number is required.'):'',
+			is_agree :currentStep==1?yup.boolean().required('Please selected terms and conditions.').oneOf([true],'Please selected terms and conditions.'):'',
+			otp_verified : currentStep==2?yup.string().required('Please enter OTP.'):'',
+			pan_number : currentStep==3?yup.string().required('Please enter pan card number.'):'',
+			loan_type : currentStep==3?yup.string().required('Please select loan type.'):'',
+			employee_type : currentStep==3?yup.string().required('Please select employee type.'):''
+
+		}),
+		onSubmit:values=>{
+			if(currentStep==2){
+				console.log(values)
+				// props.setCurrentStep(parseInt(values.loan_type))
+			} else {
+				setCurrentStep(currentStep+1)
+			}
+		}
+	});
+	return (
+		<>
+		<section className="newstep-form"> 
+			<div className="container new-step-container">
+				<div className="row form-newalign">
+					<div className="col-md-12 col-lg-6">
+					
+					
+					<form id="msform">
+								
+						<fieldset className="ui-step-content" style={currentStep==0?{display:"block"}:{display:"none"}}>
+								<h1 className="mb-0">Personal Info</h1>
+								<p className="mt-1">Instant Business & Personal Loan</p>
+								<div className="stepform-newdesign">
+								<div className="row">
+										<div className="col-12 col-md-10">
+										<label>Email Address</label>
+										<input type="text" className="" placeholder="Enter email"/>
+										</div>
+										<div className="col-12 col-md-10">
+										<label>Father's Name</label>
+										<input type="text" className="" placeholder="Enter name"/>
+										</div>
+										<div className="col-xs-12 col-md-5">
+											<label>Gender</label>
+											<input type="text" className="" placeholder="Enter gender"/>
+										</div>
+										<div className="col-xs-12 col-md-5">
+											<label>Qualification</label>
+											<select><option>Select Your Qualification</option></select>
+										</div>
+										<div className="col-xs-12 col-md-5">
+											<label>Marital Status</label>
+											<input type="text" className="" placeholder="Enter status"/>
+										</div>
+										<div className="col-xs-12 col-md-5">
+											<label>Number of Kids</label>
+											<input type="text" className="" placeholder="Enter kids number"/>
+										</div>
+									<div className="col-xs-12 col-md-5">
+											<label>Vehicle Type</label>
+											<select><option>Select Your Vehicle</option></select>
+										</div>
+										<div className="col-xs-12 col-md-5">
+											<label>Flat No./Building No./Street No.</label>
+											<input type="text" className="" placeholder="Enter House No."/>
+										</div>
+									<div className="col-xs-12 col-md-5">
+											<label>State</label>
+											<select><option>Select Your State</option></select>
+										</div>
+										<div className="col-xs-12 col-md-5">
+											<label>City</label>
+											<input type="text" className="" placeholder="Enter city"/>
+										</div>
+									</div>
+								</div>
+							<input type="button" name="next" className="next action-button apply-now-btn ml-00" value="Continue" />
+						</fieldset>
+						
+					
+					<fieldset className="ui-step-content" style={currentStep==1?{display:"block"}:{display:"none"}}>
+							<button type="button" name="previous" className="previous action-button-previous" ><i className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button>
+							<h1 className="mb-0 mt-1">Employment Info</h1>
+								<p className="mt-1">Instant Business & Personal Loan</p>
+								<div className="stepform-newdesign">
+								<div className="row">
+										<div className="col-12 col-md-5">
+										<label>Name of current employer</label>
+										<input type="text" className="" placeholder="Enter name"/>
+										</div>
+										<div className="col-12 col-md-5">
+										<label>Designation</label>
+										<input type="text" className="" placeholder="Enter designation"/>
+										</div>
+										<div className="col-xs-12 col-md-5">
+											<label>No. of years in current organization</label>
+											<input type="text" className="" placeholder="Enter year"/>
+										</div>
+										<div className="col-xs-12 col-md-5">
+											<label>Type of organization </label>
+											<select><option>Select Your organization</option></select>
+										</div>
+										<div className="col-xs-12 col-md-5">
+											<label>Total Experience (In Year) </label>
+											<select><option>Select Your exp. year</option></select>
+										</div>
+										<div className="col-xs-12 col-md-5">
+											<label>Number of Kids</label>
+											<input type="text" className="" placeholder="Enter kids number"/>
+										</div>
+										<div className="col-xs-12 col-md-5">
+											<label>Required Amount</label>
+											<input type="text" className="" placeholder="Enter amount"/>
+										</div>
+										<div className="col-xs-12 col-md-5">
+											<label>Building No./Plot No.</label>
+											<input type="text" className="" placeholder="Enter house no."/>
+										</div>
+										<div className="col-xs-12 col-md-5">
+											<label>State</label>
+											<select><option>Select Your State</option></select>
+										</div>
+										<div className="col-xs-12 col-md-5">
+											<label>City</label>
+											<input type="text" className="" placeholder="Enter city"/>
+										</div>
+										<div className="col-xs-12 col-md-5">
+											<label>Pincode </label>
+											<input type="text" className="" placeholder="Enter area pincode"/>
+										</div>
+										<div className="col-xs-12 col-md-5">
+											<label>Company Website</label>
+											<input type="text" className="" placeholder="Enter website URL"/>
+										</div>
+										<div className="col-xs-12 col-md-5">
+											<label>Official Email Address</label>
+											<input type="text" className="" placeholder="Enter official email"/>
+										</div>
+										<div className="col-xs-12 col-md-5">
+											<label>Monthly take home</label>
+											<input type="text" className="" placeholder="Enter monthly income"/>
+										</div>
+										<div className="col-xs-12 col-md-5">
+											<label>Mode of receiving salary</label>
+											<select><option>Select Your salary mode</option></select>
+										</div>
+										<div className="col-xs-12 col-md-5">
+											<label>Bank Name</label>
+											<input type="text" className="" placeholder="Enter your bank name"/>
+										</div>
+										
+									</div>
+								</div>
+							<input type="button" name="next" className="next action-button apply-now-btn ml-00" value="Continue" />
+						</fieldset>
+						
+						
+						<fieldset className="ui-step-content" style={currentStep==2?{display:"block"}:{display:"none"}}>
+							<button type="button" name="previous" className="previous action-button-previous" ><i className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button>
+							<h1 className="mb-0 mt-1">Upload Doc</h1>
+							<p className="mt-1">Instant Business & Personal Loan</p>
+							<div className="stepform-newdesign">
+								<div className="row">
+									<div className="col-12 col-md-6 col-lg-5">
+									<p className="mb-0">Upload Pan Card</p>
+									<div className="preview-zone hidden">
+										<div className="imgupload-box box-solid">
+											<div className="box-header with-border">
+											<div className="box-tools pull-right">
+												<button type="button" className="btn btn-danger btn-xs remove-preview">
+												<i className="fa-solid fa-trash fa-fw"></i>
+												</button>
+											</div>
+											</div>
+											<div className="box-body"></div>
+										</div>
+										</div>
+										<div className="dropzone-wrapper">
+										<div className="dropzone-desc">
+											<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+											<p className="mt-1">Upload Your Pan Card</p>
+										</div>
+										<input type="file" name="img_logo" className="dropzone" />
+										</div>
+									</div>
+									<div className="col-12 col-md-6 col-lg-5">
+									<p className="mb-0">Upload Pan Aadhar Card</p>
+									<div className="preview-zone hidden">
+										<div className="imgupload-box box-solid">
+											<div className="box-header with-border">
+											<div className="box-tools pull-right">
+												<button type="button" className="btn btn-danger btn-xs remove-preview">
+												<i className="fa-solid fa-trash fa-fw"></i>
+												</button>
+											</div>
+											</div>
+											<div className="box-body"></div>
+										</div>
+										</div>
+										<div className="dropzone-wrapper">
+										<div className="dropzone-desc">
+											<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+											<p className="mt-1">Upload Aadhar</p>
+										</div>
+										<input type="file" name="img_logo" className="dropzone" />
+										</div>
+									</div>
+								</div>
+								<div className="row">
+									<div className="col-12 col-md-6 col-lg-5">
+									<p className="mb-0">One Year Latest Bank Statement</p>
+									<div className="preview-zone hidden">
+										<div className="imgupload-box box-solid">
+											<div className="box-header with-border">
+											<div className="box-tools pull-right">
+												<button type="button" className="btn btn-danger btn-xs remove-preview">
+												<i className="fa-solid fa-trash fa-fw"></i>
+												</button>
+											</div>
+											</div>
+											<div className="box-body"></div>
+										</div>
+										</div>
+										<div className="dropzone-wrapper">
+										<div className="dropzone-desc">
+											<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+											<p className="mt-1">Upload PDF,Document</p>
+										</div>
+										<input type="file" name="img_logo" className="dropzone"/>
+										</div>
+									</div>
+									<div className="col-12 col-md-6 col-lg-5">
+										<p className="mb-0">Upload latest 3 months salary slips</p>
+										<div className="preview-zone hidden">
+											<div className="imgupload-box box-solid">
+												<div className="box-header with-border">
+												<div className="box-tools pull-right">
+													<button type="button" className="btn btn-danger btn-xs remove-preview">
+													<i className="fa-solid fa-trash fa-fw"></i>
+													</button>
+												</div>
+												</div>
+												<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+												<p className="mt-1">Upload PDF,Document</p>
+											
+											<input type="file" name="img_logo" className="dropzone"/>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						<input type="button" name="next" className="next action-button apply-now-btn mt-5 ml-00" value="Verify & Proceed" />
+						</fieldset>
+						
+						<fieldset className="ui-step-content" style={currentStep==3?{display:"block",textAlign:"center"}:{display:"none"}}>
+							<div className="success-animation">
+							<svg className="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle className="checkmark__circle" cx="26" cy="26" r="25" fill="none" /><path className="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" /></svg>
+							</div>
+							<h1 className="mb-0">Thank you!</h1>
+							<h6 className="mb-0">Your application has been successfully received. You may choose to note down the file number for further tracking of the case!</h6>
+							<p><b>File ID:</b> :FTM0005330</p>
+							<p><b>Password:</b> vbvb8964</p>
+						<input type="submit" name="submit" className="submit action-button apply-now-btn" value="Continue" />
+						</fieldset>
+					
+					</form>
+					</div>
+					
+					<div className="col-md-12 col-lg-6">
+					<img src="assets/img/loanright-personal.png" alt="" className="righimg" />
+					</div>
+					
+				</div>
+			</div> 
+		</section>
+		</>
+	)
+}
 
 export default UserForm
