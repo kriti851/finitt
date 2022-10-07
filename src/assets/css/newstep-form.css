@@ -229,8 +229,10 @@
 .radio {
     margin: 0px;
     display: inline-block;
-    width: 50%;
+    width: auto;
     float: left;
+    display: flex;
+    margin-right: 50px;
 }
 .radio input[type=radio] {
   position: absolute;

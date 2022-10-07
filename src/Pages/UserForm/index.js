@@ -159,17 +159,18 @@ const StepOne = (props) => {
 				   
 				   <fieldset className="ui-step-content" style={currentStep==1?{display:"block"}:{display:"none"}}>
 					  <h1 className="mb-0">Apply in 3 easy steps</h1>
-							<h6>let's start with your basic info</h6>
+							<h6 className="md-4">let's start with your basic info</h6>
 							
 							<div className="stepform-newdesign">
 							   <div className="row">
 								   <div className="col-12 col-md-10">
 								      <label>Mobile Number</label>
 								      <input type="text" className="mb-0" name="mobile_number" {...form.getFieldProps("mobile_number")}    placeholder="We will send an OTP on this number"/>
-                      {form.touched.mobile_number && form.errors.mobile_number ? <div  className="text-danger">{form.errors.mobile_number}</div> : ''}
+									  {form.touched.mobile_number && form.errors.mobile_number ? 
+									  <div  className="text-danger">{form.errors.mobile_number}</div> : ''}
 								   </div>
 								   <div className="col-md-12">
-								     <ul className="unstyled centered">
+								     <ul className="unstyled centered mt-5">
 										  <li>
 											<input className="styled-checkbox" id="styled-checkbox-1" type="checkbox" value="value1" />
 											<label htmlFor="styled-checkbox-1">Get updates on WhatsApp</label>
@@ -193,21 +194,21 @@ const StepOne = (props) => {
 					<fieldset className="ui-step-content"  style={currentStep==2?{display:"block"}:{display:"none"}}>
 					    <button type="button" name="previous" className="previous action-button-previous"  onClick={() =>setCurrentStep(currentStep-1) }><i className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button>
 						<h1 className="mb-0">Verify OTP</h1>
-						<h6>FINITT has sent an OTP to your registers mobile number +91 {form.values.mobile_number}</h6>
+						<h6 className="md-4">FINITT has sent an OTP to your registers mobile number +91 {form.values.mobile_number}</h6>
 						<div className="stepform-newdesign">
 							<div className="row">
 								<div className="col-12 col-md-10">
 								    <label>Enter OTP</label>
-								    <input type="text" className=""  name="otp_verified" {...form.getFieldProps("otp_verified")}   placeholder="Enter 6 Digit OTP"/>
+								    <input type="text" className="mb-0"  name="otp_verified" {...form.getFieldProps("otp_verified")}   placeholder="Enter 6 Digit OTP"/>
                     {form.touched.otp_verified && form.errors.otp_verified ? <div  className="text-danger">{form.errors.otp_verified}</div> : ''}
 
 								</div>
 								{/* <div className="col-xs-6 col-md-5">
 								     <Link to="" className="resentotp">Resend OTP</Link>
 								</div> */}
-								<div className="col-xs-6 col-md-5 text-right">
+								{/*<div className="col-xs-6 col-md-5 text-right">
 								     <i className="fa-regular fa-clock fa-fw"></i> 00:15
-								</div>
+								</div>*/}
 							</div>
 						</div>
 					   <input type="submit" name="next" className="next action-button apply-now-btn mt-5 ml-00" value="Verify & Proceed"  />
@@ -229,7 +230,7 @@ const StepOne = (props) => {
 								</div> */}
 								<div className="col-xs-12 col-md-8">
 								    <label>Pan Card Number</label>
-								    <input type="text" className="" placeholder="Enter pan card number"  name="pan_number" {...form.getFieldProps("pan_number")}   />
+								    <input type="text" className="mb-0" placeholder="Enter pan card number"  name="pan_number" {...form.getFieldProps("pan_number")}   />
                     {form.touched.pan_number && form.errors.pan_number ? <div  className="text-danger">{form.errors.pan_number}</div> : ''}
 
 								</div>
@@ -249,7 +250,7 @@ const StepOne = (props) => {
 									<label htmlFor="radio-2" className="radio-label">Self Employed</label>
 								  </div>
 								</div>
-								<div className="col-xs-12 col-md-5">
+								<div className="col-xs-12 col-md-8">
 								  <p className="mb-33">Loan Type </p>
 								  <div className="radio">
 									<input id="radio-3" name="loan_type" type="radio" value="1" onChange={(e) => form.setFieldValue('loan_type', e.target.value)} checked={form.values.loan_type==1} />
