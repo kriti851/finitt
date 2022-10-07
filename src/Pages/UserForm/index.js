@@ -188,8 +188,8 @@ const StepOne = (props) => {
 									</span>
 								   </li>
 							   </ul>
-							   <input type="button" name="next" class="next action-button apply-now-btn ml-00 leftfloat-withmr-1" value="Apply Now" />
-                               {/* <a href="javascript:void(0)" data-toggle="modal" data-target="#check-status" class="apply-now-btn ml-00 mymodalonline">Check Status</a> */}
+							   <input type="submit" name="next" className="next action-button apply-now-btn ml-00 leftfloat-withmr-1" value="Apply Now" />
+                               {/* <a href="javascript:void(0)" data-toggle="modal" data-target="#check-status" className="apply-now-btn ml-00 mymodalonline">Check Status</a> */}
 
 					</fieldset>
 					   
