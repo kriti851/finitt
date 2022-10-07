@@ -95,7 +95,7 @@ const UserForm = () => {
  
 
   //Normal Form 
-//   steps.push(<StepOne next={handleNextStep}  prev={handlePrevStep} setData={setData} data={data} setCurrentStep={setCurrentStep}/>) 
+  steps.push(<StepOne next={handleNextStep}  prev={handlePrevStep} setData={setData} data={data} setCurrentStep={setCurrentStep}/>) 
   // Personal Form
   steps.push(<PersonalForm next={handleNextStep}  prev={handlePrevStep} setData={setData} data={data} />) 
   // Business Form
@@ -103,7 +103,6 @@ const UserForm = () => {
   return (
     <>
         <Header></Header>
-		{steps.length}
         {steps[currentStep]}
     </>
   )
@@ -406,7 +405,7 @@ const StepOne = (props) => {
 
 
 const BusinessForm = (props) => {
-	const [currentStep, setCurrentStep] = useState(1);
+	const [currentStep, setCurrentStep] = useState(0);
 	const form=useFormik({
 		initialValues: props.data.business_info,
 		enableReinitialize: true,
@@ -854,7 +853,7 @@ const BusinessForm = (props) => {
 }
 
 const PersonalForm = (props) => {
-	const [currentStep, setCurrentStep] = useState(2);
+	const [currentStep, setCurrentStep] = useState(0);
 	const form=useFormik({
 		initialValues: props.data.personal_info,
 		enableReinitialize: true,
@@ -906,6 +905,7 @@ const PersonalForm = (props) => {
 			if(currentStep==2){
 				console.log(values)
 				// props.setCurrentStep(parseInt(values.loan_type))
+				setCurrentStep(currentStep+1)
 			} else {
 				setCurrentStep(currentStep+1)
 			}
@@ -1288,14 +1288,18 @@ const PersonalForm = (props) => {
 													</button>
 												</div>
 												</div>
+												<div className="box-body"></div>
+											</div>
+											</div>
+											<div className="dropzone-wrapper">
+											   <div className="dropzone-desc">
 												<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
 												<p className="mt-1">Upload PDF,Document</p>
-											
+												</div>
 											<input type="file" name="img_logo" className="dropzone" onChange={(e) => acceptedFiles(e,'salery_slip') }/>
 											</div>
 											{form.touched.salery_slip && form.errors.salery_slip ? <div  className="text-danger">{form.errors.salery_slip}</div> : ''}
 
-										</div>
 									</div>
 								</div>
 							</div>
