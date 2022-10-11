@@ -14,6 +14,7 @@ const AppRoutes = () => {
     <BrowserRouter>
     <Routes>
       <Route path='/' element={<UserForm />} />
+      <Route path='/:name' element={<UserForm />} />
     </Routes>
   </BrowserRouter>
   )
