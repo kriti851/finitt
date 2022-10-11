@@ -159,16 +159,16 @@ const StepOne = (props) => {
 		initialValues: props.data.info,
 		// enableReinitialize: true,
 		validationSchema: yup.object({
-			mobile_number:currentStep==1?yup.string().required('Please enter mobile number.').min(10, 'Please enter valid mobile number.')
-			.max(10, 'Please enter valid mobile number.').matches(phoneRegExp, 'Please enter valid mobile number.'):'',
-			is_agree :currentStep==1?yup.boolean().required('Please select terms and conditions.').oneOf([true],'Please selected terms and conditions.'):'',
-			otp_verified : currentStep==2?yup.string().required('Please enter OTP.').min(4, 'Please enter valid OTP.')
+			mobile_number:currentStep==1?yup.string().required('Please enter mobile number').min(10, 'Please enter valid mobile number')
+			.max(10, 'Please enter valid mobile number.').matches(phoneRegExp, 'Please enter valid mobile number'):'',
+			is_agree :currentStep==1?yup.boolean().required('Please select terms and conditions').oneOf([true],'Please select terms and conditions'):'',
+			otp_verified : currentStep==2?yup.string().required('Please enter OTP').min(4, 'Please enter valid OTP')
 			.max(4, 'Please enter valid OTP.'):'',
-			pan_number : currentStep==3?yup.string().required('Please enter pan card number.'):'',
+			pan_number : currentStep==3?yup.string().required('Please enter pan card number'):'',
 			loan_type : currentStep==4?yup.number().test('is boolean',
 			'Please select loan type',
 			(value) => value === 2 || value === 1):'',
-			employee_type : currentStep==4?yup.string().required('Please select employee type.'):''
+			employee_type : currentStep==4?yup.string().required('Please select employee type'):''
 
 		}),
 		onSubmit:values=>{
@@ -303,7 +303,7 @@ const StepOne = (props) => {
 					<fieldset className="ui-step-content"  style={currentStep==2?{display:"block"}:{display:"none"}}>
 					    <button type="button" name="previous" className="previous action-button-previous"  onClick={() =>setCurrentStep(currentStep-1) }><i className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button>
 						<h1 className="mb-0">Verify OTP</h1>
-						<h6 className="md-4">FINITT has sent an OTP to your registers mobile number +91 {form.values.mobile_number}</h6>
+						<h6 className="md-4">FINITT has sent an OTP to your registered mobile number +91 {form.values.mobile_number}</h6>
 						<div className="stepform-newdesign">
 							<div className="row">
 								<div className="col-12 col-md-10">
@@ -428,34 +428,33 @@ const StepOne = (props) => {
 						
 						<div>
 							<h1>Congratulations! <br></br> You are eligible for a loan.</h1>
-							<p>In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available.</p>
+							
 						</div>
-						<div className="col-xs-12 col-md-8">
-							<p className="mb-33">Employment type</p>
-							<div className="radio">
-							<input id="radio-1" name="employee_type" type="radio" value="1" onChange={(e) => form.setFieldValue('employee_type', e.target.value)} checked={form.values.employee_type==1}/>
-							<label htmlFor="radio-1" className="radio-label">Salaried</label>
-							</div>
-							<div className="radio">
-							<input id="radio-2" name="employee_type" type="radio" onChange={(e) => form.setFieldValue('employee_type', e.target.value)} checked={form.values.employee_type==2}/>
-							<label htmlFor="radio-2" className="radio-label">Self Employed</label>
-							</div>
+						<div className="checkbox">
+							<p className="mb-33"><b>Employment type</b></p>
+							{/* <div className="checkbox"> */}
+							<input id="checkbox-1" name="employee_type" type="checkbox" value="1" onChange={(e) => form.setFieldValue('employee_type', e.target.value)} checked={form.values.employee_type==1}/>
+							<label htmlFor="checkbox-1" className="checkbox-label">&nbsp; Salaried &nbsp;</label>
+							{/* </div> */}
+							{/* <div className="checkbox"> */}
+							<input id="checkbox-2" name="employee_type" type="checkbox" value="2" onChange={(e) => form.setFieldValue('employee_type', e.target.value)} checked={form.values.employee_type==2}/>
+							<label htmlFor="checkbox-2" className="checkbox-label"> Self Employed</label>
+							{/* </div> */}
 						</div>
 						<div className="col-xs-12 col-md-8 ">
 							{form.touched.employee_type && form.errors.employee_type ? <div  className="text-danger">{form.errors.employee_type}</div> : ''}
-
 						</div>
 
-						<div className="col-xs-12 col-md-8 " style={{marginBottom:"10px"}}>
-							<p className="mb-33">Loan Type </p>
-							<div className="radio">
-							<input id="radio-3" name="loan_type" type="radio" value="1" onChange={(e) => form.setFieldValue('loan_type', e.target.value)} checked={form.values.loan_type==1} />
-							<label htmlFor="radio-3" className="radio-label">Personal</label>
-							</div>
-							<div className="radio">
-							<input id="radio-4" name="loan_type" type="radio"  value="2" onChange={(e) => form.setFieldValue('loan_type', e.target.value)} checked={form.values.loan_type==2} />
-							<label htmlFor="radio-4" className="radio-label">Business</label>
-							</div>
+						<div className="checkbox" style={{marginBottom:"10px"}}>
+							<p className="mb-33"><b>Loan Type</b></p>
+							{/* <div className="checkbox"> */}
+							<input id="checkbox-3" name="loan_type" type="checkbox" value="1" onChange={(e) => form.setFieldValue('loan_type', e.target.value)} checked={form.values.loan_type==1} />
+							<label htmlFor="checkbox-3" className="checkbox-label">&nbsp; Personal &nbsp;</label>
+							{/* </div> */}
+							{/* <div className="checkbox"> */}
+							<input id="checkbox-4" name="loan_type" type="checkbox"  value="2" onChange={(e) => form.setFieldValue('loan_type', e.target.value)} checked={form.values.loan_type==2} />
+							<label htmlFor="checkbox-4" className="checkbox-label">&nbsp; Business &nbsp;</label>
+							{/* </div> */}
 						
 						</div>
 						<div className="col-xs-12 col-md-8 ">
@@ -468,7 +467,7 @@ const StepOne = (props) => {
 						</div> */}
 						
 						<div>
-					   <input type="submit" name="submit" className="submit action-button apply-now-btn ml-00" value="Submit Your Details" />
+					   <input type="submit" name="submit" className="submit action-button apply-now-btn ml-00" value="Go" />
 					   </div>
 					   <Link to="" className="apply-now-btn ml-00" style={{display:"none"}}>Start New Application</Link>
 					   
@@ -478,7 +477,7 @@ const StepOne = (props) => {
                 </div>
 				
 				        <div className="col-md-12 col-lg-6">
-                   <img src="/assets/img/loanright-1.png" alt="" className="righimg" />
+                   {/* <img src="/assets/img/loanright-1.png" alt="" className="righimg" /> */}
                 </div>
 				
             </div>
@@ -495,18 +494,18 @@ const BusinessForm = (props) => {
 		initialValues: props.data.business_info,
 		// enableReinitialize: true,
 		validationSchema: yup.object({
-			company_name:currentStep==0?yup.string().required('Please enter business name.'):'',
-			legal_name :currentStep==0?yup.string().required('Please enter legal name of your business.'):'',
-			state : currentStep==0?yup.string().required('Please select state.'):'',
-			city : currentStep==0?yup.string().required('Please select city.'):'',
-			houseno : currentStep==0?yup.string().required('Please Enter Building name/flat no.'):'',
-			pincode : currentStep==0?yup.string().required('Please select pincode.'):'',
-			business_type : currentStep==0?yup.string().required('Please select Business type.'):'',
-			type_of_nature : currentStep==0?yup.string().required('Please select nature type of your business.'):'',
-			vintage : currentStep==0?yup.number().typeError('you must specify a number').required('Vintage filed is required.'):'',
-			turn_over : currentStep==0?yup.string().required('Please select Business turn over.'):'',
-			desired_amount : currentStep==0?yup.string().required('Please select desired loan amount.'):'',
-			required_amount : currentStep==0?yup.number().typeError('you must specify a number').required('please enter required amount.'):'',
+			company_name:currentStep==0?yup.string().required('Please enter business name'):'',
+			legal_name :currentStep==0?yup.string().required('Please enter legal name of your business'):'',
+			state : currentStep==0?yup.string().required('Please select state'):'',
+			city : currentStep==0?yup.string().required('Please select city'):'',
+			houseno : currentStep==0?yup.string().required('Please Enter Building name/flat no'):'',
+			pincode : currentStep==0?yup.string().required('Please select pincode'):'',
+			business_type : currentStep==0?yup.string().required('Please select Business type'):'',
+			type_of_nature : currentStep==0?yup.string().required('Please select nature type of your business'):'',
+			vintage : currentStep==0?yup.number().typeError('you must specify a number').required('Vintage filed is required'):'',
+			turn_over : currentStep==0?yup.string().required('Please select Business turn over'):'',
+			desired_amount : currentStep==0?yup.string().required('Please select desired loan amount'):'',
+			required_amount : currentStep==0?yup.number().typeError('you must specify a number').required('please enter required amount'):'',
 			co_application: currentStep==1?yup.array().of(
 				yup.object({
 					name: yup.string().required("Please enter co-applicant name!"),
@@ -515,14 +514,14 @@ const BusinessForm = (props) => {
 					relationship: yup.string().required("Please enter co-applicant relationship"),
 				}),
 			) : '',
-			pan_number:currentStep==2?yup.string().required('Please enter pan card number.'):'',
-			pancard_image:currentStep==2?yup.string().required('Please upload pan card image.'):'',
-			gst_number:currentStep==2?yup.string().required('Please enter valid gst number.'):'',
-			gstproof_image:currentStep==2?yup.string().required('Please upload valid gst image.'):'',
-			business_address:currentStep==2?yup.string().required('Please enter valid business address.'):'',
-			business_address_proof:currentStep==2?yup.string().required('Please enter business address proof image.'):'',
-			bank_statement:currentStep==2?yup.string().required('Please upload bank statement.'):'',
-			itr_docs:currentStep==2?yup.string().required('Please upload ITR.'):'',
+			pan_number:currentStep==2?yup.string().required('Please enter pan card number'):'',
+			pancard_image:currentStep==2?yup.string().required('Please upload pan card image'):'',
+			gst_number:currentStep==2?yup.string().required('Please enter valid gst number'):'',
+			gstproof_image:currentStep==2?yup.string().required('Please upload valid gst image'):'',
+			business_address:currentStep==2?yup.string().required('Please enter valid business address'):'',
+			business_address_proof:currentStep==2?yup.string().required('Please enter business address proof image'):'',
+			bank_statement:currentStep==2?yup.string().required('Please upload bank statement'):'',
+			itr_docs:currentStep==2?yup.string().required('Please upload ITR'):'',
 			
 		}),
 		onSubmit:values=>{
@@ -997,42 +996,42 @@ const PersonalForm = (props) => {
 		initialValues: props.data.personal_info,
 		// enableReinitialize: true,
 		validationSchema: yup.object({
-			email: currentStep==0?yup.string().email('Please enter valid email address').required('Please enter email address.'):'',
-			father_name : currentStep==0?yup.string().required('Please enter father name.'):'',
+			email: currentStep==0?yup.string().email('Please enter valid email address').required('Please enter email address'):'',
+			father_name : currentStep==0?yup.string().required('Please enter father name'):'',
 			gender :  currentStep==0?yup.string().required('Please select gender.'):'',
-			qualification : currentStep==0?yup.string().required('Please select qualification.'):'',
+			qualification : currentStep==0?yup.string().required('Please select qualification'):'',
 			marital_status : currentStep==0?yup.string().required('Please select marital status'):'',
 			number_of_kids :  currentStep==0?yup.number().typeError('you must specify a number'):'',
-			vehicle_type : currentStep==0?yup.string().required('Please select vehicle type.'):'',
-			residence_building :  currentStep==0?yup.string().required('Please enter Flat No./Building No./Street No.'):'',
-			residence_area : currentStep==0?yup.string().required('Please enter residence area .'):'',
-			residence_state : currentStep==0?yup.string().required('Please select state.'):'',
-			residence_city :  currentStep==0?yup.string().required('Please select city.'):'',
-			residence_pincode :  currentStep==0?yup.string().required('Please select pincode.'):'',
+			vehicle_type : currentStep==0?yup.string().required('Please select vehicle type'):'',
+			residence_building :  currentStep==0?yup.string().required('Please enter Flat No./Building No./Street No'):'',
+			residence_area : currentStep==0?yup.string().required('Please enter residence area'):'',
+			residence_state : currentStep==0?yup.string().required('Please select state'):'',
+			residence_city :  currentStep==0?yup.string().required('Please select city'):'',
+			residence_pincode :  currentStep==0?yup.string().required('Please select pincode'):'',
 
-			employer_name : currentStep==1?yup.string().required('Please enter employer name.'):'',
-			designation :currentStep==1?yup.string().required('Please enter your designation.'):'',
-			organization :currentStep==1?yup.number().typeError('you must specify a number').required('Please enter organization.'):'',
-			organization_type :currentStep==1?yup.string().required('Please select organization.'):'',
-			total_experience :currentStep==1?yup.string().required('Please select total experience.'):'',
-			required_amount :currentStep==1?yup.number().typeError('you must specify a number').required('Please enter required amount.'):'',
-			company_building :currentStep==1?yup.string().required('Please enter Flat No./Building No./Street No.'):'',
-			company_area :currentStep==1?yup.string().required('Please enter area.'):'',
-			company_state :currentStep==1?yup.string().required('Please select state.'):'',
-			company_city :currentStep==1?yup.string().required('Please select city.'):'',
-			company_pincode :currentStep==1?yup.string().required('Please select pincode.'):'',
+			employer_name : currentStep==1?yup.string().required('Please enter employer name'):'',
+			designation :currentStep==1?yup.string().required('Please enter your designation'):'',
+			organization :currentStep==1?yup.number().typeError('you must specify a number').required('Please enter organization'):'',
+			organization_type :currentStep==1?yup.string().required('Please select organization'):'',
+			total_experience :currentStep==1?yup.string().required('Please select total experience'):'',
+			required_amount :currentStep==1?yup.number().typeError('you must specify a number').required('Please enter required amount'):'',
+			company_building :currentStep==1?yup.string().required('Please enter Flat No./Building No./Street No'):'',
+			company_area :currentStep==1?yup.string().required('Please enter area'):'',
+			company_state :currentStep==1?yup.string().required('Please select state'):'',
+			company_city :currentStep==1?yup.string().required('Please select city'):'',
+			company_pincode :currentStep==1?yup.string().required('Please select pincode'):'',
 			company_website :currentStep==1?yup.string().matches(
 				/((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
-				'Please enter valid URL.'
-			).required('Please enter website.'):'',
-			company_email :currentStep==1?yup.string().email('Please enter valid email address').required('Please enter valid company email.'):'',
+				'Please enter valid URL'
+			).required('Please enter website'):'',
+			company_email :currentStep==1?yup.string().email('Please enter valid email address').required('Please enter valid company email'):'',
 			salery_inhand :currentStep==1?yup.number().typeError('you must specify a number').required('Please enter salary detail'):'',
 			salary_mode :currentStep==1?yup.string().required('Please select salary mode'):'',
-			bank_name :currentStep==1?yup.string().required('Please enter bank name.'):'',
-			pancard_image : currentStep==2?yup.string().required('Please upload pan card image.'):'',
-			aadhar_image : currentStep==2?yup.string().required('Please upload aadhar image.'):'',
-			bank_statement : currentStep==2?yup.string().required('Please upload bank statement.'):'',
-			salery_slip : currentStep==2?yup.string().required('Please upload salary slip.'):''
+			bank_name :currentStep==1?yup.string().required('Please enter bank name'):'',
+			pancard_image : currentStep==2?yup.string().required('Please upload pan card image'):'',
+			aadhar_image : currentStep==2?yup.string().required('Please upload aadhar image'):'',
+			bank_statement : currentStep==2?yup.string().required('Please upload bank statement'):'',
+			salery_slip : currentStep==2?yup.string().required('Please upload salary slip'):''
 		}),
 		onSubmit:values=>{
 			props.data.personal_info =values;
@@ -1533,7 +1532,7 @@ const PersonalForm = (props) => {
 					</div>
 					
 					<div className="col-md-12 col-lg-6">
-					<img src="/assets/img/loanright-personal.png" alt="" className="righimg" />
+					{/* <img src="/assets/img/loanright-personal.png" alt="" className="righimg" /> */}
 					</div>
 					
 				</div>
