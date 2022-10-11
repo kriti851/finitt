@@ -3,21 +3,32 @@ import { Link,useLocation,useParams } from 'react-router-dom';
 import Header from '../layout/Header'; //Include Heder
 import {useFormik} from 'formik';
 import * as yup from 'yup';
+import Service from './../../service'; 
+import uuid from 'react-uuid';
+const api = new Service();
+const config = require('./../../config.json');
 
 
 const UserForm = () => {
 
+  const [allStates, setallStates] = useState([]);
+  const [userId, setuserId] = useState(0);
+  const [formResponse, setformResponse] = useState({});
   const [data, setData] = useState({
-		mobile_number : '',
-		is_agree : false,
-		otp_verified : '',
-		pan_number : '',
-		loan_type : 0,
-		employee_type : 0,
+	    info :{
+			mobile_number : '',
+			is_agree : false,
+			otp_verified : '',
+			pan_number : '',
+			loan_type : 1,
+			employee_type : 1,
+	    },
         business_info : {
 		    company_name:'',
 			legal_name :'',
+			state_id : '',
 			state : '',
+			city_id:'',
 			city :'',
 			houseno :'',
 			pincode : '',
@@ -28,14 +39,21 @@ const UserForm = () => {
 			desired_amount : '',
 			required_amount : '',
 			co_application: [
-				{ name: "", pan_number: "", pancard_image: "", relationship : ""}
+				{ name: "", pan_number: "", pancard_image: "",pancard_image_url: "", relationship : ""}
 			],
 			pan_number:'',
 			pancard_image:'',
+			pancard_image_url:'',
 			gst_number:'',
 			gstproof_image:'',
+			gstproof_image_url:'',
 			business_address:'',
 			business_address_proof:'',
+			business_address_proof_url:'',
+			bank_statement : '',
+			bank_statement_url : '',
+			itr_docs : '',
+			itr_docs_url : ''
 		},
 		personal_info : {
 			email:'',
@@ -43,12 +61,14 @@ const UserForm = () => {
 			gender : '',
 			qualification :'',
 			marital_status :'',
-			number_of_kids : '',
+			number_of_kids : 0,
 			vehicle_type :'',
 			residence_building : '',
 			residence_area :'',
 			residence_state :'',
+			residence_state_id :'',
 			residence_city : '',
+			residence_city_id : '',
 			residence_pincode :'',
 			employer_name :'',
 			designation :'',
@@ -59,7 +79,9 @@ const UserForm = () => {
 			company_building :'',
 			company_area :'',
 			company_state :'',
+			company_state_id :'',
 			company_city :'',
+			company_city_id :'',
 			company_pincode :'',
 			company_website :'',
 			company_email :'',
@@ -67,22 +89,43 @@ const UserForm = () => {
 			salary_mode :'',
 			bank_name :'',
 			pancard_image :'',
+			pancard_image_url :'',
 			aadhar_image : '',
+			aadhar_image_url : '',
 			bank_statement : '',
-			salery_slip : ''
+			bank_statement_url : '',
+			salery_slip : '',
+			salery_slip_url : ''
 		}
 
 
 
   })
 
+    useEffect(() => {
+			GetStates()
+	}, [])
+
+	const GetStates = () => { 
+        api.getApi('allStates').then(response => {
+            setallStates(response.states);
+        }).catch(error => {
+        });
+        
+    }
   let steps = [];
 
   const [currentStep, setCurrentStep] = useState(0);
   const handleNextStep = (newData, final = false) => {
     setData((prev) => ({ ...prev, ...newData }));
+	console.log(newData)
     if (final) {
-      // makeRequest(newData);
+		console.log(userId)
+		api.postApi(newData.info.loan_type==2?'businessInfoForm':'personalInForm',{...newData,user_id:userId}).then(response => {
+			console.log(response)
+			setformResponse(response.userdata)
+        }).catch(error => {
+        });
       return;
     }
   };
@@ -95,11 +138,11 @@ const UserForm = () => {
  
 
   //Normal Form 
-  steps.push(<StepOne next={handleNextStep}  prev={handlePrevStep} setData={setData} data={data} setCurrentStep={setCurrentStep}/>) 
+  steps.push(<StepOne  setuserId={setuserId} userId={userId} next={handleNextStep}  prev={handlePrevStep} setData={setData} data={data} setCurrentStep={setCurrentStep} allStates={allStates}/>) 
   // Personal Form
-  steps.push(<PersonalForm next={handleNextStep}  prev={handlePrevStep} setData={setData} data={data} />) 
+  steps.push(<PersonalForm formResponse={formResponse} setuserId={setuserId} userId={userId} next={handleNextStep}  prev={handlePrevStep} setData={setData} data={data} allStates={allStates} />) 
   // Business Form
-  steps.push(<BusinessForm next={handleNextStep}  prev={handlePrevStep} setData={setData} data={data} />) 
+  steps.push(<BusinessForm formResponse={formResponse} setuserId={setuserId} userId={userId} next={handleNextStep}  prev={handlePrevStep} setData={setData} data={data}  allStates={allStates} />) 
   return (
     <>
         <Header></Header>
@@ -113,23 +156,55 @@ const StepOne = (props) => {
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
     const [currentStep, setCurrentStep] = useState(0);
 	const form=useFormik({
-		initialValues: props.data,
-		enableReinitialize: true,
+		initialValues: props.data.info,
+		// enableReinitialize: true,
 		validationSchema: yup.object({
-			mobile_number:currentStep==1?yup.string().required('Mobile number is required.').matches(phoneRegExp, 'Mobile number is not valid'):'',
+			mobile_number:currentStep==1?yup.string().required('Please enter mobile number.').min(10, 'Please enter valid mobile number.')
+			.max(10, 'Please enter valid mobile number.').matches(phoneRegExp, 'Please enter valid mobile number.'):'',
 			is_agree :currentStep==1?yup.boolean().required('Please select terms and conditions.').oneOf([true],'Please selected terms and conditions.'):'',
-			otp_verified : currentStep==2?yup.string().required('Please enter OTP.'):'',
+			otp_verified : currentStep==2?yup.string().required('Please enter OTP.').min(4, 'Please enter valid OTP.')
+			.max(4, 'Please enter valid OTP.'):'',
 			pan_number : currentStep==3?yup.string().required('Please enter pan card number.'):'',
-			loan_type : currentStep==3?yup.string().required('Please select loan type.'):'',
-			employee_type : currentStep==3?yup.string().required('Please select employee type.'):''
+			loan_type : currentStep==4?yup.number().test('is boolean',
+			'Please select loan type',
+			(value) => value === 2 || value === 1):'',
+			employee_type : currentStep==4?yup.string().required('Please select employee type.'):''
 
 		}),
 		onSubmit:values=>{
 			if(currentStep==4){
+				props.data.info = values;
+				props.setData(props.data);
 				props.next(props.data,false);
 				props.setCurrentStep(values.loan_type)
 			} else {
-				setCurrentStep(currentStep+1)
+				if(currentStep==1){
+					api.postApi('loginUser',{mobile_number:values.mobile_number}).then(response => {
+						// setCities(response.cities);
+						if(response.status=='success') {
+							props.setuserId(response.data.user_id)
+							setCurrentStep(currentStep+1)
+						} else {
+							props.setuserId(response.data.user_id)
+						}
+					}).catch(error => {
+
+					});
+				} else if(currentStep==2) {
+					api.postApi('verifyOtp',{mobile_number:values.mobile_number,otp:values.otp_verified}).then(response => {
+					  console.log(response.data.user_id)
+						if(response.status=='success' && response.data) {
+							setCurrentStep(4)
+							props.setuserId(response.data.user_id)
+						} else {
+							setCurrentStep(currentStep+1)
+						}
+					}).catch(error => {
+
+					});
+				} else {
+					setCurrentStep(currentStep+1)
+				}
 			}
 		}
 	});
@@ -212,9 +287,8 @@ const StepOne = (props) => {
 										  </li>
 										  <li>
 											<input className="styled-checkbox" id="styled-checkbox-2" type="checkbox" checked={form.values.is_agree==true}   onChange={(e)=> form.setFieldValue('is_agree', e.target.checked) }/>
-											<label htmlFor="styled-checkbox-2">By applying you agree to our 
-											   <Link to=""> Terms of Use </Link> and 
-											   <Link to=""> Privacy Policy </Link>
+											<label htmlFor="styled-checkbox-2">Please agree with the 
+											   <Link to=""> &nbsp;Terms & Conditions </Link> &nbsp;and&nbsp;<Link to=""> Privacy Policy </Link>
 											</label>
                       {form.touched.is_agree && form.errors.is_agree ? <div  className="text-danger">{form.errors.is_agree}</div> : ''}
 										  </li>
@@ -234,7 +308,7 @@ const StepOne = (props) => {
 							<div className="row">
 								<div className="col-12 col-md-10">
 								    <label>Enter OTP</label>
-								    <input type="text" className="mb-0"  name="otp_verified" {...form.getFieldProps("otp_verified")}   placeholder="Enter 6 Digit OTP"/>
+								    <input type="text" className="mb-0"  name="otp_verified" {...form.getFieldProps("otp_verified")}   placeholder="Enter 4 Digit OTP"/>
                     {form.touched.otp_verified && form.errors.otp_verified ? <div  className="text-danger">{form.errors.otp_verified}</div> : ''}
 
 								</div>
@@ -251,7 +325,7 @@ const StepOne = (props) => {
 					
 				   
 				   <fieldset className="ui-step-content"  style={currentStep==3?{display:"block"}:{display:"none"}}>
-					    <button type="button" name="previous" className="previous action-button-previous" onClick={() =>setCurrentStep(currentStep-1) } ><i className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button>
+					    {/* <button type="button" name="previous" className="previous action-button-previous" onClick={() =>setCurrentStep(currentStep-1) } ><i className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button> */}
 						<h1>Personal info</h1>
 						<div className="stepform-newdesign">
 							<div className="row">
@@ -274,28 +348,7 @@ const StepOne = (props) => {
 								    <input type="date" className="" placeholder="DOB as per PAN"/>
 								</div> */}
 								
-								<div className="col-xs-12 col-md-8">
-								  <p className="mb-33">Employment type</p>
-								  <div className="radio">
-									<input id="radio-1" name="employee_type" type="radio" />
-									<label htmlFor="radio-1" className="radio-label">Salaried</label>
-								  </div>
-								  <div className="radio">
-									<input id="radio-2" name="employee_type" type="radio" checked readOnly/>
-									<label htmlFor="radio-2" className="radio-label">Self Employed</label>
-								  </div>
-								</div>
-								<div className="col-xs-12 col-md-8">
-								  <p className="mb-33">Loan Type </p>
-								  <div className="radio">
-									<input id="radio-3" name="loan_type" type="radio" value="1" onChange={(e) => form.setFieldValue('loan_type', e.target.value)} checked={form.values.loan_type==1} />
-									<label htmlFor="radio-3" className="radio-label">Personal</label>
-								  </div>
-								  <div className="radio">
-									<input id="radio-4" name="loan_type" type="radio"  value="2" onChange={(e) => form.setFieldValue('loan_type', e.target.value)} checked={form.values.loan_type==2} />
-									<label htmlFor="radio-4" className="radio-label">Business</label>
-								  </div>
-								</div>
+								
 							</div>
 						</div>
 					   <input type="submit" name="next" className="next action-button apply-now-btn mt-5 ml-00" value="Submit"  />
@@ -367,25 +420,56 @@ const StepOne = (props) => {
 						</div>
 					   <input type="button" name="next" className="next action-button apply-now-btn  ml-00" value="Continue" />
 					</fieldset> */}
-				   
-				   
+						
 				   
 				   <fieldset className="ui-step-content" style={currentStep==4?{display:"block"}:{display:"none"}}> 
 					    {/* <button type="button" name="previous" className="previous action-button-previous" onClick={() =>setCurrentStep(currentStep-1) } ><i className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button> */}
+						
 						
 						<div>
 							<h1>Congratulations! <br></br> You are eligible for a loan.</h1>
 							<p>In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content. Lorem ipsum may be used as a placeholder before final copy is available.</p>
 						</div>
+						<div className="col-xs-12 col-md-8">
+							<p className="mb-33">Employment type</p>
+							<div className="radio">
+							<input id="radio-1" name="employee_type" type="radio" value="1" onChange={(e) => form.setFieldValue('employee_type', e.target.value)} checked={form.values.employee_type==1}/>
+							<label htmlFor="radio-1" className="radio-label">Salaried</label>
+							</div>
+							<div className="radio">
+							<input id="radio-2" name="employee_type" type="radio" onChange={(e) => form.setFieldValue('employee_type', e.target.value)} checked={form.values.employee_type==2}/>
+							<label htmlFor="radio-2" className="radio-label">Self Employed</label>
+							</div>
+						</div>
+						<div className="col-xs-12 col-md-8 ">
+							{form.touched.employee_type && form.errors.employee_type ? <div  className="text-danger">{form.errors.employee_type}</div> : ''}
+
+						</div>
+
+						<div className="col-xs-12 col-md-8 " style={{marginBottom:"10px"}}>
+							<p className="mb-33">Loan Type </p>
+							<div className="radio">
+							<input id="radio-3" name="loan_type" type="radio" value="1" onChange={(e) => form.setFieldValue('loan_type', e.target.value)} checked={form.values.loan_type==1} />
+							<label htmlFor="radio-3" className="radio-label">Personal</label>
+							</div>
+							<div className="radio">
+							<input id="radio-4" name="loan_type" type="radio"  value="2" onChange={(e) => form.setFieldValue('loan_type', e.target.value)} checked={form.values.loan_type==2} />
+							<label htmlFor="radio-4" className="radio-label">Business</label>
+							</div>
 						
+						</div>
+						<div className="col-xs-12 col-md-8 ">
+							{form.touched.loan_type && form.errors.loan_type ? <div  className="text-danger">{form.errors.loan_type}</div> : ''}
+						</div>
+
 						{/* <div>
 							<h1>Sorry!</h1>
 							<p>Oops! We regret to inform you that we are unable to process your application as it does not meet our internal policy criteria. Please note the reason for the decline of your application is a business decision and is based on multiple parameters and certainly on no way, is indicative of your creditworthiness. Please try again after 60 Days.</p>
 						</div> */}
 						
-					
+						<div>
 					   <input type="submit" name="submit" className="submit action-button apply-now-btn ml-00" value="Submit Your Details" />
-					   
+					   </div>
 					   <Link to="" className="apply-now-btn ml-00" style={{display:"none"}}>Start New Application</Link>
 					   
 					</fieldset>
@@ -409,7 +493,7 @@ const BusinessForm = (props) => {
 	const [currentStep, setCurrentStep] = useState(0);
 	const form=useFormik({
 		initialValues: props.data.business_info,
-		enableReinitialize: true,
+		// enableReinitialize: true,
 		validationSchema: yup.object({
 			company_name:currentStep==0?yup.string().required('Please enter business name.'):'',
 			legal_name :currentStep==0?yup.string().required('Please enter legal name of your business.'):'',
@@ -419,10 +503,10 @@ const BusinessForm = (props) => {
 			pincode : currentStep==0?yup.string().required('Please select pincode.'):'',
 			business_type : currentStep==0?yup.string().required('Please select Business type.'):'',
 			type_of_nature : currentStep==0?yup.string().required('Please select nature type of your business.'):'',
-			vintage : currentStep==0?yup.string().required('Vintage filed is required.'):'',
+			vintage : currentStep==0?yup.number().typeError('you must specify a number').required('Vintage filed is required.'):'',
 			turn_over : currentStep==0?yup.string().required('Please select Business turn over.'):'',
 			desired_amount : currentStep==0?yup.string().required('Please select desired loan amount.'):'',
-			required_amount : currentStep==0?yup.string().required('please enter required amount.'):'',
+			required_amount : currentStep==0?yup.number().typeError('you must specify a number').required('please enter required amount.'):'',
 			co_application: currentStep==1?yup.array().of(
 				yup.object({
 					name: yup.string().required("Please enter co-applicant name!"),
@@ -437,14 +521,16 @@ const BusinessForm = (props) => {
 			gstproof_image:currentStep==2?yup.string().required('Please upload valid gst image.'):'',
 			business_address:currentStep==2?yup.string().required('Please enter valid business address.'):'',
 			business_address_proof:currentStep==2?yup.string().required('Please enter business address proof image.'):'',
-			// business_address:currentStep==2?yup.string().required('Required amount filed is required.'):'',
-			// business_address_proof:currentStep==2?yup.string().required('Required amount filed is required.'):'',
+			bank_statement:currentStep==2?yup.string().required('Please upload bank statement.'):'',
+			itr_docs:currentStep==2?yup.string().required('Please upload ITR.'):'',
 			
 		}),
 		onSubmit:values=>{
+			props.data.business_info =values;
+			props.setData(props.data);
 			if(currentStep==2){
-				console.log(values)
-				setCurrentStep(currentStep+1)
+				props.next(props.data,true);
+				// setCurrentStep(currentStep+1)
 			} else {
 			  setCurrentStep(currentStep+1)
 			}
@@ -452,23 +538,44 @@ const BusinessForm = (props) => {
 		}
 	});
 
-	const acceptedFiles  = (e,path) => {
-		// 	   setloading(true);
+	const acceptedFiles  = (e,path,s3_path) => {
+		var filename = uuid()+'.'+e.target.files[0].name.split('.').pop()
 		var formData = new FormData();
 		formData.append('image', e.target.files[0])
-        console.log(e.target.files[0])
-		form.setFieldValue(path,true);
-		// api.postApi('upload-images',formData,true).then(response => { 
-		// 	multiItemform.setFieldValue("item_photos", [...multiItemform.values.item_photos,...response.data]);
-		// 	setloading(false);
-		// 	 e.target.value = ''
-		// }).catch(error => {
-		// 	setloading(false);
-		// 	 toast.error(error.message);
-		// 	  e.target.value = ''
-		// }); 
+		formData.append('folder', s3_path+'/'+filename)
+		api.postApi('imageUpload',formData,true).then(response => { 
+			form.setFieldValue(path, filename);
+			form.setFieldValue(path+'_url', response.url);
+			e.target.value = ''
+		}).catch(error => {
+			e.target.value = ''
+		}); 
 	}
 
+	const [cities, setCities] = useState([]);
+	const GetCities = (state_id) => { 
+		var state = props.allStates.find(state => state.id==state_id);
+        api.postApi('cityList',{state_id:state_id}).then(response => {
+			form.setFieldValue('state',state.name)
+			form.setFieldValue('state_id',state_id)
+            setCities(response.cities);
+        }).catch(error => {
+        });
+        
+    }
+
+	const [pincode, setPincode] = useState([]);
+	const GetPincode = (city_id) => { 
+		var city = cities.find(city => city.id==city_id);
+
+        api.postApi('pincodeList',{city:city.name,state_id:form.values.state_id}).then(response => {
+			form.setFieldValue('city',city.name)
+			form.setFieldValue('city_id',city_id)
+            setPincode(response.pincode);
+        }).catch(error => {
+        });
+        
+    }
 	return (
 		<>
 		<section  className="newstep-form"> 
@@ -496,17 +603,21 @@ const BusinessForm = (props) => {
 									</div>
 									<div  className="col-xs-12 col-md-5">
 										<label>State</label>
-										<select name="state"  onChange={(e) => form.setFieldValue('state',e.target.value)} >
+										<select name="state"  onChange={(e) => GetCities(e.target.value)} >
 											<option>Select Your State</option>
-											<option value="1">Select Your State</option>
+											{props.allStates && props.allStates.length>0 && props.allStates.map((option, index) => (
+											<option value={option.id}  key={index}>{option.name}</option>
+											))}
 										</select>
 										{form.touched.state && form.errors.state ? <div  className="text-danger">{form.errors.state}</div> : ''}
 									</div>
 									<div  className="col-xs-12 col-md-5">
 										<label>City</label>
-										<select name="city"  onChange={(e) => form.setFieldValue('city',e.target.value)} >
+										<select name="city"  onChange={(e) => GetPincode(e.target.value)} >
 											<option>Select Your City</option>
-											<option value="1">Select Your City</option>
+											{cities.length>0 && cities.map((option, index) => (
+											<option value={option.id}  key={index}>{option.name}</option>
+											))}
 										</select>
 										{form.touched.city && form.errors.city ? <div  className="text-danger">{form.errors.city}</div> : ''}
 									</div>
@@ -518,8 +629,11 @@ const BusinessForm = (props) => {
 									<div  className="col-xs-12 col-md-5">
 										<label>Pin Code</label>
 										<select name="pincode"  onChange={(e) => form.setFieldValue('pincode',e.target.value)} >
-											<option>Select Your Pin Code</option>
-											<option value="1">Select Your Pin Code</option>
+											<option>Select Pin Code</option>
+											<option value="1">Select Pin Code</option>
+											{pincode.length>0 && pincode.map((option, index) => (
+											<option value={option.pincode}  key={index}>{option.pincode}</option>
+											))}
 										</select>
 										{form.touched.pincode && form.errors.pincode ? <div  className="text-danger">{form.errors.pincode}</div> : ''}
 									</div>
@@ -622,9 +736,9 @@ const BusinessForm = (props) => {
 						
 					
 					<fieldset  className="ui-step-content"  style={currentStep==1?{display:"block"}:{display:"none"}}>
-							<button type="button" name="previous"  className="previous action-button-previous" ><i  className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button>
+							<button type="button" name="previous"  className="previous action-button-previous" onClick={() =>setCurrentStep(currentStep-1) } ><i  className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button>
 							<h1  className="mb-0 mt-1">Co-Applicants</h1>
-								<p  className="mt-1">Instant Business & Personal Loan {props.data.business_info.co_application.length}</p>
+								<p  className="mt-1">Instant Business & Personal Loan {props.data && props.data.business_info && props.data.business_info.co_application.length}</p>
 								<div  className="stepform-newdesign">
 								   {form.values.co_application.length > 0 && form.values.co_application.map((co, index) => 
 									
@@ -660,11 +774,15 @@ const BusinessForm = (props) => {
 												</div>
 												</div>
 												<div  className="dropzone-wrapper">
-												<div  className="dropzone-desc">
-													<i  className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-													<p  className="mt-1">Upload Your Pan Card</p>
-												</div>
-												<input type="file" name="img_logo"  className="dropzone" accept="image/png, image/gif, image/jpeg"  onChange={(e) => acceptedFiles(e,`co_application.${index}.pancard_image`) }/>
+												{form.values['co_application']?.[index]?.['pancard_image_url']?
+													<img src={form.values['co_application']?.[index]?.['pancard_image_url']} alt="" width="100%" height="100%"/>
+													: 
+														<div  className="dropzone-desc">
+															<i  className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+															<p  className="mt-1">Upload Your Pan Card</p>
+														</div>
+												}
+												<input type="file" name="img_logo"  className="dropzone" accept="image/png, image/gif, image/jpeg"  onChange={(e) => acceptedFiles(e,`co_application.${index}.pancard_image`,'uploads/merchant/pancard') }/>
 												</div>
 												{form.touched['co_application']?.[index]?.['pancard_image'] && form.errors['co_application']?.[index]?.['pancard_image'] ? <div  className="text-danger">{form.errors['co_application']?.[index]?.['pancard_image']}</div> : ''}
 
@@ -677,7 +795,7 @@ const BusinessForm = (props) => {
 						
 						
 						<fieldset  className="ui-step-content"  style={currentStep==2?{display:"block"}:{display:"none"}}>
-							<button type="button" name="previous"  className="previous action-button-previous" ><i  className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button>
+							<button type="button" name="previous"  className="previous action-button-previous" onClick={() =>setCurrentStep(currentStep-1) } ><i  className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button>
 							<h1  className="mb-0 mt-1">Upload Doc</h1>
 							<p  className="mt-1">Instant Business & Personal Loan</p>
 							<div  className="stepform-newdesign">
@@ -703,11 +821,15 @@ const BusinessForm = (props) => {
 										</div>
 										</div>
 										<div  className="dropzone-wrapper">
-										<div  className="dropzone-desc">
-											<i  className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-											<p  className="mt-1">Upload Card</p>
-										</div>
-										<input type="file" name="img_logo" onChange={(e) => acceptedFiles(e,'pancard_image') } className="dropzone"/>
+											{form.values.pancard_image_url?
+											  <img src={form.values.pancard_image_url} alt="" width="100%" height="100%"/>
+										    : 
+											 <div  className="dropzone-desc">
+												<i  className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+												<p  className="mt-1">Upload Card</p>
+											</div>
+										    }
+										<input type="file" name="img_logo" onChange={(e) => acceptedFiles(e,'pancard_image','uploads/merchant/pancard') } className="dropzone"/>
 
 										</div>
 										{form.touched.pancard_image && form.errors.pancard_image ? <div  className="text-danger">{form.errors.pancard_image}</div> : ''}
@@ -736,11 +858,15 @@ const BusinessForm = (props) => {
 										</div>
 										</div>
 										<div  className="dropzone-wrapper">
-										<div  className="dropzone-desc">
-											<i  className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-											<p  className="mt-1">Upload Registration</p>
-										</div>
-										<input type="file" name="img_logo"  onChange={(e) => acceptedFiles(e,'gstproof_image') } className="dropzone"/>
+										    {form.values.gstproof_image_url?
+											  <img src={form.values.gstproof_image_url} alt="" width="100%" height="100%" />
+										    : 
+												<div  className="dropzone-desc">
+													<i  className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+													<p  className="mt-1">Upload Registration</p>
+												</div>
+											}
+										<input type="file" name="img_logo"  onChange={(e) => acceptedFiles(e,'gstproof_image','uploads/merchant/gst') } className="dropzone"/>
 										</div>
 										{form.touched.gstproof_image && form.errors.gstproof_image ? <div  className="text-danger">{form.errors.gstproof_image}</div> : ''}
 
@@ -768,11 +894,15 @@ const BusinessForm = (props) => {
 										</div>
 										</div>
 										<div  className="dropzone-wrapper">
-										<div  className="dropzone-desc">
-											<i  className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-											<p  className="mt-1">Upload business address</p>
-										</div>
-										<input type="file" name="img_logo"  onChange={(e) => acceptedFiles(e,'business_address_proof') } className="dropzone"/>
+										    {form.values.business_address_proof_url?
+											  <img src={form.values.business_address_proof_url} alt=""  width="100%" height="100%"/>
+										    : 
+												<div  className="dropzone-desc">
+													<i  className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+													<p  className="mt-1">Upload business address</p>
+												</div>
+											}
+										<input type="file" name="img_logo"  onChange={(e) => acceptedFiles(e,'business_address_proof','uploads/merchant/business') } className="dropzone"/>
 										</div>
 										{form.touched.business_address_proof && form.errors.business_address_proof ? <div  className="text-danger">{form.errors.business_address_proof}</div> : ''}
 
@@ -794,11 +924,15 @@ const BusinessForm = (props) => {
 										</div>
 										</div>
 										<div  className="dropzone-wrapper">
-										<div  className="dropzone-desc">
-											<i  className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-											<p  className="mt-1">Upload PDF,Document</p>
-										</div>
-										<input type="file" name="img_logo"  className="dropzone"/>
+										    {form.values.bank_statement_url?
+											  <img src={form.values.bank_statement_url} alt=""  width="100%" height="100%"/>
+										    : 
+												<div  className="dropzone-desc">
+													<i  className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+													<p  className="mt-1">Upload PDF,Document</p>
+												</div>
+											}
+										<input type="file" name="img_logo"  className="dropzone" onChange={(e) => acceptedFiles(e,'bank_statement','uploads/merchant/bankstatement')}/>
 										</div>
 									</div>
 									<div  className="col-12 col-md-6 col-lg-5">
@@ -816,11 +950,15 @@ const BusinessForm = (props) => {
 										</div>
 										</div>
 										<div  className="dropzone-wrapper">
-										<div  className="dropzone-desc">
-											<i  className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-											<p  className="mt-1">Upload PDF,Document</p>
-										</div>
-										<input type="file" name="img_logo"  className="dropzone" />
+										    {form.values.itr_docs_url?
+											  <img src={form.values.itr_docs_url} alt=""  width="100%" height="100%"/>
+										    : 
+												<div  className="dropzone-desc">
+													<i  className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+													<p  className="mt-1">Upload PDF,Document</p>
+												</div>
+											}
+										<input type="file" name="img_logo"  className="dropzone" onChange={(e) => acceptedFiles(e,'itr_docs','uploads/merchant/business') } />
 										</div>
 									</div>
 								</div>
@@ -835,8 +973,8 @@ const BusinessForm = (props) => {
 							</div>
 							<h1  className="mb-0">Thank you!</h1>
 							<h6  className="mb-0">Your application has been successfully received. You may choose to note down the file number for further tracking of the case!</h6>
-							<p><b>File ID:</b> :FTM0005330</p>
-							<p><b>Password:</b> vbvb8964</p>
+							<p><b>File ID:</b> : {props.formResponse && props.formResponse.file_id}</p>
+							<p><b>Password:</b> 123456</p>
 					     	{/* <input type="submit" name="submit"  className="submit action-button apply-now-btn" value="Continue" /> */}
 						</fieldset>
 					</form>	
@@ -857,14 +995,14 @@ const PersonalForm = (props) => {
 	const [currentStep, setCurrentStep] = useState(0);
 	const form=useFormik({
 		initialValues: props.data.personal_info,
-		enableReinitialize: true,
+		// enableReinitialize: true,
 		validationSchema: yup.object({
-			email: currentStep==0?yup.string().required('Please enter valid email address.'):'',
+			email: currentStep==0?yup.string().email('Please enter valid email address').required('Please enter email address.'):'',
 			father_name : currentStep==0?yup.string().required('Please enter father name.'):'',
 			gender :  currentStep==0?yup.string().required('Please select gender.'):'',
 			qualification : currentStep==0?yup.string().required('Please select qualification.'):'',
 			marital_status : currentStep==0?yup.string().required('Please select marital status'):'',
-			number_of_kids :  currentStep==0?yup.string().required('Please enter number of kids.'):'',
+			number_of_kids :  currentStep==0?yup.number().typeError('you must specify a number'):'',
 			vehicle_type : currentStep==0?yup.string().required('Please select vehicle type.'):'',
 			residence_building :  currentStep==0?yup.string().required('Please enter Flat No./Building No./Street No.'):'',
 			residence_area : currentStep==0?yup.string().required('Please enter residence area .'):'',
@@ -874,31 +1012,33 @@ const PersonalForm = (props) => {
 
 			employer_name : currentStep==1?yup.string().required('Please enter employer name.'):'',
 			designation :currentStep==1?yup.string().required('Please enter your designation.'):'',
-			organization :currentStep==1?yup.string().required('Please enter organization.'):'',
+			organization :currentStep==1?yup.number().typeError('you must specify a number').required('Please enter organization.'):'',
 			organization_type :currentStep==1?yup.string().required('Please select organization.'):'',
 			total_experience :currentStep==1?yup.string().required('Please select total experience.'):'',
-			required_amount :currentStep==1?yup.string().required('Please enter required amount.'):'',
+			required_amount :currentStep==1?yup.number().typeError('you must specify a number').required('Please enter required amount.'):'',
 			company_building :currentStep==1?yup.string().required('Please enter Flat No./Building No./Street No.'):'',
 			company_area :currentStep==1?yup.string().required('Please enter area.'):'',
 			company_state :currentStep==1?yup.string().required('Please select state.'):'',
 			company_city :currentStep==1?yup.string().required('Please select city.'):'',
 			company_pincode :currentStep==1?yup.string().required('Please select pincode.'):'',
-			company_website :currentStep==1?yup.string().required('Please enter website.'):'',
-			company_email :currentStep==1?yup.string().required('Please enter valid company email.'):'',
-			salery_inhand :currentStep==1?yup.string().required('Please enter salary detail'):'',
+			company_website :currentStep==1?yup.string().matches(
+				/((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
+				'Please enter valid URL.'
+			).required('Please enter website.'):'',
+			company_email :currentStep==1?yup.string().email('Please enter valid email address').required('Please enter valid company email.'):'',
+			salery_inhand :currentStep==1?yup.number().typeError('you must specify a number').required('Please enter salary detail'):'',
 			salary_mode :currentStep==1?yup.string().required('Please select salary mode'):'',
 			bank_name :currentStep==1?yup.string().required('Please enter bank name.'):'',
-
-			
 			pancard_image : currentStep==2?yup.string().required('Please upload pan card image.'):'',
 			aadhar_image : currentStep==2?yup.string().required('Please upload aadhar image.'):'',
 			bank_statement : currentStep==2?yup.string().required('Please upload bank statement.'):'',
 			salery_slip : currentStep==2?yup.string().required('Please upload salary slip.'):''
 		}),
 		onSubmit:values=>{
+			props.data.personal_info =values;
+			props.setData(props.data);
 			if(currentStep==2){
-				console.log(values)
-				// props.setCurrentStep(parseInt(values.loan_type))
+				props.next(props.data,true);
 				setCurrentStep(currentStep+1)
 			} else {
 				setCurrentStep(currentStep+1)
@@ -906,14 +1046,65 @@ const PersonalForm = (props) => {
 		}
 	});
 
-	const acceptedFiles  = (e,path) => {
-		// 	   setloading(true);
+	const acceptedFiles  = (e,path,s3_path) => {
+		var filename = uuid()+'.'+e.target.files[0].name.split('.').pop()
 		var formData = new FormData();
 		formData.append('image', e.target.files[0])
-        console.log(e.target.files[0])
-		form.setFieldValue(path,true);
+		formData.append('folder', s3_path+'/'+filename)
+		api.postApi('imageUpload',formData,true).then(response => { 
+			form.setFieldValue(path, filename);
+			form.setFieldValue(path+'_url', response.url);
+			e.target.value = ''
+		}).catch(error => {
+			e.target.value = ''
+		}); 
 	}
+	
+	const [cities, setCities] = useState([]);
+	const [residence_cities, setresidence_cities] = useState([]);
+	const GetCities = (state_id,path='') => { 
+		var state = props.allStates.find(state => state.id==state_id);
+        api.postApi('cityList',{state_id:state_id}).then(response => {
+			if(path=='residence_state'){
+				form.setFieldValue('residence_state',state.name)
+				form.setFieldValue('residence_state_id',state_id)
+				setresidence_cities(response.cities);	
+			} else {
+				form.setFieldValue('company_state',state.name)
+				form.setFieldValue('company_state_id',state_id)
+				setCities(response.cities);	
+			}
+        }).catch(error => {
+        });
+    }
+	const [residence_pincode, setresidence_pincode] = useState([]);
+	const [pincode, setPincode] = useState([]);
+	const GetPincode = (city_id,path='') => { 
+		var city;
+		var state_id;
+		if(path=='residence_city'){
+		    city = residence_cities.find(city => city.id==city_id);
+			state_id = form.values.residence_state_id
+		} else {
+			city = cities.find(city => city.id==city_id);
+			state_id = form.values.company_state_id
+		}
 
+        api.postApi('pincodeList',{city:city.name,state_id:state_id}).then(response => {
+			if(path=='residence_city'){
+				form.setFieldValue('residence_city',city.name)
+				form.setFieldValue('residence_city_id',city_id)
+				setresidence_pincode(response.pincode);
+			}else {
+				form.setFieldValue('company_city',city.name)
+				form.setFieldValue('company_city_id',city_id)
+				setPincode(response.pincode);
+			}
+        }).catch(error => {
+        });
+        
+    }
+	
 	return (
 		<>
 		<section className="newstep-form"> 
@@ -990,17 +1181,22 @@ const PersonalForm = (props) => {
 										</div>
 									    <div className="col-xs-12 col-md-5">
 											<label>State</label>
-											<select  name="residence_state"  onChange={(e) => form.setFieldValue('residence_state',e.target.value)} >
+											<select  name="residence_state"  onChange={(e) => GetCities(e.target.value,'residence_state')} >
 												<option>Select State</option>
-											<option value="1">Select State</option>
+												{props.allStates.length>0 && props.allStates.map((option, index) => (
+											<option value={option.id}  key={index}>{option.name}</option>
+											))}
 											</select>
 											{form.touched.residence_state && form.errors.residence_state ? <div  className="text-danger">{form.errors.residence_state}</div> : ''}
 										</div>
 										<div className="col-xs-12 col-md-5">
 											<label>City</label>
-											<select name="residence_city"  onChange={(e) => form.setFieldValue('residence_city',e.target.value)} >
+											<select name="residence_city"  onChange={(e) => GetPincode(e.target.value,'residence_city')}  >
 												<option>Select City</option>
-												<option value="1">Select Your City</option>
+												<option value="1">Select City</option>
+												{residence_cities.length>0 && residence_cities.map((option, index) => (
+											<option value={option.id}  key={index}>{option.name}</option>
+											))}
 											</select>
 											{form.touched.residence_city && form.errors.residence_city ? <div  className="text-danger">{form.errors.residence_city}</div> : ''}
 										</div>
@@ -1013,7 +1209,9 @@ const PersonalForm = (props) => {
 											<label>Pincode</label>
 											<select name="residence_pincode"  onChange={(e) => form.setFieldValue('residence_pincode',e.target.value)} >
 												<option>Select Pincode</option>
-												<option value="1">Select Pincode</option>
+												{residence_pincode.length>0 && residence_pincode.map((option, index) => (
+												  <option value={option.pincode}  key={index}>{option.pincode}</option>
+												))}
 											</select>
 											{form.touched.residence_pincode && form.errors.residence_pincode ? <div  className="text-danger">{form.errors.residence_pincode}</div> : ''}
 										</div>
@@ -1024,7 +1222,7 @@ const PersonalForm = (props) => {
 						
 					
 					<fieldset className="ui-step-content" style={currentStep==1?{display:"block"}:{display:"none"}}>
-							<button type="button" name="previous" className="previous action-button-previous" ><i className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button>
+							<button type="button" name="previous" className="previous action-button-previous" onClick={() =>setCurrentStep(currentStep-1) } ><i className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button>
 							<h1 className="mb-0 mt-1">Employment Info</h1>
 								<p className="mt-1">Instant Business & Personal Loan</p>
 								<div className="stepform-newdesign">
@@ -1115,18 +1313,22 @@ const PersonalForm = (props) => {
 										</div>
 										<div className="col-xs-12 col-md-5">
 											<label>State</label>
-											<select  name="company_state" onChange={(e) => form.setFieldValue('company_state',e.target.value)} >
+											<select  name="company_state" onChange={(e) => GetCities(e.target.value,'company_state')} >
 												<option>Select Your State</option>
-												<option value="1">Select Your State</option>
+												{props.allStates.length>0 && props.allStates.map((option, index) => (
+											<option value={option.id}  key={index}>{option.name}</option>
+											))}
 											</select>
 											{form.touched.company_state && form.errors.company_state ? <div  className="text-danger">{form.errors.company_state}</div> : ''}
 
 										</div>
 										<div className="col-xs-12 col-md-5">
 											<label>City</label>
-											<select  name="company_city" onChange={(e) => form.setFieldValue('company_city',e.target.value)} >
+											<select  name="company_city"  onChange={(e) => GetPincode(e.target.value,'company_city')} >
 												<option>Select City</option>
-												<option value="1">Select City</option>
+												{cities.length>0 && cities.map((option, index) => (
+											<option value={option.id}  key={index}>{option.name}</option>
+											))}
 											</select>					
 											{form.touched.company_city && form.errors.company_city ? <div  className="text-danger">{form.errors.company_city}</div> : ''}
 
@@ -1141,7 +1343,9 @@ const PersonalForm = (props) => {
 											<label>Pincode </label>
 											<select  name="company_pincode" onChange={(e) => form.setFieldValue('company_pincode',e.target.value)} >
 												<option>Select Pincode</option>
-												<option value="1">Select Pincode</option>
+												{pincode.length>0 && pincode.map((option, index) => (
+												  <option value={option.pincode}  key={index}>{option.pincode}</option>
+												))}
 											</select>	
 											{form.touched.company_pincode && form.errors.company_pincode ? <div  className="text-danger">{form.errors.company_pincode}</div> : ''}
 
@@ -1189,7 +1393,7 @@ const PersonalForm = (props) => {
 						
 						
 						<fieldset className="ui-step-content" style={currentStep==2?{display:"block"}:{display:"none"}}>
-							<button type="button" name="previous" className="previous action-button-previous" ><i className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button>
+							<button type="button" name="previous" className="previous action-button-previous" onClick={() =>setCurrentStep(currentStep-1) }  ><i className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button>
 							<h1 className="mb-0 mt-1">Upload Doc</h1>
 							<p className="mt-1">Instant Business & Personal Loan</p>
 							<div className="stepform-newdesign">
@@ -1209,11 +1413,15 @@ const PersonalForm = (props) => {
 										</div>
 										</div>
 										<div className="dropzone-wrapper">
-										<div className="dropzone-desc">
-											<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-											<p className="mt-1">Upload Your Pan Card</p>
-										</div>
-										<input type="file" name="img_logo" className="dropzone"  onChange={(e) => acceptedFiles(e,'pancard_image') }/>
+										    {form.values.pancard_image_url?
+												<img src={form.values.pancard_image_url} alt=""  width="100%" height="100%"/>
+												:
+												<div className="dropzone-desc">
+													<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+													<p className="mt-1">Upload Your Pan Card</p>
+												</div>
+											}	
+										<input type="file" name="img_logo" className="dropzone"  onChange={(e) => acceptedFiles(e,'pancard_image','uploads/merchant/pancard') }/>
 										
 										</div>
 										{form.touched.pancard_image && form.errors.pancard_image ? <div  className="text-danger">{form.errors.pancard_image}</div> : ''}
@@ -1234,11 +1442,15 @@ const PersonalForm = (props) => {
 										</div>
 										</div>
 										<div className="dropzone-wrapper">
-										<div className="dropzone-desc">
-											<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-											<p className="mt-1">Upload Aadhar</p>
-										</div>
-										<input type="file" name="img_logo" className="dropzone" onChange={(e) => acceptedFiles(e,'aadhar_image') } />
+									     	{form.values.aadhar_image_url?
+												<img src={form.values.aadhar_image_url} alt=""  width="100%" height="100%"/>
+												: 
+												<div className="dropzone-desc">
+													<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+													<p className="mt-1">Upload Aadhar</p>
+												</div>
+											}
+										<input type="file" name="img_logo" className="dropzone" onChange={(e) => acceptedFiles(e,'aadhar_image','uploads/merchant/aadharcard') } />
 										</div>
 										{form.touched.aadhar_image && form.errors.aadhar_image ? <div  className="text-danger">{form.errors.aadhar_image}</div> : ''}
 
@@ -1260,11 +1472,15 @@ const PersonalForm = (props) => {
 										</div>
 										</div>
 										<div className="dropzone-wrapper">
-										<div className="dropzone-desc">
-											<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-											<p className="mt-1">Upload PDF,Document</p>
-										</div>
-										<input type="file" name="img_logo" className="dropzone" onChange={(e) => acceptedFiles(e,'bank_statement') }/>
+										    {form.values.bank_statement_url?
+												<img src={form.values.bank_statement_url} alt=""  width="100%" height="100%"/>
+												: 
+													<div className="dropzone-desc">
+														<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+														<p className="mt-1">Upload PDF,Document</p>
+													</div>
+											}
+										<input type="file" name="img_logo" className="dropzone" onChange={(e) => acceptedFiles(e,'bank_statement','uploads/merchant/bankstatement') }/>
 										</div>
 										{form.touched.bank_statement && form.errors.bank_statement ? <div  className="text-danger">{form.errors.bank_statement}</div> : ''}
 
@@ -1284,11 +1500,15 @@ const PersonalForm = (props) => {
 											</div>
 											</div>
 											<div className="dropzone-wrapper">
+											{form.values.salery_slip_url?
+												<img src={form.values.salery_slip_url} alt=""  width="100%" height="100%"/>
+												: 
 											   <div className="dropzone-desc">
 												<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
 												<p className="mt-1">Upload PDF,Document</p>
 												</div>
-											<input type="file" name="img_logo" className="dropzone" onChange={(e) => acceptedFiles(e,'salery_slip') }/>
+											}
+											<input type="file" name="img_logo" className="dropzone" onChange={(e) => acceptedFiles(e,'salery_slip','uploads/merchant/salery_slip') }/>
 											</div>
 											{form.touched.salery_slip && form.errors.salery_slip ? <div  className="text-danger">{form.errors.salery_slip}</div> : ''}
 
@@ -1304,8 +1524,8 @@ const PersonalForm = (props) => {
 							</div>
 							<h1 className="mb-0">Thank you!</h1>
 							<h6 className="mb-0">Your application has been successfully received. You may choose to note down the file number for further tracking of the case!</h6>
-							<p><b>File ID:</b> :FTM0005330</p>
-							<p><b>Password:</b> vbvb8964</p>
+							<p><b>File ID:</b> : {props.formResponse && props.formResponse.file_id}</p>
+							<p><b>Password:</b> 123456</p>
 						{/* <input type="submit" name="submit" className="submit action-button apply-now-btn" value="Continue" /> */}
 						</fieldset>
 					
