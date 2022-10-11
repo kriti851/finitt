@@ -419,20 +419,17 @@ const StepOne = (props) => {
 					   <input type="button" name="next" className="next action-button apply-now-btn  ml-00" value="Continue" />
 					</fieldset> */}
 
-
 								<fieldset className="ui-step-content" style={currentStep == 4 ? { display: "block" } : { display: "none" }}>
 									{/* <button type="button" name="previous" className="previous action-button-previous" onClick={() =>setCurrentStep(currentStep-1) } ><i className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button> */}
 
-
 									<div>
 										<h1>Congratulations! <br></br> You are eligible for a loan.</h1>
-
 									</div>
 									<div className="checkbox">
-										<p className="mb-33"><b>Employment type</b></p>
+										<p className="mb-33"><b><h3>Employment type</h3></b></p>
 										{/* <div className="checkbox"> */}
 										<input id="checkbox-1" name="employee_type" type="checkbox" value="1" onChange={(e) => form.setFieldValue('employee_type', e.target.value)} checked={form.values.employee_type == 1} />
-										<label htmlFor="checkbox-1" className="checkbox-label">&nbsp; Salaried &nbsp;</label>
+										<label htmlFor="checkbox-1" className="checkbox-label"> &nbsp;Salaried &nbsp;</label>
 										{/* </div> */}
 										{/* <div className="checkbox"> */}
 										<input id="checkbox-2" name="employee_type" type="checkbox" value="2" onChange={(e) => form.setFieldValue('employee_type', e.target.value)} checked={form.values.employee_type == 2} />
@@ -499,8 +496,8 @@ const BusinessForm = (props) => {
 			houseno: currentStep == 0 ? yup.string().required('Please Enter Building name/flat no') : '',
 			pincode: currentStep == 0 ? yup.string().required('Please select pincode') : '',
 			business_type: currentStep == 0 ? yup.string().required('Please select Business type') : '',
-			type_of_nature: currentStep == 0 ? yup.string().required('Please select nature type of your business') : '',
-			vintage: currentStep == 0 ? yup.number().typeError('you must specify a number').required('Vintage filed is required') : '',
+			type_of_nature: currentStep == 0 ? yup.string().required('Please select nature of your business') : '',
+			vintage: currentStep == 0 ? yup.number().typeError('you must specify a number').required('Please enter no of years in business') : '',
 			turn_over: currentStep == 0 ? yup.string().required('Please select Business turn over') : '',
 			desired_amount: currentStep == 0 ? yup.string().required('Please select desired loan amount') : '',
 			required_amount: currentStep == 0 ? yup.number().typeError('you must specify a number').required('please enter required amount') : '',
@@ -655,7 +652,7 @@ const BusinessForm = (props) => {
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>No. of years in Business</label>
-												<input type="text" name="vintage" {...form.getFieldProps("vintage")} className="" placeholder="Enter year" />
+												<input type="number" name="vintage" {...form.getFieldProps("vintage")} className="" placeholder="Enter year" />
 												{form.touched.vintage && form.errors.vintage ? <div className="text-danger">{form.errors.vintage}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
