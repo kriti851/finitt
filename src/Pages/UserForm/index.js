@@ -1,18 +1,18 @@
 import React,{useState,useEffect} from 'react';
-import { Link,useLocation,useParams } from 'react-router-dom';
+import { Link,useLocation,useParams,useNavigate } from 'react-router-dom';
 import Header from '../layout/Header'; //Include Heder
 import {useFormik} from 'formik';
 import * as yup from 'yup';
 import Service from './../../service'; 
 import uuid from 'react-uuid';
 const api = new Service();
-const config = require('./../../config.json');
 
 
 const UserForm = () => {
-
+  const navigate = useNavigate();
+  const { name } = useParams();
   const [allStates, setallStates] = useState([]);
-  const [userId, setuserId] = useState(0);
+  const [header, setHeader] = useState({'Authorization':'','DSA':''});
   const [formResponse, setformResponse] = useState({});
   const [data, setData] = useState({
 	    info :{
@@ -103,11 +103,27 @@ const UserForm = () => {
   })
 
     useEffect(() => {
-			GetStates()
+			if(name!==undefined) {
+				getUserDetail()
+			}
 	}, [])
 
+	const getUserDetail = () => {
+		api.postApi('user-exist',{name:name}).then(response => {
+			console.log(response) 
+			if(response.status=='success') {
+				header.DSA=name;
+                setHeader(header)
+			} else {
+				navigate('/')  
+			}
+		}).catch(error => {
+			 
+		});
+	}
+
 	const GetStates = () => { 
-        api.getApi('allStates').then(response => {
+        api.getApi('allStates','',header).then(response => {
             setallStates(response.states);
         }).catch(error => {
         });
@@ -120,10 +136,9 @@ const UserForm = () => {
     setData((prev) => ({ ...prev, ...newData }));
 	console.log(newData)
     if (final) {
-		console.log(userId)
-		api.postApi(newData.info.loan_type==2?'businessInfoForm':'personalInForm',{...newData,user_id:userId}).then(response => {
+		api.postApi(newData.info.loan_type==2?'businessInfoForm':'personalInForm',{...newData},false,header).then(response => {
 			console.log(response)
-			setformResponse(response.userdata)
+			setformResponse(response)
         }).catch(error => {
         });
       return;
@@ -138,11 +153,11 @@ const UserForm = () => {
  
 
   //Normal Form 
-  steps.push(<StepOne  setuserId={setuserId} userId={userId} next={handleNextStep}  prev={handlePrevStep} setData={setData} data={data} setCurrentStep={setCurrentStep} allStates={allStates}/>) 
+  steps.push(<StepOne  GetStates={GetStates}  setHeader={setHeader} header={header}  next={handleNextStep}  prev={handlePrevStep} setData={setData} data={data} setCurrentStep={setCurrentStep} allStates={allStates}/>) 
   // Personal Form
-  steps.push(<PersonalForm formResponse={formResponse} setuserId={setuserId} userId={userId} next={handleNextStep}  prev={handlePrevStep} setData={setData} data={data} allStates={allStates} />) 
+  steps.push(<PersonalForm formResponse={formResponse} header={header} next={handleNextStep}  prev={handlePrevStep} setData={setData} data={data} allStates={allStates} setCurrentStep={setCurrentStep} currentStep={currentStep} />) 
   // Business Form
-  steps.push(<BusinessForm formResponse={formResponse} setuserId={setuserId} userId={userId} next={handleNextStep}  prev={handlePrevStep} setData={setData} data={data}  allStates={allStates} />) 
+  steps.push(<BusinessForm formResponse={formResponse} header={header} next={handleNextStep}  prev={handlePrevStep} setData={setData} data={data}  allStates={allStates} setCurrentStep={setCurrentStep} currentStep={currentStep} />) 
   return (
     <>
         <Header></Header>
@@ -180,25 +195,26 @@ const StepOne = (props) => {
 			} else {
 				if(currentStep==1){
 					api.postApi('loginUser',{mobile_number:values.mobile_number}).then(response => {
-						// setCities(response.cities);
 						if(response.status=='success') {
-							props.setuserId(response.data.user_id)
-							setCurrentStep(currentStep+1)
-						} else {
-							props.setuserId(response.data.user_id)
-						}
+							  setCurrentStep(currentStep+1)
+						} 
 					}).catch(error => {
 
 					});
 				} else if(currentStep==2) {
 					api.postApi('verifyOtp',{mobile_number:values.mobile_number,otp:values.otp_verified}).then(response => {
-					  console.log(response.data.user_id)
 						if(response.status=='success' && response.data) {
-							setCurrentStep(4)
-							props.setuserId(response.data.user_id)
-						} else {
-							setCurrentStep(currentStep+1)
-						}
+							props.header.Authorization=response.token
+							props.setHeader(props.header,props.GetStates())
+							if(response.exit==1){
+								setCurrentStep(4)
+							} else {
+							  setCurrentStep(currentStep+1)
+							}
+						} 
+						// else {
+						// 	setCurrentStep(currentStep+1)
+						// }
 					}).catch(error => {
 
 					});
@@ -207,6 +223,7 @@ const StepOne = (props) => {
 				}
 			}
 		}
+		
 	});
 
   return (
@@ -529,7 +546,7 @@ const BusinessForm = (props) => {
 			props.setData(props.data);
 			if(currentStep==2){
 				props.next(props.data,true);
-				// setCurrentStep(currentStep+1)
+				setCurrentStep(currentStep+1)
 			} else {
 			  setCurrentStep(currentStep+1)
 			}
@@ -542,7 +559,7 @@ const BusinessForm = (props) => {
 		var formData = new FormData();
 		formData.append('image', e.target.files[0])
 		formData.append('folder', s3_path+'/'+filename)
-		api.postApi('imageUpload',formData,true).then(response => { 
+		api.postApi('imageUpload',formData,true,props.header).then(response => { 
 			form.setFieldValue(path, filename);
 			form.setFieldValue(path+'_url', response.url);
 			e.target.value = ''
@@ -554,7 +571,7 @@ const BusinessForm = (props) => {
 	const [cities, setCities] = useState([]);
 	const GetCities = (state_id) => { 
 		var state = props.allStates.find(state => state.id==state_id);
-        api.postApi('cityList',{state_id:state_id}).then(response => {
+        api.postApi('cityList',{state_id:state_id},false,props.header).then(response => {
 			form.setFieldValue('state',state.name)
 			form.setFieldValue('state_id',state_id)
             setCities(response.cities);
@@ -567,7 +584,7 @@ const BusinessForm = (props) => {
 	const GetPincode = (city_id) => { 
 		var city = cities.find(city => city.id==city_id);
 
-        api.postApi('pincodeList',{city:city.name,state_id:form.values.state_id}).then(response => {
+        api.postApi('pincodeList',{city:city.name,state_id:form.values.state_id},false,props.header).then(response => {
 			form.setFieldValue('city',city.name)
 			form.setFieldValue('city_id',city_id)
             setPincode(response.pincode);
@@ -586,6 +603,8 @@ const BusinessForm = (props) => {
 					<form id="msform" onSubmit={form.handleSubmit}>
 								
 					<fieldset  className="ui-step-content"  style={currentStep==0?{display:"block"}:{display:"none"}}>
+					{/* <button type="button" name="previous"  className="previous action-button-previous" onClick={() => props.setCurrentStep(0) } ><i  className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button> */}
+
 							<h1  className="mb-0">Business Info</h1>
 							<p  className="mt-1">Instant Business & Personal Loan</p>
 							<div  className="stepform-newdesign">
@@ -933,6 +952,8 @@ const BusinessForm = (props) => {
 											}
 										<input type="file" name="img_logo"  className="dropzone" onChange={(e) => acceptedFiles(e,'bank_statement','uploads/merchant/bankstatement')}/>
 										</div>
+										{form.touched.bank_statement && form.errors.bank_statement ? <div  className="text-danger">{form.errors.bank_statement}</div> : ''}
+
 									</div>
 									<div  className="col-12 col-md-6 col-lg-5">
 									<p  className="mb-0">Upload ITR <small>Optional</small></p>
@@ -959,6 +980,8 @@ const BusinessForm = (props) => {
 											}
 										<input type="file" name="img_logo"  className="dropzone" onChange={(e) => acceptedFiles(e,'itr_docs','uploads/merchant/business') } />
 										</div>
+										{form.touched.itr_docs && form.errors.itr_docs ? <div  className="text-danger">{form.errors.itr_docs}</div> : ''}
+
 									</div>
 								</div>
 								
@@ -973,7 +996,7 @@ const BusinessForm = (props) => {
 							<h1  className="mb-0">Thank you!</h1>
 							<h6  className="mb-0">Your application has been successfully received. You may choose to note down the file number for further tracking of the case!</h6>
 							<p><b>File ID:</b> : {props.formResponse && props.formResponse.file_id}</p>
-							<p><b>Password:</b> 123456</p>
+							<p><b>Password:</b> {props.formResponse && props.formResponse.password}</p>
 					     	{/* <input type="submit" name="submit"  className="submit action-button apply-now-btn" value="Continue" /> */}
 						</fieldset>
 					</form>	
@@ -1050,7 +1073,7 @@ const PersonalForm = (props) => {
 		var formData = new FormData();
 		formData.append('image', e.target.files[0])
 		formData.append('folder', s3_path+'/'+filename)
-		api.postApi('imageUpload',formData,true).then(response => { 
+		api.postApi('imageUpload',formData,true,props.header).then(response => { 
 			form.setFieldValue(path, filename);
 			form.setFieldValue(path+'_url', response.url);
 			e.target.value = ''
@@ -1063,7 +1086,7 @@ const PersonalForm = (props) => {
 	const [residence_cities, setresidence_cities] = useState([]);
 	const GetCities = (state_id,path='') => { 
 		var state = props.allStates.find(state => state.id==state_id);
-        api.postApi('cityList',{state_id:state_id}).then(response => {
+        api.postApi('cityList',{state_id:state_id},false,props.header).then(response => {
 			if(path=='residence_state'){
 				form.setFieldValue('residence_state',state.name)
 				form.setFieldValue('residence_state_id',state_id)
@@ -1089,7 +1112,7 @@ const PersonalForm = (props) => {
 			state_id = form.values.company_state_id
 		}
 
-        api.postApi('pincodeList',{city:city.name,state_id:state_id}).then(response => {
+        api.postApi('pincodeList',{city:city.name,state_id:state_id},false,props.header).then(response => {
 			if(path=='residence_city'){
 				form.setFieldValue('residence_city',city.name)
 				form.setFieldValue('residence_city_id',city_id)
@@ -1524,7 +1547,7 @@ const PersonalForm = (props) => {
 							<h1 className="mb-0">Thank you!</h1>
 							<h6 className="mb-0">Your application has been successfully received. You may choose to note down the file number for further tracking of the case!</h6>
 							<p><b>File ID:</b> : {props.formResponse && props.formResponse.file_id}</p>
-							<p><b>Password:</b> 123456</p>
+							<p><b>Password:</b> {props.formResponse && props.formResponse.password}</p>
 						{/* <input type="submit" name="submit" className="submit action-button apply-now-btn" value="Continue" /> */}
 						</fieldset>
 					
