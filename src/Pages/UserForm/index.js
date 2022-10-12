@@ -549,8 +549,10 @@ const BusinessForm = (props) => {
 			if(currentStep==2){
 				props.next(props.data,true);
 				setCurrentStep(currentStep+1)
+				window.scrollTo(0, 0);
 			} else {
 			  setCurrentStep(currentStep+1)
+			  window.scrollTo(0, 0);
 			}
 
 		}
@@ -645,7 +647,6 @@ const BusinessForm = (props) => {
 												<label>Pin Code</label>
 												<select name="pincode" onChange={(e) => form.setFieldValue('pincode', e.target.value)} >
 													<option>Select Pin Code</option>
-													<option value="1">Select Pin Code</option>
 													{pincode.length > 0 && pincode.map((option, index) => (
 														<option value={option.pincode} key={index}>{option.pincode}</option>
 													))}
@@ -1059,8 +1060,10 @@ const PersonalForm = (props) => {
 			if(currentStep==2){
 				props.next(props.data,true);
 				setCurrentStep(currentStep+1)
+				window.scrollTo(0, 0);
 			} else {
 				setCurrentStep(currentStep+1)
+				window.scrollTo(0, 0);
 			}
 		}
 	});
