@@ -527,16 +527,16 @@ const BusinessForm = (props) => {
 			required_amount: currentStep == 0 ? yup.number().typeError('you must specify a number').required('please enter required amount') : '',
 			co_application: currentStep == 1 ? yup.array().of(
 				yup.object({
-					name: yup.string().required("Please enter co-applicant name!"),
+					name: yup.string().required("Please enter co-applicant name").matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
 					pan_number: yup.string().required("Please enter co-applicant pan card number"),
 					pancard_image: yup.string().required("Please upload co-applicant pan card image"),
-					relationship: yup.string().required("Please enter co-applicant relationship"),
+					relationship: yup.string().required("Please enter co-applicant relationship").matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
 				}),
 			) : '',
 			pan_number:currentStep==2?yup.string().required('Please enter pan card number'):'',
 			pancard_image:currentStep==2?yup.string().required('Please upload pan card image'):'',
-			gst_number:currentStep==2?yup.string().required('Please enter valid gst number'):'',
-			gstproof_image:currentStep==2?yup.string().required('Please upload valid gst image'):'',
+			gst_number:currentStep==2?yup.string().required('Please enter valid GST number'):'',
+			gstproof_image:currentStep==2?yup.string().required('Please upload valid GST image'):'',
 			business_address:currentStep==2?yup.string().required('Please enter valid business address'):'',
 			business_address_proof:currentStep==2?yup.string().required('Please enter business address proof image'):'',
 			bank_statement:currentStep==2?yup.string().required('Please upload bank statement'):'',
@@ -749,12 +749,11 @@ const BusinessForm = (props) => {
 									</div>
 						<input type="submit" name="next"  className="next action-button apply-now-btn ml-00" value="Continue" />
 					</fieldset>
-						
-					
+											
 					<fieldset  className="ui-step-content"  style={currentStep==1?{display:"block"}:{display:"none"}}>
 							<button type="button" name="previous"  className="previous action-button-previous" onClick={() =>setCurrentStep(currentStep-1) } ><i  className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button>
 							<h1  className="mb-0 mt-1">Co-Applicants</h1>
-								<p  className="mt-1">Instant Business & Personal Loan {props.data && props.data.business_info && props.data.business_info.co_application.length}</p>
+								<p  className="mt-1">Instant Business & Personal Loan </p>
 								<div  className="stepform-newdesign">
 								   {form.values.co_application.length > 0 && form.values.co_application.map((co, index) => 
 									
@@ -1018,7 +1017,7 @@ const PersonalForm = (props) => {
 		// enableReinitialize: true,
 		validationSchema: yup.object({
 			email: currentStep==0?yup.string().email('Please enter valid email address').required('Please enter email address'):'',
-			father_name : currentStep==0?yup.string().required('Please enter fathers name').matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "):'',
+			father_name : currentStep==0?yup.string().required(`Please enter father's name`).matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "):'',
 			gender :  currentStep==0?yup.string().required('Please select gender'):'',
 			qualification : currentStep==0?yup.string().required('Please select qualification'):'',
 			marital_status : currentStep==0?yup.string().required('Please select marital status'):'',
@@ -1214,7 +1213,7 @@ const PersonalForm = (props) => {
 										<div className="col-xs-12 col-md-5">
 											<label>City</label>
 											<select name="residence_city"  onChange={(e) => GetPincode(e.target.value,'residence_city')}  >
-												<option>Select City</option>
+												{/* <option>Select City</option> */}
 												<option value="1">Select City</option>
 												{residence_cities.length>0 && residence_cities.map((option, index) => (
 											<option value={option.id}  key={index}>{option.name}</option>
