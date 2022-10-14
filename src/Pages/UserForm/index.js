@@ -5,6 +5,8 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import Service from './../../service';
 import uuid from 'react-uuid';
+import DatePicker from 'react-date-picker';
+
 const api = new Service();
 
 
@@ -15,6 +17,7 @@ const UserForm = () => {
 	const [header, setHeader] = useState({ 'Authorization': '', 'DSA': '' });
 	const [formResponse, setformResponse] = useState({});
 	const [data, setData] = useState({
+		lenders: [],
 		info: {
 			mobile_number: '',
 			is_agree: false,
@@ -22,8 +25,15 @@ const UserForm = () => {
 			pan_number: '',
 			loan_type: 1,
 			employee_type: 1,
+			wrong_opt:false,
+			
 		},
 		business_info: {
+			email: '',
+			first_name: '',
+			last_name: '',
+			gender: '',
+			date_of_birth: '',
 			company_name: '',
 			legal_name: '',
 			state_id: '',
@@ -53,12 +63,16 @@ const UserForm = () => {
 			bank_statement: '',
 			bank_statement_url: '',
 			itr_docs: '',
-			itr_docs_url: ''
+			itr_docs_url: '',
+			loan_purpose : 0
 		},
 		personal_info: {
 			email: '',
-			father_name: '',
+			first_name: '',
+			last_name: '',
 			gender: '',
+			date_of_birth: '',
+			father_name: '',
 			qualification: '',
 			marital_status: '',
 			number_of_kids: 0,
@@ -95,7 +109,8 @@ const UserForm = () => {
 			bank_statement: '',
 			bank_statement_url: '',
 			salery_slip: '',
-			salery_slip_url: ''
+			salery_slip_url: '',
+			loan_purpose : 0
 		}
 	})
 
@@ -109,7 +124,7 @@ const UserForm = () => {
 		api.postApi('user-exist', { name: name }).then(response => {
 			console.log(response)
 			if (response.status == 'success') {
-				header.DSA = name;
+				header.DSA = response.das_id;
 				setHeader(header)
 			} else {
 				navigate('/')
@@ -131,12 +146,14 @@ const UserForm = () => {
 	const [currentStep, setCurrentStep] = useState(0);
 	const handleNextStep = (newData, final = false) => {
 		setData((prev) => ({ ...prev, ...newData }));
-		console.log(newData)
+		
 		if (final) {
+			console.log(newData)
 			api.postApi(newData.info.loan_type == 2 ? 'businessInfoForm' : 'personalInForm', { ...newData }, false, header).then(response => {
 				console.log(response)
 				setformResponse(response)
 			}).catch(error => {
+				console.log(error)
 			});
 			return;
 		}
@@ -153,6 +170,9 @@ const UserForm = () => {
 	steps.push(<PersonalForm formResponse={formResponse} header={header} next={handleNextStep} prev={handlePrevStep} setData={setData} data={data} allStates={allStates} setCurrentStep={setCurrentStep} currentStep={currentStep} />)
 	// Business Form
 	steps.push(<BusinessForm formResponse={formResponse} header={header} next={handleNextStep} prev={handlePrevStep} setData={setData} data={data} allStates={allStates} setCurrentStep={setCurrentStep} currentStep={currentStep} />)
+	steps.push(<LenderListForm formResponse={formResponse} header={header} next={handleNextStep} prev={handlePrevStep} setData={setData} data={data} allStates={allStates} setCurrentStep={setCurrentStep} currentStep={currentStep} />)
+	steps.push(<ThankYouForm formResponse={formResponse} header={header} next={handleNextStep} prev={handlePrevStep} setData={setData} data={data} allStates={allStates} setCurrentStep={setCurrentStep} currentStep={currentStep} />)
+
 	return (
 		<>
 			<Header></Header>
@@ -160,6 +180,7 @@ const UserForm = () => {
 		</>
 	)
 }
+
 
 const StepOne = (props) => {
 
@@ -172,8 +193,8 @@ const StepOne = (props) => {
 			mobile_number: currentStep == 1 ? yup.string().required('Please enter mobile number').min(10, 'Please enter valid mobile number')
 				.max(10, 'Please enter valid mobile number.').matches(phoneRegExp, 'Please enter valid mobile number') : '',
 			is_agree: currentStep == 1 ? yup.boolean().required('Please select terms and conditions').oneOf([true], 'Please select terms and conditions') : '',
-			otp_verified: currentStep == 2 ? yup.string().required('Please enter OTP').min(4, 'Please enter valid OTP')
-				.max(4, 'Please enter valid OTP.') : '',
+			otp_verified: currentStep == 2 ? yup.string().required('Please enter OTP').min(6, 'Please enter valid OTP')
+				.max(6, 'Please enter valid OTP.') : '',
 			pan_number: currentStep == 3 ? yup.string().required('Please enter pan card number') : '',
 			loan_type: currentStep == 4 ? yup.number().test('is boolean',
 				'Please select loan type',
@@ -197,19 +218,35 @@ const StepOne = (props) => {
 
 					});
 				} else if (currentStep == 2) {
-					api.postApi('verifyOtp', { mobile_number: values.mobile_number, otp: values.otp_verified }).then(response => {
+					api.postApi('verifyOtp', { mobile_number: values.mobile_number, otp: values.otp_verified },false,props.header).then(response => {
 						if (response.status == 'success' && response.data) {
 							props.header.Authorization = response.token
 							props.setHeader(props.header, props.GetStates())
 							if (response.exit == 1) {
 								setCurrentStep(4)
+								form.setFieldValue('wrong_opt',false)
+								// if(response.data && response.data.user) {
+								// 	props.data.info =  { ...props.data.info,
+								// 		loan_type: 1,
+								// 		employee_type: 1,
+								// 	}
+								// } 
+								// if(response.data && response.data.user_detail) {
+
+								// }
+								// if(response.data && response.data.user_detail) {
+									
+								// }
 							} else {
 								setCurrentStep(currentStep + 1)
+								form.setFieldValue('wrong_opt',false)
 							}
+
+							
 						}
-						// else {
-						// 	setCurrentStep(currentStep+1)
-						// }
+						else {
+							form.setFieldValue('wrong_opt',true)
+						}
 					}).catch(error => {
 
 					});
@@ -221,8 +258,45 @@ const StepOne = (props) => {
 
 	});
 
+    const updateNumber = (value,path,digit) => {
+		if(value.length > digit) 
+		 value = value.substring(0,digit);
+		form.setFieldValue(path,value) 
+	}
+
+	const [show, setShow] = useState(false);
+
+
 	return (
 		<>
+		<div className={show ? "modal right display-block" : "modal display-none"}   tabIndex="-1" data-backdrop="static" data-keyboard="false">
+			<div className="modal-dialog modal-dialog-centered">
+				<div className="modal-content" id="modal_content">
+					<div className="modal-header">
+						<h4 className="modal-title"><b>Check Your Loan Status</b></h4>
+						<button type="button" className="close" onClick={() =>setShow(false)}>&times;</button>
+					</div>
+					<div className="modal-body">
+					    <div className="stepform-newdesign">
+							<div className="row">
+								    <div className="col-12 col-sm-12">
+								    	<label>Case Id</label>
+										<input  placeholder="Enter CaseId" id="caseid" title="Case Id"  type="text" />
+									</div>
+									<div className="col-12 col-sm-12">
+									   <label>Password</label>
+									   <input  placeholder ="Enter Password" id="password" title="Password"  type="password" />
+									</div>
+
+							</div>
+						</div>
+					</div>
+					<div className="modal-footer" id="status-footer" style={{display: "unset"}} >
+						<button type="button"  className="next action-button apply-now-btn ml-00 leftfloat-withmr-1" style={{float: "right"}}>Check</button>
+					</div>
+				</div>
+			</div>
+		</div>
 			<section className="newstep-form">
 				<div className="container new-step-container">
 					<div className="row form-newalign">
@@ -273,7 +347,9 @@ const StepOne = (props) => {
 											</span>
 										</li>
 									</ul>
-									<input type="submit" name="next" className="next action-button apply-now-btn ml-00 leftfloat-withmr-1" value="Apply Now" />
+									<input type="submit" name="next" className="next action-button apply-now-btn ml-00 leftfloat-withmr-1" value="Apply Now" style={{float :"left"}}/>
+
+									<input type="button" name="next" className="next action-button apply-now-btn ml-00 leftfloat-withmr-1" value="Check Status" style={{float :"right"}}  onClick={() => setShow(true)}/>
 									{/* <a href="javascript:void(0)" data-toggle="modal" data-target="#check-status" className="apply-now-btn ml-00 mymodalonline">Check Status</a> */}
 
 								</fieldset>
@@ -285,7 +361,7 @@ const StepOne = (props) => {
 										<div className="row">
 											<div className="col-12 col-md-10">
 												<label>Mobile Number</label>
-												<input type="text" className="mb-0" name="mobile_number" {...form.getFieldProps("mobile_number")} placeholder="We will send an OTP on this number" />
+												<input type="text" className="mb-0" value={form.values.mobile_number}  onChange={(e) => updateNumber(e.target.value,'mobile_number',10) } placeholder="We will send an OTP on this number" />
 												{form.touched.mobile_number && form.errors.mobile_number ?
 													<div className="text-danger">{form.errors.mobile_number}</div> : ''}
 											</div>
@@ -316,9 +392,13 @@ const StepOne = (props) => {
 										<div className="row">
 											<div className="col-12 col-md-10">
 												<label>Enter OTP</label>
-												<input type="text" className="mb-0" name="otp_verified" {...form.getFieldProps("otp_verified")} placeholder="Enter 4 Digit OTP" />
-												{form.touched.otp_verified && form.errors.otp_verified ? <div className="text-danger">{form.errors.otp_verified}</div> : ''}
-
+												<input type="text" className="mb-0"  value={form.values.otp_verified} onChange={(e) => updateNumber(e.target.value,'otp_verified',6) }  placeholder="Enter 6 Digit OTP"  />
+												{form.values.wrong_opt==false  && form.touched.otp_verified && form.errors.otp_verified ? <div className="text-danger">{form.errors.otp_verified}</div> : ''}
+												{form.values.wrong_opt?
+                                                  <div className="text-danger">
+                                                       Please enter valid OPT.
+												  </div>
+                                                : ''}
 											</div>
 											{/* <div className="col-xs-6 col-md-5">
 								     <Link to="" className="resentotp">Resend OTP</Link>
@@ -343,9 +423,9 @@ const StepOne = (props) => {
 								    <label>Last Name</label>
 								    <input type="text" className="" placeholder="Name as per PAN"/>
 								</div> */}
-											<div className="col-xs-12 col-md-8">
+											<div className="col-xs-12 col-md-8"> 
 												<label>Pan Card Number</label>
-												<input type="text" className="mb-0" placeholder="Enter pan card number" name="pan_number" {...form.getFieldProps("pan_number")} />
+												<input type="text" className="mb-0" placeholder="Enter pan card number"  onChange={(e) => updateNumber(e.target.value,'pan_number',10) } value={form.values.pan_number} />
 												{form.touched.pan_number && form.errors.pan_number ? <div className="text-danger">{form.errors.pan_number}</div> : ''}
 
 											</div>
@@ -443,9 +523,7 @@ const StepOne = (props) => {
 										<label htmlFor="checkbox-2" className="checkbox-label"> Self Employed</label>
 										{/* </div> */}
 									</div>
-									<div className="col-xs-12 col-md-8 ">
-										{form.touched.employee_type && form.errors.employee_type ? <div className="text-danger">{form.errors.employee_type}</div> : ''}
-									</div>
+									
 
 									<div className="checkbox" style={{ marginBottom: "10px" }}>
 										<p className="mb-33"><b>Loan Type</b></p>
@@ -493,6 +571,11 @@ const BusinessForm = (props) => {
 		initialValues: props.data.business_info,
 		// enableReinitialize: true,
 		validationSchema: yup.object({
+			email: currentStep == 0 ? yup.string().email('Please enter valid email address').required('Please enter email address') : '',
+			first_name: currentStep == 0 ? yup.string().required('Please enter your name').matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
+			last_name: currentStep == 0 ? yup.string().required('Please enter your surname').matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
+			gender: currentStep == 0 ? yup.string().required('Please select gender') : '',
+			date_of_birth: currentStep == 0 ? yup.string().required('Please enter dob') : '',
 			company_name: currentStep == 0 ? yup.string().required('Please enter business name').matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
 			legal_name: currentStep == 0 ? yup.string().required('Please enter legal name of your business').matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
 			state: currentStep == 0 ? yup.string().required('Please select state') : '',
@@ -521,14 +604,15 @@ const BusinessForm = (props) => {
 			business_address_proof: currentStep == 2 ? yup.string().required('Please enter business address proof image') : '',
 			bank_statement: currentStep == 2 ? yup.string().required('Please upload bank statement') : '',
 			itr_docs: currentStep == 2 ? yup.string().required('Please upload ITR') : '',
+			loan_purpose: currentStep == 2 ? yup.number().required('Please select loan purpose') : '',
 
 		}),
 		onSubmit: values => {
 			props.data.business_info = values;
 			props.setData(props.data);
 			if (currentStep == 2) {
-				props.next(props.data, true);
-				setCurrentStep(currentStep + 1)
+				// props.next(props.data, false);
+				props.setCurrentStep(parseInt(props.currentStep) + 1)
 				window.scrollTo(0, 0);
 			} else {
 				setCurrentStep(currentStep + 1)
@@ -546,9 +630,9 @@ const BusinessForm = (props) => {
 		api.postApi('imageUpload', formData, true, props.header).then(response => {
 			form.setFieldValue(path, filename);
 			form.setFieldValue(path + '_url', response.url);
-			e.target.value = ''
+			// e.target.value = ''
 		}).catch(error => {
-			e.target.value = ''
+			// e.target.value = ''
 		});
 	}
 
@@ -588,6 +672,40 @@ const BusinessForm = (props) => {
 									<p className="mt-1">Instant Business & Personal Loan</p>
 									<div className="stepform-newdesign">
 										<div className="row">
+										    <div className="col-12 col-md-5">
+												<label>First Name</label>
+												<input type="text" name="first_name" {...form.getFieldProps("first_name")} className="" placeholder="Enter first name" />
+												{form.touched.first_name && form.errors.first_name ? <div className="text-danger">{form.errors.first_name}</div> : ''}
+											</div>
+											<div className="col-12 col-md-5">
+												<label>Last Name</label>
+												<input type="text" name="last_name" {...form.getFieldProps("last_name")} className="" placeholder="Enter last name" />
+												{form.touched.last_name && form.errors.last_name ? <div className="text-danger">{form.errors.last_name}</div> : ''}
+											</div>
+											<div className="col-12 col-md-5">
+												<label>Email Address</label>
+												<input type="text" name="email" {...form.getFieldProps("email")} className="" placeholder="Enter email" />
+												{form.touched.email && form.errors.email ? <div className="text-danger">{form.errors.email}</div> : ''}
+											</div>
+ 
+											<div className="col-12 col-md-5"> 
+												<label>Date of birth</label>
+												
+												<input type="date"      
+       max="1999-12-31" name="date_of_birth" {...form.getFieldProps("date_of_birth")} className="" placeholder="Enter Date of birth" />
+												{form.touched.date_of_birth && form.errors.date_of_birth ? <div className="text-danger">{form.errors.date_of_birth}</div> : ''}
+											</div>
+										    <div className="col-xs-12 col-md-10">
+												<label>Gender</label>
+												<select name="gender" onChange={(e) => form.setFieldValue('gender', e.target.value)} >
+													<option>Select Gender</option>
+													<option value="Male" >Male</option>
+													<option value="Female">Female</option>
+													<option value="Other">Other</option>
+													<option value="Prefer not to disclose">Prefer not to disclose</option>
+												</select>
+												{form.touched.gender && form.errors.gender ? <div className="text-danger">{form.errors.gender}</div> : ''}
+											</div>
 											<div className="col-12 col-md-10">
 												<label>Business Name</label>
 												<input type="text" name="company_name" {...form.getFieldProps("company_name")} className="" placeholder="Enter name" />
@@ -647,7 +765,8 @@ const BusinessForm = (props) => {
 											<div className="col-xs-12 col-md-5">
 												<label>Nature of Business</label>
 												<select name="type_of_nature" onChange={(e) => form.setFieldValue('type_of_nature', e.target.value)}>
-													<option value="">NATURE OF BUSINESS</option>
+												{form.touched.loan_purpose && form.errors.loan_purpose ? <div className="text-danger">{form.errors.loan_purpose}</div> : ''}
+							<option value="">NATURE OF BUSINESS</option>
 													<option value="Retail">Retail</option>
 													<option value="Manufacturing">Manufacturing</option>
 													<option value="Service">Service</option>
@@ -725,6 +844,22 @@ const BusinessForm = (props) => {
 												<input type="text" name="required_amount" {...form.getFieldProps("required_amount")} className="" placeholder="Enter amount" />
 												{form.touched.required_amount && form.errors.required_amount ? <div className="text-danger">{form.errors.required_amount}</div> : ''}
 											</div>
+											<div className="col-xs-12 col-md-10">
+												    <label>Loan purpose </label>
+												    <select name="loan_purpose" onChange={(e) => form.setFieldValue('loan_purpose', e.target.value)}>
+														<option value="">Select One</option>
+														<option value="90000111" >Business Funding</option>
+														<option value="1373">Wedding</option>
+														<option value="90133283">Loan against gold</option>
+														<option value="90133589">Loan against property</option>
+														<option value="90156975">Top up Loan</option>
+														<option value="1367">Education</option>
+														<option value="1371">Medical</option>
+														<option value="90133283">Business working capital</option>
+													</select>
+												{form.touched.loan_purpose && form.errors.loan_purpose ? <div className="text-danger">{form.errors.loan_purpose}</div> : ''}
+
+											</div>
 										</div>
 									</div>
 									<input type="submit" name="next" className="next action-button apply-now-btn ml-00" value="Continue" />
@@ -777,7 +912,7 @@ const BusinessForm = (props) => {
 																<p className="mt-1">Upload Your Pan Card</p>
 															</div>
 														}
-														<input type="file" name="img_logo" className="dropzone" accept="image/png, image/gif, image/jpeg" onChange={(e) => acceptedFiles(e, `co_application.${index}.pancard_image`, 'uploads/merchant/pancard')} />
+														<input type="file"  className="dropzone" accept="image/png, image/gif, image/jpeg" onChange={(e) => acceptedFiles(e, `co_application.${index}.pancard_image`, 'uploads/merchant/pancard')} />
 													</div>
 													{form.touched['co_application']?.[index]?.['pancard_image'] && form.errors['co_application']?.[index]?.['pancard_image'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['pancard_image']}</div> : ''}
 
@@ -816,17 +951,19 @@ const BusinessForm = (props) => {
 													</div>
 												</div>
 												<div className="dropzone-wrapper">
-													{form.values.pancard_image_url ?
-														<img src={form.values.pancard_image_url} alt="" width="100%" height="100%" />
-														:
-														<div className="dropzone-desc">
-															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p className="mt-1">Upload Card</p>
-														</div>
-													}
-													<input type="file" name="img_logo" onChange={(e) => acceptedFiles(e, 'pancard_image', 'uploads/merchant/pancard')} className="dropzone" />
-
+													<label htmlFor="pancard_image_2" style={{cursor: "pointer"}}>
+														{form.values.pancard_image_url ?
+															<img src={form.values.pancard_image_url} alt="" width="100%" height="100%" />
+															:
+															<div className="dropzone-desc">
+																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+																<p className="mt-1">Upload Card</p>
+															</div>
+														}
+													</label>
 												</div>
+												<input type="file" id="pancard_image_2"  onChange={(e) => acceptedFiles(e, 'pancard_image', 'uploads/merchant/pancard')} className="dropzone"   style={{display:"none"}} />
+
 												{form.touched.pancard_image && form.errors.pancard_image ? <div className="text-danger">{form.errors.pancard_image}</div> : ''}
 
 											</div>
@@ -853,16 +990,19 @@ const BusinessForm = (props) => {
 													</div>
 												</div>
 												<div className="dropzone-wrapper">
-													{form.values.gstproof_image_url ?
-														<img src={form.values.gstproof_image_url} alt="" width="100%" height="100%" />
-														:
-														<div className="dropzone-desc">
-															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p className="mt-1">Upload Registration</p>
-														</div>
-													}
-													<input type="file" name="img_logo" onChange={(e) => acceptedFiles(e, 'gstproof_image', 'uploads/merchant/gst')} className="dropzone" />
+													<label htmlFor="gstproof_image_1" style={{cursor: "pointer"}}>
+														{form.values.gstproof_image_url ?
+															<img src={form.values.gstproof_image_url} alt="" width="100%" height="100%" />
+															:
+															<div className="dropzone-desc">
+																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+																<p className="mt-1">Upload Registration</p>
+															</div>
+														}
+													</label>
 												</div>
+												<input type="file"  id="gstproof_image_1" onChange={(e) => acceptedFiles(e, 'gstproof_image', 'uploads/merchant/gst')} className="dropzone"  style={{display:"none"}}/>
+
 												{form.touched.gstproof_image && form.errors.gstproof_image ? <div className="text-danger">{form.errors.gstproof_image}</div> : ''}
 
 											</div>
@@ -889,16 +1029,19 @@ const BusinessForm = (props) => {
 													</div>
 												</div>
 												<div className="dropzone-wrapper">
-													{form.values.business_address_proof_url ?
-														<img src={form.values.business_address_proof_url} alt="" width="100%" height="100%" />
-														:
-														<div className="dropzone-desc">
-															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p className="mt-1">Upload business address</p>
-														</div>
-													}
-													<input type="file" name="img_logo" onChange={(e) => acceptedFiles(e, 'business_address_proof', 'uploads/merchant/business')} className="dropzone" />
+													<label htmlFor="business_address_proof_1" style={{cursor: "pointer"}}>
+														{form.values.business_address_proof_url ?
+															<img src={form.values.business_address_proof_url} alt="" width="100%" height="100%" />
+															:
+															<div className="dropzone-desc">
+																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+																<p className="mt-1">Upload business address</p>
+															</div>
+														}
+													</label>
 												</div>
+												<input type="file"  id="business_address_proof_1" onChange={(e) => acceptedFiles(e, 'business_address_proof', 'uploads/merchant/business')} className="dropzone" style={{display:"none"}} />
+
 												{form.touched.business_address_proof && form.errors.business_address_proof ? <div className="text-danger">{form.errors.business_address_proof}</div> : ''}
 
 											</div>
@@ -919,16 +1062,19 @@ const BusinessForm = (props) => {
 													</div>
 												</div>
 												<div className="dropzone-wrapper">
-													{form.values.bank_statement_url ?
-														<img src={form.values.bank_statement_url} alt="" width="100%" height="100%" />
-														:
-														<div className="dropzone-desc">
-															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p className="mt-1">Upload PDF,Document</p>
-														</div>
-													}
-													<input type="file" name="img_logo" className="dropzone" onChange={(e) => acceptedFiles(e, 'bank_statement', 'uploads/merchant/bankstatement')} />
+													<label htmlFor="bank_statement_2" style={{cursor: "pointer"}}>
+														{form.values.bank_statement_url ?
+															<img src={form.values.bank_statement_url} alt="" width="100%" height="100%" />
+															:
+															<div className="dropzone-desc">
+																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+																<p className="mt-1">Upload PDF,Document</p>
+															</div>
+														}
+													</label>
 												</div>
+												<input type="file" id="bank_statement_2" className="dropzone" onChange={(e) => acceptedFiles(e, 'bank_statement', 'uploads/merchant/bankstatement')}  style={{display:"none"}}/>
+
 												{form.touched.bank_statement && form.errors.bank_statement ? <div className="text-danger">{form.errors.bank_statement}</div> : ''}
 
 											</div>
@@ -947,16 +1093,19 @@ const BusinessForm = (props) => {
 													</div>
 												</div>
 												<div className="dropzone-wrapper">
-													{form.values.itr_docs_url ?
-														<img src={form.values.itr_docs_url} alt="" width="100%" height="100%" />
-														:
-														<div className="dropzone-desc">
-															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p className="mt-1">Upload PDF,Document</p>
-														</div>
-													}
-													<input type="file" name="img_logo" className="dropzone" onChange={(e) => acceptedFiles(e, 'itr_docs', 'uploads/merchant/business')} />
+													<label htmlFor="itr_docs_1" style={{cursor: "pointer"}}>
+														{form.values.itr_docs_url ?
+															<img src={form.values.itr_docs_url} alt="" width="100%" height="100%" />
+															:
+															<div className="dropzone-desc">
+																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+																<p className="mt-1">Upload PDF,Document</p>
+															</div>
+														}
+													</label>
 												</div>
+												<input type="file" id="itr_docs_1" className="dropzone" onChange={(e) => acceptedFiles(e, 'itr_docs', 'uploads/merchant/business')}  style={{display:"none"}} />
+
 												{form.touched.itr_docs && form.errors.itr_docs ? <div className="text-danger">{form.errors.itr_docs}</div> : ''}
 
 											</div>
@@ -966,7 +1115,7 @@ const BusinessForm = (props) => {
 									<input type="submit" name="next" className="next action-button apply-now-btn mt-5 ml-00" value="Verify & Proceed" />
 								</fieldset>
 
-								<fieldset className="ui-step-content" style={currentStep == 3 ? { display: "block", textAlign: "center" } : { display: "none" }} >
+								{/* <fieldset className="ui-step-content" style={currentStep == 3 ? { display: "block", textAlign: "center" } : { display: "none" }} >
 									<div className="success-animation">
 										<svg className="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle className="checkmark__circle" cx="26" cy="26" r="25" fill="none" /><path className="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" /></svg>
 									</div>
@@ -974,8 +1123,7 @@ const BusinessForm = (props) => {
 									<h6 className="mb-0">Your application has been successfully received. You may choose to note down the file number for further tracking of the case!</h6>
 									<p><b>File ID:</b> : {props.formResponse && props.formResponse.file_id}</p>
 									<p><b>Password:</b> {props.formResponse && props.formResponse.password}</p>
-									{/* <input type="submit" name="submit"  className="submit action-button apply-now-btn" value="Continue" /> */}
-								</fieldset>
+								</fieldset> */}
 							</form>
 						</div>
 
@@ -996,6 +1144,9 @@ const PersonalForm = (props) => {
 		initialValues: props.data.personal_info,
 		// enableReinitialize: true,
 		validationSchema: yup.object({
+			first_name: currentStep == 0 ? yup.string().required('Please enter your name').matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
+			last_name: currentStep == 0 ? yup.string().required('Please enter your surname').matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
+			date_of_birth: currentStep == 0 ? yup.string().required('Please enter dob') : '',
 			email: currentStep == 0 ? yup.string().email('Please enter valid email address').required('Please enter email address') : '',
 			father_name: currentStep == 0 ? yup.string().required(`Please enter father's name`).matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
 			gender: currentStep == 0 ? yup.string().required('Please select gender') : '',
@@ -1031,14 +1182,15 @@ const PersonalForm = (props) => {
 			pancard_image: currentStep == 2 ? yup.string().required('Please upload pan card image') : '',
 			aadhar_image: currentStep == 2 ? yup.string().required('Please upload aadhar image') : '',
 			bank_statement: currentStep == 2 ? yup.string().required('Please upload bank statement') : '',
-			salery_slip: currentStep == 2 ? yup.string().required('Please upload salary slip') : ''
+			salery_slip: currentStep == 2 ? yup.string().required('Please upload salary slip') : '',
+			loan_purpose: currentStep == 1 ? yup.number().required('Please select loan purpose') : '',
 		}),
 		onSubmit: values => {
 			props.data.personal_info = values;
 			props.setData(props.data);
 			if (currentStep == 2) {
-				props.next(props.data, true);
-				setCurrentStep(currentStep + 1)
+				// props.next(props.data);
+				props.setCurrentStep(parseInt(props.currentStep) + 2)
 				window.scrollTo(0, 0);
 			} else {
 				setCurrentStep(currentStep + 1)
@@ -1055,9 +1207,9 @@ const PersonalForm = (props) => {
 		api.postApi('imageUpload', formData, true, props.header).then(response => {
 			form.setFieldValue(path, filename);
 			form.setFieldValue(path + '_url', response.url);
-			e.target.value = ''
+			// e.target.value = ''
 		}).catch(error => {
-			e.target.value = ''
+			// e.target.value = ''
 		});
 	}
 
@@ -1119,14 +1271,29 @@ const PersonalForm = (props) => {
 									<p className="mt-1">Instant Business & Personal Loan</p>
 									<div className="stepform-newdesign">
 										<div className="row">
-											<div className="col-12 col-md-10">
+										    <div className="col-12 col-md-5">
+												<label>First Name</label>
+												<input type="text" name="first_name" {...form.getFieldProps("first_name")} className="" placeholder="Enter first name" />
+												{form.touched.first_name && form.errors.first_name ? <div className="text-danger">{form.errors.first_name}</div> : ''}
+											</div>
+											<div className="col-12 col-md-5">
+												<label>Last Name</label>
+												<input type="text" name="last_name" {...form.getFieldProps("last_name")} className="" placeholder="Enter last name" />
+												{form.touched.last_name && form.errors.last_name ? <div className="text-danger">{form.errors.last_name}</div> : ''}
+											</div>
+											<div className="col-12 col-md-5">
 												<label>Email Address</label>
 												<input type="text" name="email" {...form.getFieldProps("email")} className="" placeholder="Enter email" />
 												{form.touched.email && form.errors.email ? <div className="text-danger">{form.errors.email}</div> : ''}
 											</div>
+											<div className="col-12 col-md-5">
+												<label>Date of birth</label>
+												<input type="date"   max="1999-12-31" name="date_of_birth" {...form.getFieldProps("date_of_birth")} className="" placeholder="Enter Date of birth" />
+												{form.touched.date_of_birth && form.errors.date_of_birth ? <div className="text-danger">{form.errors.date_of_birth}</div> : ''}
+											</div>
 											<div className="col-12 col-md-10">
 												<label>Father's Name</label>
-												<input type="text" name="father_name" {...form.getFieldProps("father_name")} className="" placeholder="Enter name" />
+												<input type="text" name="father_name" {...form.getFieldProps("father_name")} className="" placeholder="Enter father name" />
 												{form.touched.father_name && form.errors.father_name ? <div className="text-danger">{form.errors.father_name}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
@@ -1306,6 +1473,28 @@ const PersonalForm = (props) => {
 												{form.touched.required_amount && form.errors.required_amount ? <div className="text-danger">{form.errors.required_amount}</div> : ''}
 
 											</div>
+											<div className="col-xs-12 col-md-10">
+												<label>Loan purpose </label>
+												<select name="loan_purpose" onChange={(e) => form.setFieldValue('loan_purpose', e.target.value)}>
+														<option value="">Select One</option>
+														<option value="1364">Appliance purchase</option>
+														<option value="1365" >Car 2 Weller</option>
+														<option value="1367" >Education</option>
+														<option value="1368">Family event</option>
+														<option value="1369" >Home furnishing</option>
+														<option value="1371" >Medical</option>
+														<option value="1372" >Travel</option>
+														<option value="90000138">Land Purchase loan against property</option>
+														<option value="90133639" >Loan for purchase of 2 wheelers</option>
+														<option value="90137346" >Consumer loan </option>
+														<option value="90156975">Top up loan</option>
+														<option value="1373" >Wedding</option>
+														<option value="1368" >Family event</option>
+														<option value="1366" >Debt consolidationl</option>
+													</select> 
+													{form.touched.loan_purpose && form.errors.loan_purpose ? <div className="text-danger">{form.errors.loan_purpose}</div> : ''}
+
+											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Building No./Plot No.</label>
 												<input type="text" name="company_building"  {...form.getFieldProps("company_building")} className="" placeholder="Enter house no." />
@@ -1413,18 +1602,21 @@ const PersonalForm = (props) => {
 														<div className="box-body"></div>
 													</div>
 												</div>
-												<div className="dropzone-wrapper">
+												<div className="dropzone-wrapper" >
+												<label htmlFor="pancad_1" style={{cursor: "pointer"}}>
 													{form.values.pancard_image_url ?
 														<img src={form.values.pancard_image_url} alt="" width="100%" height="100%" />
 														:
-														<div className="dropzone-desc">
+														<div className="dropzone-desc" >
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
 															<p className="mt-1">Upload Your Pan Card</p>
 														</div>
 													}
-													<input type="file" name="img_logo" className="dropzone" onChange={(e) => acceptedFiles(e, 'pancard_image', 'uploads/merchant/pancard')} />
 
+												</label>
 												</div>
+												<input type="file" id="pancad_1"  className="dropzone" onChange={(e) => acceptedFiles(e, 'pancard_image', 'uploads/merchant/pancard')} style={{display:"none"}} />
+
 												{form.touched.pancard_image && form.errors.pancard_image ? <div className="text-danger">{form.errors.pancard_image}</div> : ''}
 
 											</div>
@@ -1443,16 +1635,19 @@ const PersonalForm = (props) => {
 													</div>
 												</div>
 												<div className="dropzone-wrapper">
-													{form.values.aadhar_image_url ?
-														<img src={form.values.aadhar_image_url} alt="" width="100%" height="100%" />
-														:
-														<div className="dropzone-desc">
-															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p className="mt-1">Upload Aadhar</p>
-														</div>
-													}
-													<input type="file" name="img_logo" className="dropzone" onChange={(e) => acceptedFiles(e, 'aadhar_image', 'uploads/merchant/aadharcard')} />
+													<label htmlFor="aadhar_image_1" style={{cursor: "pointer"}}>
+														{form.values.aadhar_image_url ?
+															<img src={form.values.aadhar_image_url} alt="" width="100%" height="100%" />
+															:
+															<div className="dropzone-desc">
+																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+																<p className="mt-1">Upload Aadhar</p>
+															</div>
+														}
+													</label>
 												</div>
+												<input type="file" id="aadhar_image_1"  className="dropzone" onChange={(e) => acceptedFiles(e, 'aadhar_image', 'uploads/merchant/aadharcard')} style={{display:"none"}} />
+
 												{form.touched.aadhar_image && form.errors.aadhar_image ? <div className="text-danger">{form.errors.aadhar_image}</div> : ''}
 
 											</div>
@@ -1473,16 +1668,20 @@ const PersonalForm = (props) => {
 													</div>
 												</div>
 												<div className="dropzone-wrapper">
-													{form.values.bank_statement_url ?
-														<img src={form.values.bank_statement_url} alt="" width="100%" height="100%" />
-														:
-														<div className="dropzone-desc">
-															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p className="mt-1">Upload PDF,Document</p>
-														</div>
-													}
-													<input type="file" name="img_logo" className="dropzone" onChange={(e) => acceptedFiles(e, 'bank_statement', 'uploads/merchant/bankstatement')} />
+													<label htmlFor="bank_statement_1" style={{cursor: "pointer"}}>
+														{form.values.bank_statement_url ?
+															<img src={form.values.bank_statement_url} alt="" width="100%" height="100%" />
+															:
+															<div className="dropzone-desc">
+																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+																<p className="mt-1">Upload PDF,Document</p>
+															</div>
+														}
+													
+													</label>
 												</div>
+												<input type="file"  id="bank_statement_1" className="dropzone" onChange={(e) => acceptedFiles(e, 'bank_statement', 'uploads/merchant/bankstatement')} style={{display:"none"}} />
+
 												{form.touched.bank_statement && form.errors.bank_statement ? <div className="text-danger">{form.errors.bank_statement}</div> : ''}
 
 											</div>
@@ -1501,16 +1700,19 @@ const PersonalForm = (props) => {
 													</div>
 												</div>
 												<div className="dropzone-wrapper">
-													{form.values.salery_slip_url ?
-														<img src={form.values.salery_slip_url} alt="" width="100%" height="100%" />
-														:
-														<div className="dropzone-desc">
-															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p className="mt-1">Upload PDF,Document</p>
-														</div>
-													}
-													<input type="file" name="img_logo" className="dropzone" onChange={(e) => acceptedFiles(e, 'salery_slip', 'uploads/merchant/salery_slip')} />
+													<label htmlFor="salery_slip_1" style={{cursor: "pointer"}}>
+														{form.values.salery_slip_url ?
+															<img src={form.values.salery_slip_url} alt="" width="100%" height="100%" />
+															:
+															<div className="dropzone-desc">
+																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+																<p className="mt-1">Upload PDF,Document</p>
+															</div>
+														}
+													</label>
 												</div>
+												<input type="file" id="salery_slip_1"  className="dropzone" onChange={(e) => acceptedFiles(e, 'salery_slip', 'uploads/merchant/salery_slip')} style={{display:"none"}}  />
+
 												{form.touched.salery_slip && form.errors.salery_slip ? <div className="text-danger">{form.errors.salery_slip}</div> : ''}
 
 											</div>
@@ -1519,16 +1721,7 @@ const PersonalForm = (props) => {
 									<input type="submit" name="next" className="next action-button apply-now-btn mt-5 ml-00" value="Verify & Proceed" />
 								</fieldset>
 
-								<fieldset className="ui-step-content" style={currentStep == 3 ? { display: "block", textAlign: "center" } : { display: "none" }}>
-									<div className="success-animation">
-										<svg className="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle className="checkmark__circle" cx="26" cy="26" r="25" fill="none" /><path className="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" /></svg>
-									</div>
-									<h1 className="mb-0">Thank you!</h1>
-									<h6 className="mb-0">Your application has been successfully received. You may choose to note down the file number for further tracking of the case!</h6>
-									<p><b>File ID:</b> : {props.formResponse && props.formResponse.file_id}</p>
-									<p><b>Password:</b> {props.formResponse && props.formResponse.password}</p>
-									{/* <input type="submit" name="submit" className="submit action-button apply-now-btn" value="Continue" /> */}
-								</fieldset>
+							
 
 							</form>
 						</div>
@@ -1541,6 +1734,135 @@ const PersonalForm = (props) => {
 				</div>
 			</section>
 		</>
+	)
+}
+const LenderListForm = (props) => {
+
+
+	const [errorMassege, setErrorMassege] = useState(0);
+	
+	const submitForm = (event) => {
+	        if(props.data.lenders.length>0) {
+				setErrorMassege('')
+				props.setData(props.data)
+				props.next(props.data,true);
+				props.setCurrentStep(props.currentStep + 1)
+			} else {
+				setErrorMassege('Please select at least one lender')
+			}
+	}
+
+	useEffect(() => {
+			GetLenderList()
+	}, [])
+
+	const lenderPushArray = (event) => {
+		if(event.target.checked) {
+			setErrorMassege('')
+			props.data.lenders.push(event.target.value)
+			props.setData(props.data)
+		} else {
+			var index = props.data.lenders.indexOf(event.target.value);
+			if (index !== -1) {
+				props.data.lenders.splice(index, 1);
+			}
+			props.setData(props.data)
+			
+		}
+	}
+
+	const [lenderList, setlenderList] = useState([]);
+	const GetLenderList = () => {
+		api.postApi('verifyLendersList', {}, false, props.header).then(response => {
+			if(response.status=='success') {
+				setlenderList(response.lenderList);
+			}
+		}).catch(error => {
+		});
+	}
+
+	return (
+		<>
+		<section className="newstep-form">
+		{/* <form id="msform" onSubmit={form.handleSubmit}> */}
+		<div className="container">
+		
+			<div className="row d-flex justify-content-center flexwrap">
+			
+				<div className="col-md-12">
+					{lenderList.length > 0 && lenderList.map((co, index) => (
+					
+					
+					
+						<div className="landerlist-loan" key={index}>
+												<label to="" className="link-website" style={{float:"left"}}> <input type="checkbox" id={co.user_id+"_lender_error"} value={co.user_id}  onChange={(e) => lenderPushArray(e)}/> <b>{co.company_name}</b></label>
+
+							<div className="review-body">
+							<div className="review-table table-responsive">
+							<table className="table table-bordered">
+								<thead>
+									<tr>
+										<th>Min-Max Rate Of Interest</th>
+										<th>Min-max Loan Range</th>
+										<th>Min-Max Tenure</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>{co.mini_rate_of_intrest}% - {co.max_rate_of_intrest}%</td>
+										<td>{co.mini_loan_range}-{co.max_loan_range}</td>
+										<td>{co.mini_tenure} Month - {co.max_tenure} Month</td>
+									</tr>
+								</tbody>
+							</table>
+							</div>
+						</div>
+					</div>	  
+					))}
+					{errorMassege? <div className="text-danger" style={{textAlign:"end"}}>{errorMassege}</div> :''}
+				</div>
+				
+				<div className="col-md-12" style={{textAlign:"end"}}>
+					<button type="button" className="submit action-button apply-now-btn ml-00" onClick={() => submitForm() } style={{float:"right"}}>SUBMIT</button>
+				</div>
+				
+			</div>
+			
+		</div>
+		{/* </form> */}
+  </section>
+  </>
+	)
+}
+
+const ThankYouForm = (props) => {
+
+	return (
+		<section className="newstep-form">
+				<div className="container new-step-container">
+					<div className="row form-newalign">
+						<div className="col-md-12 col-lg-6">
+							{/* <form id="msform" onSubmit={form.handleSubmit}> */}
+								<fieldset className="ui-step-content" style={{ display: "block", textAlign: "center" }}>
+									<div className="success-animation">
+										<svg className="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle className="checkmark__circle" cx="26" cy="26" r="25" fill="none" /><path className="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" /></svg>
+									</div>
+									<h1 className="mb-0">Thank you!</h1>
+									<h6 className="mb-0">Your application has been successfully received. You may choose to note down the file number for further tracking of the case!</h6>
+									<p><b>File ID:</b> : {props.formResponse && props.formResponse.file_id}</p>
+									<p><b>Password:</b> {props.formResponse && props.formResponse.password}</p>
+									{/* <input type="submit" name="submit" className="submit action-button apply-now-btn" value="Continue" /> */}
+								</fieldset>
+							{/* </form> */}
+						</div>
+
+						<div className="col-md-12 col-lg-6">
+							<img src="/assets/img/loan.png" alt="sds" className="righimg" />
+						</div>
+
+					</div>
+				</div>
+		</section>
 	)
 }
 
