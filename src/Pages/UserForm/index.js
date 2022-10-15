@@ -5,7 +5,8 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import Service from './../../service';
 import uuid from 'react-uuid';
-import DatePicker from 'react-date-picker';
+// import DatePicker from 'react-date-picker';
+import toast, { Toaster } from 'react-hot-toast';
 
 const api = new Service();
 
@@ -172,6 +173,7 @@ const UserForm = () => {
 
 	return (
 		<>
+		<Toaster position="top-right" reverseOrder={false} />
 			<Header></Header>
 			{steps[currentStep]}
 		</>
@@ -678,6 +680,7 @@ const BusinessForm = (props) => {
 		api.postApi('imageUpload', formData, true, props.header).then(response => {
 			form.setFieldValue(path, filename);
 			form.setFieldValue(path + '_url', response.url);
+			toast.success('Uploaded successfully');
 			// e.target.value = ''
 		}).catch(error => {
 			// e.target.value = ''
@@ -707,6 +710,12 @@ const BusinessForm = (props) => {
 		}).catch(error => {
 		});
 
+	}
+
+	const  capitalName = (text) => {
+		text = text.toLowerCase();
+		console.log(text.charAt(0).toUpperCase() + text.slice(1))
+		return text.charAt(0).toUpperCase() + text.slice(1);
 	}
 	return (
 		<>
@@ -746,7 +755,7 @@ const BusinessForm = (props) => {
 										    <div className="col-xs-12 col-md-10">
 												<label>Gender</label>
 												<select name="gender" onChange={(e) => form.setFieldValue('gender', e.target.value)} >
-													<option>Select Gender</option>
+													<option>Select One</option>
 													<option value="Male" >Male</option>
 													<option value="Female">Female</option>
 													<option value="Other">Other</option>
@@ -767,7 +776,7 @@ const BusinessForm = (props) => {
 											<div className="col-xs-12 col-md-5">
 												<label>State</label>
 												<select name="state" onChange={(e) => GetCities(e.target.value)} >
-													<option>Select Your State</option>
+													<option>Select One</option>
 													{props.allStates && props.allStates.length > 0 && props.allStates.map((option, index) => (
 														<option value={option.id} key={index}>{option.name}</option>
 													))}
@@ -777,9 +786,9 @@ const BusinessForm = (props) => {
 											<div className="col-xs-12 col-md-5">
 												<label>City</label>
 												<select name="city" onChange={(e) => GetPincode(e.target.value)} >
-													<option>Select Your City</option>
+													<option>Select One</option>
 													{cities.length > 0 && cities.map((option, index) => (
-														<option value={option.id} key={index}>{option.name}</option>
+														<option value={option.id} key={index}>{capitalName(option.name)}</option>
 													))}
 												</select>
 												{form.touched.city && form.errors.city ? <div className="text-danger">{form.errors.city}</div> : ''}
@@ -792,7 +801,7 @@ const BusinessForm = (props) => {
 											<div className="col-xs-12 col-md-5">
 												<label>Pin Code</label>
 												<select name="pincode" onChange={(e) => form.setFieldValue('pincode', e.target.value)} >
-													<option>Select Pin Code</option>
+													<option>Select One</option>
 													{pincode.length > 0 && pincode.map((option, index) => (
 														<option value={option.pincode} key={index}>{option.pincode}</option>
 													))}
@@ -802,7 +811,7 @@ const BusinessForm = (props) => {
 											<div className="col-xs-12 col-md-5">
 												<label>Type of Firm</label>
 												<select name="business_type" onChange={(e) => form.setFieldValue('business_type', e.target.value)}>
-													<option value="">TYPE OF FIRM</option>
+													<option>Select One</option>
 													<option value="Individual">Individual</option>
 													<option value="Proprietorship">Proprietorship</option>
 													<option value="Partnership">Partnership</option>
@@ -814,7 +823,7 @@ const BusinessForm = (props) => {
 												<label>Nature of Business</label>
 												<select name="type_of_nature" onChange={(e) => form.setFieldValue('type_of_nature', e.target.value)}>
 												{form.touched.loan_purpose && form.errors.loan_purpose ? <div className="text-danger">{form.errors.loan_purpose}</div> : ''}
-							<option value="">NATURE OF BUSINESS</option>
+													<option>Select One</option>
 													<option value="Retail">Retail</option>
 													<option value="Manufacturing">Manufacturing</option>
 													<option value="Service">Service</option>
@@ -830,7 +839,7 @@ const BusinessForm = (props) => {
 											<div className="col-xs-12 col-md-5">
 												<label>Monthly Turnover</label>
 												<select name="turn_over" onChange={(e) => form.setFieldValue('turn_over', e.target.value)}>
-													<option value="">MONTHLY TURNOVER</option>
+													<option>Select One</option>
 													<option value="0.5 - 0.75 lac">0.5 - 0.75 lac</option>
 													<option value="0.75 - 1 lac">0.75 - 1 lac</option>
 													<option value="1 - 5 lac">1 - 5 lac</option>
@@ -860,7 +869,7 @@ const BusinessForm = (props) => {
 											<div className="col-xs-12 col-md-5">
 												<label>Desired Loan Amount</label>
 												<select name="desired_amount" onChange={(e) => form.setFieldValue('desired_amount', e.target.value)}>
-													<option value="">DESIRED LOAN AMOUNT</option>
+													<option>Select One</option>
 													<option value="0.5 - 0.75 lac">0.5 - 0.75 lac</option>
 													<option value="0.75 - 1 lac">0.75 - 1 lac</option>
 													<option value="1 - 5 lac">1 - 5 lac</option>
@@ -895,15 +904,15 @@ const BusinessForm = (props) => {
 											<div className="col-xs-12 col-md-10">
 												    <label>Loan purpose </label>
 												    <select name="loan_purpose" onChange={(e) => form.setFieldValue('loan_purpose', e.target.value)}>
-														<option value="">Select One</option>
+														<option>Select One</option>
 														<option value="90000111" >Business Funding</option>
-														<option value="1373">Wedding</option>
+														<option value="90133283">Business working capital</option>
+														<option value="1367">Education</option>
 														<option value="90133283">Loan against gold</option>
 														<option value="90133589">Loan against property</option>
-														<option value="90156975">Top up Loan</option>
-														<option value="1367">Education</option>
 														<option value="1371">Medical</option>
-														<option value="90133283">Business working capital</option>
+														<option value="90156975">Top up Loan</option>
+														<option value="1373">Wedding</option>
 													</select>
 												{form.touched.loan_purpose && form.errors.loan_purpose ? <div className="text-danger">{form.errors.loan_purpose}</div> : ''}
 
@@ -931,7 +940,7 @@ const BusinessForm = (props) => {
 													<input type="text" name={`form.values..co_application.${index}.relationship`} {...form.getFieldProps(`co_application.${index}.relationship`)} className="" placeholder="Enter relationship" />
 													{form.touched['co_application']?.[index]?.['relationship'] && form.errors['co_application']?.[index]?.['relationship'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['relationship']}</div> : ''}
 												</div>
-												<div className="col-xs-12 col-md-10">
+												<div className="col-xs-12 col-md-10 mb-3">
 													<label>Pan Card Number </label>
 													<input type="text" name={`form.values..co_application.${index}.pan_number`}  {...form.getFieldProps(`co_application.${index}.pan_number`)} className="mb-0" placeholder="Enter Number" />
 													{form.touched['co_application']?.[index]?.['pan_number'] && form.errors['co_application']?.[index]?.['pan_number'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['pan_number']}</div> : ''}
@@ -950,16 +959,16 @@ const BusinessForm = (props) => {
 															<div className="box-body"></div>
 														</div>
 													</div>
-													<div className="dropzone-wrapper">
+													<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
 														{form.values['co_application']?.[index]?.['pancard_image_url'] ?
 															<img src={form.values['co_application']?.[index]?.['pancard_image_url']} alt="" width="100%" height="100%" />
 															:
 															<div className="dropzone-desc">
 																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-																<p className="mt-1">Upload Your Pan Card</p>
+																<p className="mt-1">Upload Image(png/jpeg/jpg)</p>
 															</div>
 														}
-														<input type="file"  className="dropzone" accept="image/png, image/gif, image/jpeg" onChange={(e) => acceptedFiles(e, `co_application.${index}.pancard_image`, 'uploads/merchant/pancard')} />
+														<input type="file"  className="dropzone" accept="image/png, image/jpeg, image/jpg" onChange={(e) => acceptedFiles(e, `co_application.${index}.pancard_image`, 'uploads/merchant/pancard')} />
 													</div>
 													{form.touched['co_application']?.[index]?.['pancard_image'] && form.errors['co_application']?.[index]?.['pancard_image'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['pancard_image']}</div> : ''}
 
@@ -975,7 +984,7 @@ const BusinessForm = (props) => {
 									<p className="mt-1">Instant Business & Personal Loan</p>
 									<div className="stepform-newdesign">
 										<div className="row md-4">
-											<div className="col-xs-12 col-md-10">
+											<div className="col-xs-12 col-md-10 mb-3">
 												<label>Firm Pan Number </label>
 												<input type="text" name="pan_number" {...form.getFieldProps('pan_number')} className="mb-0" placeholder="Enter Number" />
 												{form.touched.pan_number && form.errors.pan_number ? <div className="text-danger">{form.errors.pan_number}</div> : ''}
@@ -995,26 +1004,26 @@ const BusinessForm = (props) => {
 														<div className="box-body"></div>
 													</div>
 												</div>
-												<div className="dropzone-wrapper">
+												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
 													<label htmlFor="pancard_image_2" style={{cursor: "pointer"}}>
 														{form.values.pancard_image_url ?
 															<img src={form.values.pancard_image_url} alt="" width="100%" height="100%" />
 															:
 															<div className="dropzone-desc">
 																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-																<p className="mt-1">Upload Card</p>
+																<p className="mt-1">Upload Image(png/jpeg/jpg)</p>
 															</div>
 														}
 													</label>
 												</div>
-												<input type="file" id="pancard_image_2"  onChange={(e) => acceptedFiles(e, 'pancard_image', 'uploads/merchant/pancard')} className="dropzone"   style={{display:"none"}} />
+												<input type="file" id="pancard_image_2" accept="image/png, image/jpeg, image/jpg" onChange={(e) => acceptedFiles(e, 'pancard_image', 'uploads/merchant/pancard')} className="dropzone"   style={{display:"none"}} />
 
 												{form.touched.pancard_image && form.errors.pancard_image ? <div className="text-danger">{form.errors.pancard_image}</div> : ''}
 
 											</div>
 										</div>
 										<div className="row">
-											<div className="col-xs-12 col-md-10">
+											<div className="col-xs-12 col-md-10 mb-3">
 												<label>Firm GST Number </label>
 												<input type="text" name="gst_number" {...form.getFieldProps('gst_number')} className="" placeholder="Enter Number" />
 												{form.touched.gst_number && form.errors.gst_number ? <div className="text-danger">{form.errors.gst_number}</div> : ''}
@@ -1034,26 +1043,26 @@ const BusinessForm = (props) => {
 														<div className="box-body"></div>
 													</div>
 												</div>
-												<div className="dropzone-wrapper">
+												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
 													<label htmlFor="gstproof_image_1" style={{cursor: "pointer"}}>
 														{form.values.gstproof_image_url ?
 															<img src={form.values.gstproof_image_url} alt="" width="100%" height="100%" />
 															:
 															<div className="dropzone-desc">
 																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-																<p className="mt-1">Upload Registration</p>
+																<p className="mt-1">Upload Image(png/jpeg/jpg)</p>
 															</div>
 														}
 													</label>
 												</div>
-												<input type="file"  id="gstproof_image_1" onChange={(e) => acceptedFiles(e, 'gstproof_image', 'uploads/merchant/gst')} className="dropzone"  style={{display:"none"}}/>
+												<input type="file"  id="gstproof_image_1" accept="image/png, image/jpeg, image/jpg" onChange={(e) => acceptedFiles(e, 'gstproof_image', 'uploads/merchant/gst')} className="dropzone"  style={{display:"none"}}/>
 
 												{form.touched.gstproof_image && form.errors.gstproof_image ? <div className="text-danger">{form.errors.gstproof_image}</div> : ''}
 
 											</div>
 										</div>
 										<div className="row md-4">
-											<div className="col-xs-12 col-md-10">
+											<div className="col-xs-12 col-md-10 mb-3">
 												<label>Business Address </label>
 												<input type="text" name="business_address"  {...form.getFieldProps('business_address')} className="mb-0" placeholder="Enter address" />
 												{form.touched.business_address && form.errors.business_address ? <div className="text-danger">{form.errors.business_address}</div> : ''}
@@ -1073,19 +1082,19 @@ const BusinessForm = (props) => {
 														<div className="box-body"></div>
 													</div>
 												</div>
-												<div className="dropzone-wrapper">
+												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
 													<label htmlFor="business_address_proof_1" style={{cursor: "pointer"}}>
 														{form.values.business_address_proof_url ?
 															<img src={form.values.business_address_proof_url} alt="" width="100%" height="100%" />
 															:
 															<div className="dropzone-desc">
 																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-																<p className="mt-1">Upload business address</p>
+																<p className="mt-1">Upload file (document/image)</p>
 															</div>
 														}
 													</label>
 												</div>
-												<input type="file"  id="business_address_proof_1" onChange={(e) => acceptedFiles(e, 'business_address_proof', 'uploads/merchant/business')} className="dropzone" style={{display:"none"}} />
+												<input type="file"  id="business_address_proof_1"  onChange={(e) => acceptedFiles(e, 'business_address_proof', 'uploads/merchant/business')} className="dropzone" style={{display:"none"}} />
 
 												{form.touched.business_address_proof && form.errors.business_address_proof ? <div className="text-danger">{form.errors.business_address_proof}</div> : ''}
 
@@ -1106,25 +1115,25 @@ const BusinessForm = (props) => {
 														<div className="box-body"></div>
 													</div>
 												</div>
-												<div className="dropzone-wrapper">
-													<label htmlFor="bank_statement_2" style={{cursor: "pointer"}}>
+												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
+													<label htmlFor="bank_statement_2"  style={{cursor: "pointer",marginLeft: "27px"}}>
 														{form.values.bank_statement_url ?
-															<img src={form.values.bank_statement_url} alt="" width="100%" height="100%" />
+															<img src="/assets/img/pdf.png" alt="" height="127px" />
 															:
 															<div className="dropzone-desc">
 																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-																<p className="mt-1">Upload PDF,Document</p>
+																<p className="mt-1">Upload PDF</p>
 															</div>
 														}
 													</label>
 												</div>
-												<input type="file" accept=".pdf" id="bank_statement_2" className="dropzone" onChange={(e) => acceptedFiles(e, 'bank_statement', 'uploads/merchant/bankstatement')}  style={{display:"none"}}/>
+												<input type="file" id="bank_statement_2" className="dropzone" onChange={(e) => acceptedFiles(e, 'bank_statement', 'uploads/merchant/bankstatement')}  style={{display:"none"}}/>
 
 												{form.touched.bank_statement && form.errors.bank_statement ? <div className="text-danger">{form.errors.bank_statement}</div> : ''}
 
 											</div>
 											<div className="col-12 col-md-6 col-lg-5">
-												<p className="mb-0">Upload ITR Optional</p>
+												<p className="mb-0">Upload ITR <small>Optional</small></p>
 												<div className="preview-zone hidden">
 													<div className="imgupload-box box-solid">
 														<div className="box-header with-border">
@@ -1137,19 +1146,19 @@ const BusinessForm = (props) => {
 														<div className="box-body"></div>
 													</div>
 												</div>
-												<div className="dropzone-wrapper">
-													<label htmlFor="itr_docs_1" style={{cursor: "pointer"}}>
+												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
+													<label htmlFor="itr_docs_1"  style={{cursor: "pointer",marginLeft: "27px"}}>
 														{form.values.itr_docs_url ?
-															<img src={form.values.itr_docs_url} alt="" width="100%" height="100%" />
+															<img src="/assets/img/pdf.png" alt="" height="127px" />
 															:
 															<div className="dropzone-desc">
 																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-																<p className="mt-1">Upload PDF,Document</p>
+																<p className="mt-1">Upload PDF</p>
 															</div>
 														}
 													</label>
 												</div>
-												<input type="file" id="itr_docs_1" className="dropzone" onChange={(e) => acceptedFiles(e, 'itr_docs', 'uploads/merchant/business')}  style={{display:"none"}} />
+												<input type="file" id="itr_docs_1" className="dropzone" accept="application/pdf"  onChange={(e) => acceptedFiles(e, 'itr_docs', 'uploads/merchant/business')}  style={{display:"none"}} />
 
 												{form.touched.itr_docs && form.errors.itr_docs ? <div className="text-danger">{form.errors.itr_docs}</div> : ''}
 
@@ -1252,6 +1261,7 @@ const PersonalForm = (props) => {
 		api.postApi('imageUpload', formData, true, props.header).then(response => {
 			form.setFieldValue(path, filename);
 			form.setFieldValue(path + '_url', response.url);
+			toast.success('Uploaded successfully');
 			// e.target.value = ''
 		}).catch(error => {
 			// e.target.value = ''
@@ -1303,6 +1313,11 @@ const PersonalForm = (props) => {
 
 	}
 
+	const  capitalName = (text) => {
+		text = text.toLowerCase();
+		console.log(text.charAt(0).toUpperCase() + text.slice(1))
+		return text.charAt(0).toUpperCase() + text.slice(1);
+	}
 	return (
 		<>
 			<section className="newstep-form">
@@ -1344,7 +1359,7 @@ const PersonalForm = (props) => {
 											<div className="col-xs-12 col-md-5">
 												<label>Gender</label>
 												<select name="gender" onChange={(e) => form.setFieldValue('gender', e.target.value)} >
-													<option>Select Gender</option>
+													<option>Select One</option>
 													<option value="Male" >Male</option>
 													<option value="Female">Female</option>
 													<option value="Other">Other</option>
@@ -1355,7 +1370,7 @@ const PersonalForm = (props) => {
 											<div className="col-xs-12 col-md-5">
 												<label>Qualification</label>
 												<select name="qualification" onChange={(e) => form.setFieldValue('qualification', e.target.value)}>
-													<option>Select Qualification</option>
+													<option>Select One</option>
 													<option value="Under Graduate" >Under Graduate</option>
 													<option value="Graduate">Graduate</option>
 													<option value="Post Graduate">Post Graduate</option>
@@ -1365,7 +1380,7 @@ const PersonalForm = (props) => {
 											<div className="col-xs-12 col-md-5">
 												<label>Marital Status</label>
 												<select name="marital_status" onChange={(e) => form.setFieldValue('marital_status', e.target.value)} >
-													<option value="">Select Marital Status</option>
+													<option value="">Select One</option>
 													<option value="Married" >Married</option>
 													<option value="Single">Single</option>
 													<option value="Prefer Not to Say">Prefer Not to Say</option>
@@ -1395,7 +1410,7 @@ const PersonalForm = (props) => {
 											<div className="col-xs-12 col-md-5">
 												<label>State</label>
 												<select name="residence_state" onChange={(e) => GetCities(e.target.value, 'residence_state')} >
-													<option>Select State</option>
+													<option>Select One</option>
 													{props.allStates.length > 0 && props.allStates.map((option, index) => (
 														<option value={option.id} key={index}>{option.name}</option>
 													))}
@@ -1406,9 +1421,9 @@ const PersonalForm = (props) => {
 												<label>City</label>
 												<select name="residence_city" onChange={(e) => GetPincode(e.target.value, 'residence_city')}  >
 													{/* <option>Select City</option> */}
-													<option value="1">Select City</option>
+													<option >Select One</option>
 													{residence_cities.length > 0 && residence_cities.map((option, index) => (
-														<option value={option.id} key={index}>{option.name}</option>
+														<option value={option.id} key={index}>{capitalName(option.name)}</option>
 													))}
 												</select>
 												{form.touched.residence_city && form.errors.residence_city ? <div className="text-danger">{form.errors.residence_city}</div> : ''}
@@ -1421,7 +1436,7 @@ const PersonalForm = (props) => {
 											<div className="col-xs-12 col-md-5">
 												<label>Pincode</label>
 												<select name="residence_pincode" onChange={(e) => form.setFieldValue('residence_pincode', e.target.value)} >
-													<option>Select Pincode</option>
+													<option>Select One</option>
 													{residence_pincode.length > 0 && residence_pincode.map((option, index) => (
 														<option value={option.pincode} key={index}>{option.pincode}</option>
 													))}
@@ -1458,9 +1473,9 @@ const PersonalForm = (props) => {
 
 											</div>
 											<div className="col-xs-12 col-md-5">
-												<label>Type of organization </label>
+												<label>Type of <br></br>organization </label>
 												<select name="organization_type" onChange={(e) => form.setFieldValue('organization_type', e.target.value)}  >
-													<option value="">TYPE OF ORGANIZATION</option>
+													<option >Select One</option>
 													<option value="Proprietorship" >Proprietorship</option>
 													<option value="Partnership">Partnership</option>
 													<option value="Private Limited">Private Limited</option>
@@ -1474,7 +1489,7 @@ const PersonalForm = (props) => {
 											<div className="col-xs-12 col-md-5">
 												<label>Total Experience (In Year) </label>
 												<select name="total_experience" onChange={(e) => form.setFieldValue('total_experience', e.target.value)}  >
-													<option value="">TOTAL EXPERIENCE (IN YEAR)</option>
+													<option >Select One</option>
 													<option value="Less than 1">Less than Year</option>
 													<option value="1">1</option>
 													<option value="2">2</option>
@@ -1519,22 +1534,21 @@ const PersonalForm = (props) => {
 											<div className="col-xs-12 col-md-10">
 												<label>Loan purpose </label>
 												<select name="loan_purpose" onChange={(e) => form.setFieldValue('loan_purpose', e.target.value)}>
-														<option value="">Select One</option>
+														<option >Select One</option>
 														<option value="1364">Appliance purchase</option>
-														<option value="1365" >Car 2 wheeler</option>
+														<option value="1365" >Car 2 Weller</option>
 														<option value="1367" >Education</option>
 														<option value="1368">Family event</option>
 														<option value="1369" >Home furnishing</option>
-														<option value="1371" >Medical</option>
-														<option value="1372" >Travel</option>
 														<option value="90000138">Land Purchase loan against property</option>
 														<option value="90133639" >Loan for purchase of 2 wheelers</option>
-														<option value="90137346" >Consumer loan </option>
+														<option value="1371" >Medical</option>
+														<option value="1372" >Travel</option>
 														<option value="90156975">Top up loan</option>
 														<option value="1373" >Wedding</option>
 														<option value="1368" >Family event</option>
 														<option value="1366" >Debt consolidationl</option>
-												</select> 
+													</select> 
 													{form.touched.loan_purpose && form.errors.loan_purpose ? <div className="text-danger">{form.errors.loan_purpose}</div> : ''}
 
 											</div>
@@ -1547,7 +1561,7 @@ const PersonalForm = (props) => {
 											<div className="col-xs-12 col-md-5">
 												<label>State</label>
 												<select name="company_state" onChange={(e) => GetCities(e.target.value, 'company_state')} >
-													<option>Select Your State</option>
+													<option>Select One</option>
 													{props.allStates.length > 0 && props.allStates.map((option, index) => (
 														<option value={option.id} key={index}>{option.name}</option>
 													))}
@@ -1558,9 +1572,9 @@ const PersonalForm = (props) => {
 											<div className="col-xs-12 col-md-5">
 												<label>City</label>
 												<select name="company_city" onChange={(e) => GetPincode(e.target.value, 'company_city')} >
-													<option>Select City</option>
+													<option>Select One</option>
 													{cities.length > 0 && cities.map((option, index) => (
-														<option value={option.id} key={index}>{option.name}</option>
+														<option value={option.id} key={index}>{capitalName(option.name)}</option>
 													))}
 												</select>
 												{form.touched.company_city && form.errors.company_city ? <div className="text-danger">{form.errors.company_city}</div> : ''}
@@ -1575,7 +1589,7 @@ const PersonalForm = (props) => {
 											<div className="col-xs-12 col-md-5">
 												<label>Pincode </label>
 												<select name="company_pincode" onChange={(e) => form.setFieldValue('company_pincode', e.target.value)} >
-													<option>Select Pincode</option>
+													<option>Select One</option>
 													{pincode.length > 0 && pincode.map((option, index) => (
 														<option value={option.pincode} key={index}>{option.pincode}</option>
 													))}
@@ -1604,7 +1618,7 @@ const PersonalForm = (props) => {
 											<div className="col-xs-12 col-md-5">
 												<label>Mode of receiving salary</label>
 												<select name="salary_mode" onChange={(e) => form.setFieldValue('salary_mode', e.target.value)} >
-													<option value="">MODE OF RECEIVING SALARY</option>
+													<option>Select One</option>
 													<option value="Bank account transfer">Bank account transfer</option>
 													<option value="Cheque" >Cheque</option>
 													<option value="Cash">Cash</option>
@@ -1643,20 +1657,20 @@ const PersonalForm = (props) => {
 														<div className="box-body"></div>
 													</div>
 												</div>
-												<div className="dropzone-wrapper" >
+												<div className="dropzone-wrapper"  style={{overflow:"hidden"}}>
 												<label htmlFor="pancad_1" style={{cursor: "pointer"}}>
 													{form.values.pancard_image_url ?
 														<img src={form.values.pancard_image_url} alt="" width="100%" height="100%" />
 														:
 														<div className="dropzone-desc" >
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p className="mt-1">Upload Your Pan Card</p>
+															<p className="mt-1">Upload Image(png/jpeg/jpg)</p>
 														</div>
 													}
 
 												</label>
 												</div>
-												<input type="file" id="pancad_1"  className="dropzone" onChange={(e) => acceptedFiles(e, 'pancard_image', 'uploads/merchant/pancard')} style={{display:"none"}} />
+												<input type="file" id="pancad_1" accept="image/png, image/jpeg , image/jpg"  className="dropzone" onChange={(e) => acceptedFiles(e, 'pancard_image', 'uploads/merchant/pancard')} style={{display:"none"}} />
 
 												{form.touched.pancard_image && form.errors.pancard_image ? <div className="text-danger">{form.errors.pancard_image}</div> : ''}
 
@@ -1675,19 +1689,19 @@ const PersonalForm = (props) => {
 														<div className="box-body"></div>
 													</div>
 												</div>
-												<div className="dropzone-wrapper">
+												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
 													<label htmlFor="aadhar_image_1" style={{cursor: "pointer"}}>
 														{form.values.aadhar_image_url ?
 															<img src={form.values.aadhar_image_url} alt="" width="100%" height="100%" />
 															:
 															<div className="dropzone-desc">
 																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-																<p className="mt-1">Upload Aadhar</p>
+																<p className="mt-1">Upload Image(png/jpeg/jpg)</p>
 															</div>
 														}
 													</label>
 												</div>
-												<input type="file" id="aadhar_image_1"  className="dropzone" onChange={(e) => acceptedFiles(e, 'aadhar_image', 'uploads/merchant/aadharcard')} style={{display:"none"}} />
+												<input type="file" id="aadhar_image_1"  className="dropzone" accept="image/png, image/jpeg, image/jpg" onChange={(e) => acceptedFiles(e, 'aadhar_image', 'uploads/merchant/aadharcard')} style={{display:"none"}} />
 
 												{form.touched.aadhar_image && form.errors.aadhar_image ? <div className="text-danger">{form.errors.aadhar_image}</div> : ''}
 											</div>
@@ -1707,20 +1721,20 @@ const PersonalForm = (props) => {
 														<div className="box-body"></div>
 													</div>
 												</div>
-												<div className="dropzone-wrapper">
-													<label htmlFor="bank_statement_1" style={{cursor: "pointer"}}>
+												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
+													<label htmlFor="bank_statement_1" style={{cursor: "pointer",marginLeft: "27px"}}>
 														{form.values.bank_statement_url ?
-															<iframe src={form.values.bank_statement_url} alt="" width="100%" height="100%"></iframe>
+															<img src={form.values.bank_statement_url} alt="" width="100%" height="100%" />
 															:
 															<div className="dropzone-desc">
 																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-																<p className="mt-1">Upload PDF,Document</p>
+																<p className="mt-1">Upload PDF</p>
 															</div>
 														}
 													
 													</label>
 												</div>
-												<input type="file"  id="bank_statement_1" className="dropzone" onChange={(e) => acceptedFiles(e, 'bank_statement', 'uploads/merchant/bankstatement')} style={{display:"none"}} />
+												<input type="file"  id="bank_statement_1"   accept="application/pdf" className="dropzone" onChange={(e) => acceptedFiles(e, 'bank_statement', 'uploads/merchant/bankstatement')} style={{display:"none"}} />
 
 												{form.touched.bank_statement && form.errors.bank_statement ? <div className="text-danger">{form.errors.bank_statement}</div> : ''}
 
@@ -1739,19 +1753,19 @@ const PersonalForm = (props) => {
 														<div className="box-body"></div>
 													</div>
 												</div>
-												<div className="dropzone-wrapper">
-													<label htmlFor="salery_slip_1" style={{cursor: "pointer"}}>
+												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
+													<label htmlFor="salery_slip_1" style={{cursor: "pointer",marginLeft: "27px"}}>
 														{form.values.salery_slip_url ?
-															<iframe src={form.values.salery_slip_url} alt="" width="100%" height="100%" />
+															<img src={form.values.salery_slip_url} alt="" width="100%" height="100%" />
 															:
 															<div className="dropzone-desc">
 																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-																<p className="mt-1">Upload PDF,Document</p>
+																<p className="mt-1">Upload PDF</p>
 															</div>
 														}
 													</label>
 												</div>
-												<input type="file" id="salery_slip_1" accept=".pdf" className="dropzone" onChange={(e) => acceptedFiles(e, 'salery_slip', 'uploads/merchant/salery_slip')} style={{display:"none"}}  />
+												<input type="file" id="salery_slip_1"  className="dropzone" onChange={(e) => acceptedFiles(e, 'salery_slip', 'uploads/merchant/salery_slip')} style={{display:"none"}}  />
 
 												{form.touched.salery_slip && form.errors.salery_slip ? <div className="text-danger">{form.errors.salery_slip}</div> : ''}
 
