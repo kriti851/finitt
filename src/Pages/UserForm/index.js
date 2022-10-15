@@ -5,7 +5,8 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import Service from './../../service';
 import uuid from 'react-uuid';
-import DatePicker from 'react-date-picker';
+// import DatePicker from 'react-date-picker';
+import toast, { Toaster } from 'react-hot-toast';
 
 const api = new Service();
 
@@ -175,6 +176,7 @@ const UserForm = () => {
 
 	return (
 		<>
+		<Toaster position="top-right" reverseOrder={false} />
 			<Header></Header>
 			{steps[currentStep]}
 		</>
@@ -698,6 +700,7 @@ const BusinessForm = (props) => {
 		api.postApi('imageUpload', formData, true, props.header).then(response => {
 			form.setFieldValue(path, filename);
 			form.setFieldValue(path + '_url', response.url);
+			toast.success('Uploaded successfully');
 			// e.target.value = ''
 		}).catch(error => {
 			// e.target.value = ''
@@ -952,7 +955,7 @@ const BusinessForm = (props) => {
 													<input type="text" name={`form.values..co_application.${index}.relationship`} {...form.getFieldProps(`co_application.${index}.relationship`)} className="" placeholder="Enter relationship" />
 													{form.touched['co_application']?.[index]?.['relationship'] && form.errors['co_application']?.[index]?.['relationship'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['relationship']}</div> : ''}
 												</div>
-												<div className="col-xs-12 col-md-10">
+												<div className="col-xs-12 col-md-10 mb-3">
 													<label>Pan Card Number </label>
 													<input type="text" name={`form.values..co_application.${index}.pan_number`}  {...form.getFieldProps(`co_application.${index}.pan_number`)} className="mb-0" placeholder="Enter Number" />
 													{form.touched['co_application']?.[index]?.['pan_number'] && form.errors['co_application']?.[index]?.['pan_number'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['pan_number']}</div> : ''}
@@ -971,7 +974,7 @@ const BusinessForm = (props) => {
 															<div className="box-body"></div>
 														</div>
 													</div>
-													<div className="dropzone-wrapper">
+													<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
 														{form.values['co_application']?.[index]?.['pancard_image_url'] ?
 															<img src={form.values['co_application']?.[index]?.['pancard_image_url']} alt="" width="100%" height="100%" />
 															:
@@ -1018,7 +1021,7 @@ const BusinessForm = (props) => {
 														<div className="box-body"></div>
 													</div>
 												</div>
-												<div className="dropzone-wrapper">
+												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
 													<label htmlFor="pancard_image_2" style={{cursor: "pointer"}}>
 														{form.values.pancard_image_url ?
 															<img src={form.values.pancard_image_url} alt="" width="100%" height="100%" />
@@ -1057,7 +1060,7 @@ const BusinessForm = (props) => {
 														<div className="box-body"></div>
 													</div>
 												</div>
-												<div className="dropzone-wrapper">
+												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
 													<label htmlFor="gstproof_image_1" style={{cursor: "pointer"}}>
 														{form.values.gstproof_image_url ?
 															<img src={form.values.gstproof_image_url} alt="" width="100%" height="100%" />
@@ -1096,7 +1099,7 @@ const BusinessForm = (props) => {
 														<div className="box-body"></div>
 													</div>
 												</div>
-												<div className="dropzone-wrapper">
+												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
 													<label htmlFor="business_address_proof_1" style={{cursor: "pointer"}}>
 														{form.values.business_address_proof_url ?
 															<img src={form.values.business_address_proof_url} alt="" width="100%" height="100%" />
@@ -1129,10 +1132,10 @@ const BusinessForm = (props) => {
 														<div className="box-body"></div>
 													</div>
 												</div>
-												<div className="dropzone-wrapper">
-													<label htmlFor="bank_statement_2" style={{cursor: "pointer"}}>
+												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
+													<label htmlFor="bank_statement_2"  style={{cursor: "pointer",marginLeft: "27px"}}>
 														{form.values.bank_statement_url ?
-															<img src={form.values.bank_statement_url} alt="" width="100%" height="100%" />
+															<img src="/assets/img/pdf.png" alt="" height="127px" />
 															:
 															<div className="dropzone-desc">
 																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
@@ -1141,13 +1144,13 @@ const BusinessForm = (props) => {
 														}
 													</label>
 												</div>
-												<input type="file" id="bank_statement_2" className="dropzone" onChange={(e) => acceptedFiles(e, 'bank_statement', 'uploads/merchant/bankstatement')}  style={{display:"none"}}/>
+												<input type="file" id="bank_statement_2" accept="application/pdf"  className="dropzone" onChange={(e) => acceptedFiles(e, 'bank_statement', 'uploads/merchant/bankstatement')}  style={{display:"none"}}/>
 
 												{form.touched.bank_statement && form.errors.bank_statement ? <div className="text-danger">{form.errors.bank_statement}</div> : ''}
 
 											</div>
 											<div className="col-12 col-md-6 col-lg-5">
-												<p className="mb-0">Upload ITR <small>Optional</small></p>
+												<p className="mb-0">Upload ITR  <br></br> (Optional) </p>
 												<div className="preview-zone hidden">
 													<div className="imgupload-box box-solid">
 														<div className="box-header with-border">
@@ -1160,10 +1163,10 @@ const BusinessForm = (props) => {
 														<div className="box-body"></div>
 													</div>
 												</div>
-												<div className="dropzone-wrapper">
-													<label htmlFor="itr_docs_1" style={{cursor: "pointer"}}>
+												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
+													<label htmlFor="itr_docs_1"  style={{cursor: "pointer",marginLeft: "27px"}}>
 														{form.values.itr_docs_url ?
-															<img src={form.values.itr_docs_url} alt="" width="100%" height="100%" />
+															<img src="/assets/img/pdf.png" alt="" height="127px" />
 															:
 															<div className="dropzone-desc">
 																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
@@ -1172,7 +1175,7 @@ const BusinessForm = (props) => {
 														}
 													</label>
 												</div>
-												<input type="file" id="itr_docs_1" className="dropzone" onChange={(e) => acceptedFiles(e, 'itr_docs', 'uploads/merchant/business')}  style={{display:"none"}} />
+												<input type="file" id="itr_docs_1" className="dropzone" accept="application/pdf"  onChange={(e) => acceptedFiles(e, 'itr_docs', 'uploads/merchant/business')}  style={{display:"none"}} />
 
 												{form.touched.itr_docs && form.errors.itr_docs ? <div className="text-danger">{form.errors.itr_docs}</div> : ''}
 
@@ -1275,6 +1278,7 @@ const PersonalForm = (props) => {
 		api.postApi('imageUpload', formData, true, props.header).then(response => {
 			form.setFieldValue(path, filename);
 			form.setFieldValue(path + '_url', response.url);
+			toast.success('Uploaded successfully');
 			// e.target.value = ''
 		}).catch(error => {
 			// e.target.value = ''
@@ -1546,7 +1550,7 @@ const PersonalForm = (props) => {
 												<select name="loan_purpose" onChange={(e) => form.setFieldValue('loan_purpose', e.target.value)}>
 														<option value="">Select One</option>
 														<option value="1364">Appliance purchase</option>
-														<option value="1365" >Car 2 Weller</option>
+														<option value="1365" >Car 2 wheeler</option>
 														<option value="1367" >Education</option>
 														<option value="1368">Family event</option>
 														<option value="1369" >Home furnishing</option>
@@ -1670,7 +1674,7 @@ const PersonalForm = (props) => {
 														<div className="box-body"></div>
 													</div>
 												</div>
-												<div className="dropzone-wrapper" >
+												<div className="dropzone-wrapper"  style={{overflow:"hidden"}}>
 												<label htmlFor="pancad_1" style={{cursor: "pointer"}}>
 													{form.values.pancard_image_url ?
 														<img src={form.values.pancard_image_url} alt="" width="100%" height="100%" />
@@ -1702,7 +1706,7 @@ const PersonalForm = (props) => {
 														<div className="box-body"></div>
 													</div>
 												</div>
-												<div className="dropzone-wrapper">
+												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
 													<label htmlFor="aadhar_image_1" style={{cursor: "pointer"}}>
 														{form.values.aadhar_image_url ?
 															<img src={form.values.aadhar_image_url} alt="" width="100%" height="100%" />
@@ -1735,10 +1739,10 @@ const PersonalForm = (props) => {
 														<div className="box-body"></div>
 													</div>
 												</div>
-												<div className="dropzone-wrapper">
-													<label htmlFor="bank_statement_1" style={{cursor: "pointer"}}>
+												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
+													<label htmlFor="bank_statement_1" style={{cursor: "pointer",marginLeft: "27px"}}>
 														{form.values.bank_statement_url ?
-															<img src={form.values.bank_statement_url} alt="" width="100%" height="100%" />
+															<img src="/assets/img/pdf.png" alt=""  height="127px" />
 															:
 															<div className="dropzone-desc">
 																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
@@ -1748,7 +1752,7 @@ const PersonalForm = (props) => {
 													
 													</label>
 												</div>
-												<input type="file"  id="bank_statement_1" className="dropzone" onChange={(e) => acceptedFiles(e, 'bank_statement', 'uploads/merchant/bankstatement')} style={{display:"none"}} />
+												<input type="file"  id="bank_statement_1"   accept="application/pdf" className="dropzone" onChange={(e) => acceptedFiles(e, 'bank_statement', 'uploads/merchant/bankstatement')} style={{display:"none"}} />
 
 												{form.touched.bank_statement && form.errors.bank_statement ? <div className="text-danger">{form.errors.bank_statement}</div> : ''}
 
@@ -1767,10 +1771,10 @@ const PersonalForm = (props) => {
 														<div className="box-body"></div>
 													</div>
 												</div>
-												<div className="dropzone-wrapper">
-													<label htmlFor="salery_slip_1" style={{cursor: "pointer"}}>
+												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
+													<label htmlFor="salery_slip_1" style={{cursor: "pointer",marginLeft: "27px"}}>
 														{form.values.salery_slip_url ?
-															<img src={form.values.salery_slip_url} alt="" width="100%" height="100%" />
+															<img src="/assets/img/pdf.png" alt="" height="127px" />
 															:
 															<div className="dropzone-desc">
 																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
@@ -1779,7 +1783,7 @@ const PersonalForm = (props) => {
 														}
 													</label>
 												</div>
-												<input type="file" id="salery_slip_1"  className="dropzone" onChange={(e) => acceptedFiles(e, 'salery_slip', 'uploads/merchant/salery_slip')} style={{display:"none"}}  />
+												<input type="file" id="salery_slip_1"  accept="application/pdf" className="dropzone" onChange={(e) => acceptedFiles(e, 'salery_slip', 'uploads/merchant/salery_slip')} style={{display:"none"}}  />
 
 												{form.touched.salery_slip && form.errors.salery_slip ? <div className="text-danger">{form.errors.salery_slip}</div> : ''}
 
