@@ -266,36 +266,104 @@ const StepOne = (props) => {
 
 	const [show, setShow] = useState(false);
 
+	const [userResponse, setsUserResponse] = useState('');
+
+
+	const formStatus = useFormik({
+		initialValues:{
+			caseid : "",
+			password: ""
+		},
+		validationSchema: yup.object({
+			caseid: yup.string().required('Please enter your id'),
+			password: yup.string().required('Please enter password')
+		}),
+		onSubmit: values => {
+			api.postApi('check-user-status', values,false, props.header).then(response => {
+				if(response.status=='success') {
+					setsUserResponse(response)
+				}
+			}).catch(error => {
+
+			});
+		}
+	})
+
+	// const GetStatus = () => {
+	// 	api.postApi('check-user-status', {},false, header).then(response => {
+	// 		if(response.status=='success') {
+	// 			setsUserResponse(response)
+	// 		}
+	// 	}).catch(error => {
+	// 	});
+
+	// }
+
 
 	return (
 		<>
 		<div className={show ? "modal right display-block" : "modal display-none"}   tabIndex="-1" data-backdrop="static" data-keyboard="false">
+		<form id="msform" onSubmit={formStatus.handleSubmit}>
 			<div className="modal-dialog modal-dialog-centered">
 				<div className="modal-content" id="modal_content">
 					<div className="modal-header">
-						<h4 className="modal-title"><b>Check Your Loan Status</b></h4>
-						<button type="button" className="close" onClick={() =>setShow(false)}>&times;</button>
+						<h4 className="modal-title"><b>{userResponse==''? 'Check Your Loan Status' : ' Current Loan Status ('+userResponse.case_status+ ')' }</b></h4>
+						<button type="button" className="close" onClick={() =>setShow(false,setsUserResponse('',formStatus.resetForm()))}>&times;</button>
 					</div>
+					
 					<div className="modal-body">
+						
 					    <div className="stepform-newdesign">
-							<div className="row">
-								    <div className="col-12 col-sm-12">
-								    	<label>Case Id</label>
-										<input  placeholder="Enter CaseId" id="caseid" title="Case Id"  type="text" />
-									</div>
-									<div className="col-12 col-sm-12">
-									   <label>Password</label>
-									   <input  placeholder ="Enter Password" id="password" title="Password"  type="password" />
-									</div>
+						    {userResponse==''? 
+								<div className="row" style={{textAlign: "left"}}>
+										<div className="col-12 col-sm-12">
+											<label>Case Id</label>
+											<input   name="caseid" {...formStatus.getFieldProps("caseid")} placeholder="Enter CaseId"   type="text"  style={{marginBottom: "0px"}}/>
+											{formStatus.touched.caseid && formStatus.errors.caseid ?
+													<div className="text-danger"  style={{textAlign: "left"}}>{formStatus.errors.caseid}</div> : ''}
+										</div>
+										<div className="col-12 col-sm-12">
+										<label>Password</label>
+										<input name="password" {...formStatus.getFieldProps("password")} placeholder ="Enter Password" type="password" style={{marginBottom: "0px"}} />
+										{formStatus.touched.password && formStatus.errors.password ?
+													<div className="text-danger" style={{textAlign: "left"}}>{formStatus.errors.password}</div> : ''}
+										</div>
 
-							</div>
+								</div>
+							: ''}
+
+                            {userResponse && userResponse.lenders.length && userResponse.lenders.map((option, index) => (
+								<div className="row" key={index}>
+                                  <table className="table table-bordered">
+									<thead>
+										<tr>
+											<th>Company Name</th>
+											<th>Status</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>{option.company_name}</td>
+											<td>{option.status}</td>
+										</tr>
+									</tbody>
+								</table>
+                                   
+								</div>
+							))}
+							
 						</div>
+						
 					</div>
+					{userResponse==''?
 					<div className="modal-footer" id="status-footer" style={{display: "unset"}} >
-						<button type="button"  className="next action-button apply-now-btn ml-00 leftfloat-withmr-1" style={{float: "right"}}>Check</button>
+						<button type="submit"  className="next action-button apply-now-btn ml-00 leftfloat-withmr-1" style={{float: "right"}}>Check</button>
 					</div>
+					: ''}
+					
 				</div>
 			</div>
+			</form>
 		</div>
 			<section className="newstep-form">
 				<div className="container new-step-container">
