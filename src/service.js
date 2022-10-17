@@ -1,15 +1,8 @@
 
-
 const config = require('./config.json');
 const api_base_url =config.API_URL;
 
-
-
-
-
-class Service {
-    
-    
+class Service {   
     getApi(path,parameter = '',object = {}) {
         return new Promise(function(resolve, reject) {
             let headers = {}
@@ -82,7 +75,6 @@ class Service {
             });
         });
     }
-
 }
 export default Service;
 

@@ -10,7 +10,6 @@ import toast, { Toaster } from 'react-hot-toast';
 
 const api = new Service();
 
-
 const UserForm = () => {
 	const navigate = useNavigate();
 	const { name } = useParams();
@@ -114,7 +113,6 @@ const UserForm = () => {
 			loan_purpose : 0
 		}
 	})
-
 	useEffect(() => {
 		if (name !== undefined) {
 			getUserDetail()
@@ -134,7 +132,6 @@ const UserForm = () => {
 
 		});
 	}
-
 	const GetStates = () => {
 		api.getApi('allStates', '', header).then(response => {
 			setallStates(response.states);
@@ -182,7 +179,6 @@ const UserForm = () => {
 		</>
 	)
 }
-
 
 const StepOne = (props) => {
 
@@ -242,9 +238,7 @@ const StepOne = (props) => {
 							} else {
 								setCurrentStep(currentStep + 1)
 								form.setFieldValue('wrong_opt',false)
-							}
-
-							
+							}							
 						}
 						else {
 							form.setFieldValue('wrong_opt',true)
@@ -269,8 +263,6 @@ const StepOne = (props) => {
 	const [show, setShow] = useState(false);
 
 	const [userResponse, setsUserResponse] = useState('');
-
-
 	const formStatus = useFormik({
 		initialValues:{
 			caseid : "",
@@ -291,7 +283,6 @@ const StepOne = (props) => {
 		}
 	})
 
-
 	return (
 		<>
 		<div className={show ? "modal right display-block" : "modal display-none"}   tabIndex="-1" data-backdrop="static" data-keyboard="false">
@@ -301,10 +292,8 @@ const StepOne = (props) => {
 					<div className="modal-header">
 						<h4 className="modal-title"><b>{userResponse==''? 'Check Your Loan Status' : ' Current Loan Status ('+userResponse.case_status+ ')' }</b></h4>
 						<button type="button" className="close" onClick={() =>setShow(false,setsUserResponse('',formStatus.resetForm()))}>&times;</button>
-					</div>
-					
-					<div className="modal-body">
-						
+					</div>					
+					<div className="modal-body">						
 					    <div className="stepform-newdesign">
 						    {userResponse==''? 
 								<div className="row" style={{textAlign: "left"}}>
@@ -339,13 +328,11 @@ const StepOne = (props) => {
 											<td>{option.status}</td>
 										</tr>
 									</tbody>
-								</table>
-                                   
+								</table>                                  
 								</div>
 							))}
 							
-						</div>
-						
+						</div>						
 					</div>
 					{userResponse==''?
 					<div className="modal-footer" id="status-footer" style={{display: "unset"}} >
@@ -362,7 +349,6 @@ const StepOne = (props) => {
 					<div className="row form-newalign">
 						<div className="col-md-12 col-lg-6">
 							<form id="msform" onSubmit={form.handleSubmit}>
-
 								<fieldset className="ui-step-content" style={currentStep == 0 ? { display: "block" } : { display: "none" }}>
 									<h1>Instant Business & Personal</h1>
 									<ul className="checiocn">
@@ -547,9 +533,6 @@ const StepOne = (props) => {
 						</div>
 					   <input type="button" name="next" className="next action-button apply-now-btn mt-5 ml-00" value="Verify Number" onClick={()=>setCurrentStep(6)}/>
 					</fieldset> */}
-
-
-
 								{/* <fieldset className="ui-step-content">
 					    <button type="button" name="previous" className="previous action-button-previous" onClick={() =>setCurrentStep(currentStep-1) } ><i className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button>
 						<h1 className="mb-0">Additional Info Required</h1>
@@ -583,8 +566,6 @@ const StepOne = (props) => {
 										<label htmlFor="checkbox-2" className="checkbox-label"> Self Employed</label>
 										{/* </div> */}
 									</div>
-									
-
 									<div className="checkbox" style={{ marginBottom: "10px" }}>
 										<p className="mb-33"><b>Loan Type</b></p>
 										{/* <div className="checkbox"> */}
@@ -931,7 +912,6 @@ const BusinessForm = (props) => {
 									</div>
 									<input type="submit" name="next" className="next action-button apply-now-btn ml-00" value="Continue" />
 								</fieldset>
-
 								<fieldset className="ui-step-content" style={currentStep == 1 ? { display: "block" } : { display: "none" }}>
 									<button type="button" name="previous" className="previous action-button-previous" onClick={() => setCurrentStep(currentStep - 1)} ><i className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button>
 									<h1 className="mb-0 mt-1">Co-Applicants</h1>
@@ -992,8 +972,6 @@ const BusinessForm = (props) => {
 									</div>
 									<input type="submit" name="next" className="next action-button apply-now-btn ml-00" value="Continue" />
 								</fieldset>
-
-
 								<fieldset className="ui-step-content" style={currentStep == 2 ? { display: "block" } : { display: "none" }}>
 									<button type="button" name="previous" className="previous action-button-previous" onClick={() => setCurrentStep(currentStep - 1)} ><i className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button>
 									<h1 className="mb-0 mt-1">Upload Doc</h1>
@@ -1143,13 +1121,13 @@ const BusinessForm = (props) => {
 														}
 													</label>
 												</div>
-												<input type="file" id="bank_statement_2" accept="application/pdf"  className="dropzone" onChange={(e) => acceptedFiles(e, 'bank_statement', 'uploads/merchant/bankstatement')}  style={{display:"none"}}/>
+												<input type="file" id="bank_statement_2" className="dropzone" onChange={(e) => acceptedFiles(e, 'bank_statement', 'uploads/merchant/bankstatement')}  style={{display:"none"}}/>
 
 												{form.touched.bank_statement && form.errors.bank_statement ? <div className="text-danger">{form.errors.bank_statement}</div> : ''}
 
 											</div>
 											<div className="col-12 col-md-6 col-lg-5">
-												<p className="mb-0">Upload ITR  <br></br> (Optional) </p>
+												<p className="mb-0">Upload ITR <small>Optional</small></p>
 												<div className="preview-zone hidden">
 													<div className="imgupload-box box-solid">
 														<div className="box-header with-border">
@@ -1232,7 +1210,7 @@ const PersonalForm = (props) => {
 
 			employer_name: currentStep == 1 ? yup.string().required('Please enter employer name').matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
 			designation: currentStep == 1 ? yup.string().required('Please enter your designation').matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
-			organization: currentStep == 1 ? yup.number().typeError('you must specify a number').required('Please enter organization') : '',
+			organization: currentStep == 1 ? yup.number().typeError('you must specify a number').required('Please enter working years') : '',
 			organization_type: currentStep == 1 ? yup.string().required('Please select organization') : '',
 			total_experience: currentStep == 1 ? yup.string().required('Please select total experience') : '',
 			required_amount: currentStep == 1 ? yup.number().typeError('you must specify a number').required('Please enter required amount') : '',
@@ -1464,7 +1442,6 @@ const PersonalForm = (props) => {
 									<input type="submit" name="next" className="next action-button apply-now-btn ml-00" value="Continue" />
 								</fieldset>
 
-
 								<fieldset className="ui-step-content" style={currentStep == 1 ? { display: "block" } : { display: "none" }}>
 									<button type="button" name="previous" className="previous action-button-previous" onClick={() => setCurrentStep(currentStep - 1)} ><i className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button>
 									<h1 className="mb-0 mt-1">Employment Info</h1>
@@ -1484,7 +1461,7 @@ const PersonalForm = (props) => {
 
 											</div>
 											<div className="col-xs-12 col-md-5">
-												<label>No. of years in current organization</label>
+												<label>No. of years in organization</label>
 												<input type="number" min="0" className="" name="organization"  {...form.getFieldProps("organization")} placeholder="Enter year" />
 												{form.touched.organization && form.errors.organization ? <div className="text-danger">{form.errors.organization}</div> : ''}
 
@@ -1508,7 +1485,7 @@ const PersonalForm = (props) => {
 												<select name="total_experience" onChange={(e) => form.setFieldValue('total_experience', e.target.value)}  >
 													<option >Select One</option>
 													<option value="Less than 1">Less than Year</option>
-													<option value="1" >1</option>
+													<option value="1">1</option>
 													<option value="2">2</option>
 													<option value="3">3</option>
 													<option value="4">4</option>
@@ -1547,16 +1524,13 @@ const PersonalForm = (props) => {
 												<label>Required Amount</label>
 												<input type="text" name="required_amount"  {...form.getFieldProps("required_amount")} className="" placeholder="Enter amount" />
 												{form.touched.required_amount && form.errors.required_amount ? <div className="text-danger">{form.errors.required_amount}</div> : ''}
-
 											</div>
 											<div className="col-xs-12 col-md-10">
 												<label>Loan purpose </label>
 												<select name="loan_purpose" onChange={(e) => form.setFieldValue('loan_purpose', e.target.value)}>
 														<option >Select One</option>
 														<option value="1364">Appliance purchase</option>
-														<option value="1365" >Car 2 wheeler</option>
-														<option value="90137346" >Consumer loan </option>
-														<option value="1366" >Debt consolidationl</option>
+														<option value="1365" >Car 2 Weller</option>
 														<option value="1367" >Education</option>
 														<option value="1368">Family event</option>
 														<option value="1369" >Home furnishing</option>
@@ -1566,7 +1540,8 @@ const PersonalForm = (props) => {
 														<option value="1372" >Travel</option>
 														<option value="90156975">Top up loan</option>
 														<option value="1373" >Wedding</option>
-														
+														<option value="1368" >Family event</option>
+														<option value="1366" >Debt consolidationl</option>
 													</select> 
 													{form.touched.loan_purpose && form.errors.loan_purpose ? <div className="text-danger">{form.errors.loan_purpose}</div> : ''}
 
@@ -1651,12 +1626,10 @@ const PersonalForm = (props) => {
 												{form.touched.bank_name && form.errors.bank_name ? <div className="text-danger">{form.errors.bank_name}</div> : ''}
 
 											</div>
-
 										</div>
 									</div>
 									<input type="submit" name="next" className="next action-button apply-now-btn ml-00" value="Continue" />
 								</fieldset>
-
 
 								<fieldset className="ui-step-content" style={currentStep == 2 ? { display: "block" } : { display: "none" }}>
 									<button type="button" name="previous" className="previous action-button-previous" onClick={() => setCurrentStep(currentStep - 1)}  ><i className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button>
@@ -1725,7 +1698,6 @@ const PersonalForm = (props) => {
 												<input type="file" id="aadhar_image_1"  className="dropzone" accept="image/png, image/jpeg, image/jpg" onChange={(e) => acceptedFiles(e, 'aadhar_image', 'uploads/merchant/aadharcard')} style={{display:"none"}} />
 
 												{form.touched.aadhar_image && form.errors.aadhar_image ? <div className="text-danger">{form.errors.aadhar_image}</div> : ''}
-
 											</div>
 										</div>
 										<div className="row">
@@ -1746,7 +1718,7 @@ const PersonalForm = (props) => {
 												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
 													<label htmlFor="bank_statement_1" style={{cursor: "pointer",marginLeft: "27px"}}>
 														{form.values.bank_statement_url ?
-															<img src="/assets/img/pdf.png" alt=""  height="127px" />
+															<img src={form.values.bank_statement_url} alt="" width="100%" height="100%" />
 															:
 															<div className="dropzone-desc">
 																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
@@ -1778,7 +1750,7 @@ const PersonalForm = (props) => {
 												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
 													<label htmlFor="salery_slip_1" style={{cursor: "pointer",marginLeft: "27px"}}>
 														{form.values.salery_slip_url ?
-															<img src="/assets/img/pdf.png" alt="" height="127px" />
+															<img src={form.values.salery_slip_url} alt="" width="100%" height="100%" />
 															:
 															<div className="dropzone-desc">
 																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
@@ -1787,7 +1759,7 @@ const PersonalForm = (props) => {
 														}
 													</label>
 												</div>
-												<input type="file" id="salery_slip_1"  accept="application/pdf" className="dropzone" onChange={(e) => acceptedFiles(e, 'salery_slip', 'uploads/merchant/salery_slip')} style={{display:"none"}}  />
+												<input type="file" id="salery_slip_1"  className="dropzone" onChange={(e) => acceptedFiles(e, 'salery_slip', 'uploads/merchant/salery_slip')} style={{display:"none"}}  />
 
 												{form.touched.salery_slip && form.errors.salery_slip ? <div className="text-danger">{form.errors.salery_slip}</div> : ''}
 
@@ -1796,9 +1768,6 @@ const PersonalForm = (props) => {
 									</div>
 									<input type="submit" name="next" className="next action-button apply-now-btn mt-5 ml-00" value="Verify & Proceed" />
 								</fieldset>
-
-							
-
 							</form>
 						</div>
 
@@ -1814,9 +1783,7 @@ const PersonalForm = (props) => {
 }
 const LenderListForm = (props) => {
 
-
-	const [errorMassege, setErrorMassege] = useState(0);
-	
+	const [errorMassege, setErrorMassege] = useState(0);	
 	const submitForm = (event) => {
 	        if(props.data.lenders.length>0) {
 				setErrorMassege('')
@@ -1827,11 +1794,9 @@ const LenderListForm = (props) => {
 				setErrorMassege('Please select at least one lender')
 			}
 	}
-
 	useEffect(() => {
 			GetLenderList()
 	}, [])
-
 	const lenderPushArray = (event) => {
 		if(event.target.checked) {
 			setErrorMassege('')
@@ -1846,7 +1811,6 @@ const LenderListForm = (props) => {
 			
 		}
 	}
-
 	const [lenderList, setlenderList] = useState([]);
 	const GetLenderList = () => {
 		api.postApi('verifyLendersList', {city:props.data.info.loan_type==1?props.data.personal_info.residence_city:props.data.business_info.city,pincode:props.data.info.loan_type==1?props.data.personal_info.residence_pincode:props.data.business_info.pincode}, false, props.header).then(response => {
@@ -1861,18 +1825,12 @@ const LenderListForm = (props) => {
 		<>
 		<section className="newstep-form">
 		{/* <form id="msform" onSubmit={form.handleSubmit}> */}
-		<div className="container">
-		
-			<div className="row d-flex justify-content-center flexwrap">
-			
+		<div className="container">		
+			<div className="row d-flex justify-content-center flexwrap">			
 				<div className="col-md-12">
-					{lenderList.length > 0 && lenderList.map((co, index) => (
-					
-					
-					
+					{lenderList.length > 0 && lenderList.map((co, index) => (					
 						<div className="landerlist-loan" key={index}>
-												<label to="" className="link-website" style={{float:"left"}}> <input type="checkbox" id={co.user_id+"_lender_error"} value={co.user_id}  onChange={(e) => lenderPushArray(e)}/> <b>{co.company_name}</b></label>
-
+							<label to="" className="link-website" style={{float:"left"}}> <input type="checkbox" id={co.user_id+"_lender_error"} value={co.user_id}  onChange={(e) => lenderPushArray(e)}/> <b>{co.company_name}</b></label>
 							<div className="review-body">
 							<div className="review-table table-responsive">
 							<table className="table table-bordered">
@@ -1896,14 +1854,12 @@ const LenderListForm = (props) => {
 					</div>	  
 					))}
 					{errorMassege? <div className="text-danger" style={{textAlign:"end"}}>{errorMassege}</div> :''}
-				</div>
-				
+				</div>				
 				<div className="col-md-12" style={{textAlign:"end"}}>
 					<button type="button" className="submit action-button apply-now-btn ml-00" onClick={() => submitForm() } style={{float:"right"}}>SUBMIT</button>
 				</div>
 				
-			</div>
-			
+			</div>			
 		</div>
 		{/* </form> */}
   </section>
@@ -1924,7 +1880,7 @@ const ThankYouForm = (props) => {
 										<svg className="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle className="checkmark__circle" cx="26" cy="26" r="25" fill="none" /><path className="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" /></svg>
 									</div>
 									<h1 className="mb-0">Thank you!</h1>
-									<h6 className="mb-0">Your application has been successfully received. You may choose to note down the file number for further tracking of the case!</h6>
+									<h6 className="mb-0">Your application has been successfully received. You may choose to note down the file number for further tracking of the case!</h6>&nbsp;
 									<p><b>File ID:</b> : {props.formResponse && props.formResponse.file_id}</p>
 									<p><b>Password:</b> {props.formResponse && props.formResponse.password}</p>
 									{/* <input type="submit" name="submit" className="submit action-button apply-now-btn" value="Continue" /> */}
