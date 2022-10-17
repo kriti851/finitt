@@ -164,7 +164,7 @@ const UserForm = () => {
 	};
 
 	// Normal Form 
-	// steps.push(<StepOne GetStates={GetStates} setHeader={setHeader} header={header} next={handleNextStep} prev={handlePrevStep} setData={setData} data={data} setCurrentStep={setCurrentStep} allStates={allStates} />)
+	steps.push(<StepOne GetStates={GetStates} setHeader={setHeader} header={header} next={handleNextStep} prev={handlePrevStep} setData={setData} data={data} setCurrentStep={setCurrentStep} allStates={allStates} />)
 	// Personal Form
 	steps.push(<PersonalForm formResponse={formResponse} header={header} next={handleNextStep} prev={handlePrevStep} setData={setData} data={data} allStates={allStates} setCurrentStep={setCurrentStep} currentStep={currentStep} />)
 	// Business Form
@@ -1301,7 +1301,7 @@ const BusinessForm = (props) => {
 }
 
 const PersonalForm = (props) => {
-	const [currentStep, setCurrentStep] = useState(2);
+	const [currentStep, setCurrentStep] = useState(0);
 	const form = useFormik({
 		initialValues: props.data.personal_info,
 		// enableReinitialize: true,
