@@ -80,11 +80,14 @@
     font-weight: 400;
     color: #424141;
 	margin-bottom: 15px;
+	position: relative;
+	    padding-right: 35px;
 }
 .stepform-newdesign input:focus {
     border: 1px solid #FF9000;
     outline: none;
 }
+
 .stepform-newdesign select {
     height: 50px;
     width: 100%;
@@ -95,11 +98,20 @@
     font-family: 'Josefin Sans';
     font-weight: 400;
     color: #424141;
+	    position: relative;
 	margin-bottom: 15px;
+	    padding-right: 35px;
 }
 .stepform-newdesign select:focus {
     border: 1px solid #FF9000;
     outline: none;
+}
+
+.stepform-newdesign .checkgreen {
+	position: absolute;
+    right: 25px;
+    top: 38px;
+    color: #00e500;
 }
 
 
@@ -452,6 +464,8 @@
 
 
 
+
+
 @media only screen and (max-width: 767px) {
 .newstep-form {
     padding: 20px 0px;
@@ -538,4 +552,385 @@
 .docutxt + label:before {
        width: 30px;
 }
+}
+
+
+
+/* Leander css */
+
+.leanderlist-padding { padding-top: 50px;}
+.f-24-size {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+.link-website {font-size: 24px; text-decoration: underline; color: black; font-weight: 700;}
+.review-body {
+    padding-top: 8px;
+    background-color: #fff;
+    position: relative;
+    overflow: hidden;
+    border-top: 3px solid #64984b !important;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+.review-body .review-left {
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+    margin-top: 10px;
+    width: 150px;
+}
+.review-body .review-left a.card-thumbnail {
+    position: relative;
+    left: 1px;
+    min-height: 35px;
+    width: 170px;
+    margin-bottom: 18px;
+    display: block;
+}
+.review-body .review-left a.card-thumbnail img {
+    width: 130px;
+    height: auto;
+}
+.review-body .review-left a.button {
+    display: block;
+    height: 77px;
+    width: 165px;
+    position: relative;
+    bottom: 18px;
+}
+.review-body .review-left a.button .bc-btn {
+    top: 18px;
+	position: relative;
+    height: 42px;
+    width: 144px;
+    margin-left: 10px;
+    font-size: 17px;
+    line-height: 28px;
+    text-align: center;
+    background-color: #319b0a;
+    box-shadow: 0 1px 5px #555;
+    border-radius: 3px;
+}
+.bc-btn .jump-text {
+    position: relative;
+    left: 1px;
+    background: #ff8700;
+    color: white;
+    padding: 10px 15px;
+    display: inline-block;
+    margin-top: 20px;
+    border-radius: 5px;
+}
+.review-body .review-middle {
+    display: inline-block;
+    vertical-align: top;
+    width: 365px;
+    font-size: 16px;
+    color: #333;
+    line-height: 1.5;
+    margin-left: 20px;
+    min-height: 150px;
+}
+.review-body .review-middle ul {
+    list-style-type: square;
+    margin-bottom: 20px;
+}
+.review-body .review-right {
+    display: inline-block;
+    vertical-align: top;
+    float: left;
+    width: 100%;
+    text-align: left;
+    margin: 0px 0px 0px 10px;
+}
+.our-rating {
+    padding-top: 10px;
+    background-color: #eaeaea;
+    position: relative;
+    padding-bottom: 10px;
+}
+.review-body .review-right .our-rating .stars {
+    font-size: 16px;
+    letter-spacing: 2px;
+    padding-bottom: 0;
+}
+.stars {
+    color: #e5bb0f;
+    padding: 5px 0;
+}
+.review-body .review-right .our-rating h4 {
+    color: #333;
+    font-size: 42px;
+    line-height: 48px;
+    margin: 0;
+}
+.review-body .review-right .our-rating .overall-rating {
+    margin: 0;
+    font-size: 13px;
+}
+.review-body .review-middle a {
+    color: #319b0a;
+    text-decoration: underline;
+    font-weight: 700;
+}
+.review-table table {
+    width: 100%;
+}
+.review-table table thead {
+    background-color: #f7f7f7;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
+.review-table table thead th {
+    width: 25%;
+    height: 25px;
+    text-align: center;
+    font-size: 14px;
+    color: #333;
+}
+.review-table table tbody td:first-child {
+    height: 35px;
+    width: 155px;
+    border: none;
+}
+.review-table table tbody td {
+    font-weight: 700;
+    text-align: center;
+    border-left: 1px solid #ddd;
+    font-size: 12px;
+    color: #333;
+}
+.review-table table th {
+    background-color: #ebecef;
+    padding: 10px 5px !important;
+}
+.mobileshow {
+	display:none !important;
+}
+.sb-btn {
+    background: #00387a;
+    color: white;
+    padding: 15px 15px;
+    border: none;transition: all 0.3s linear;
+    display: block;    font-weight: 800;
+    margin: 15px auto;
+    width: 250px;    text-transform: uppercase;
+	 margin-bottom: 20px;
+	 border-radius: 100px;
+}
+.sb-btn:hover {
+    background: #ff8700;
+} 
+.control {
+    display: block;
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 0px;
+}
+.control input {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+}
+.control__indicator {
+    position: absolute;
+    top: 0px;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background: #b5b5b5;
+}
+.control--radio .control__indicator {
+  border-radius: 50%;
+}
+.control:hover input ~ .control__indicator,
+.control input:focus ~ .control__indicator {
+  background: #ccc;
+}
+.control input:checked ~ .control__indicator {
+  background: #ff8700;
+}
+.control input:checked ~ .control__indicator {
+  background: #ff8700;
+}
+.control:hover input:not([disabled]):checked ~ .control__indicator,
+.control input:checked:focus ~ .control__indicator {
+  background: #ff8700;
+}
+.control__indicator:after {
+  content: '';
+  position: absolute;
+  display: none;
+}
+.control input:checked ~ .control__indicator:after {
+  display: block;
+}
+.control--checkbox .control__indicator:after {
+    left: 8px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+.justify-content-center {
+    -ms-flex-pack: center!important;
+    justify-content: center!important;
+}
+.d-flex {
+    display: -ms-flexbox!important;
+    display: flex!important;
+}
+.flexwrap {
+    flex-wrap: wrap;
+}
+
+
+.upload__box {
+    padding: 0px;
+}
+.upload__inputfile {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+.upload__btn {
+    display: inline-block;
+    font-weight: 600;
+    color: #242424;
+    text-align: center;
+    min-width: 100%;
+    padding: 5px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px dotted;
+    background-color: #f1f1f1;
+    border-color: #ff9000;
+        border-radius: 4px;
+    line-height: 26px;
+    font-size: 14px;
+	position: relative;
+}
+.upload__btn:hover {
+    background-color: unset;
+    color: #0f2f82;
+    transition: all 0.3s ease;
+}
+.upload__btn-box {
+  margin-bottom: 10px;
+}
+.upload__img-wrap {
+    display: flex;
+    /* flex-wrap: wrap; */
+    margin: 0px 0px;
+}
+.upload__img-box {
+    width: 250px;
+    padding: 0 0px;
+    margin-bottom: 12px;
+    border: 1px solid #c9c9c9;
+    margin-right: 10px;
+}
+.upload__img-close {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    text-align: center;
+    line-height: 28px;
+    z-index: 1;
+    cursor: pointer;
+    color: white;
+}
+.upload__img-close:hover {
+	color: white;
+}
+
+.imgpreview-newbx {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 0px;
+    position: relative;
+    padding-left: 0px;
+    list-style: none;
+    width: 100%;
+    background: #f1f1f1;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 15px;
+    column-gap: 15px;
+}
+.imgpreview-newbx li {
+    width: 150px;
+    padding: 0 0px;
+    margin-bottom: 12px;
+    position: relative;
+    border: 1px solid #cfcfcf;
+    background: white;
+    height: 130px;
+}
+.imgpreview-newbx li img {
+    width: 150px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    position: relative;
+    padding-bottom: 0%;
+}
+.imgpreview-newbx p {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    background: #00000061;
+    color: white;
+    padding: 0px 5px;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+}
+
+.upload__btn input {
+	position: absolute;
+    left: 0px;
+    bottom: 0px;
+}
+
+@media (min-width: 320px) and (max-width: 450px) {
+.imgpreview-newbx li{
+       width: 47%;
+}	
+.imgpreview-newbx li img {
+       width: 100%;
+}
+}
+
+@media (min-width: 451px) and (max-width: 575px) {
+.imgpreview-newbx li {
+    width: 31%;
+}
+.imgpreview-newbx li img {
+       width: 100%;
+}
+}
+
+input[type=checkbox], input[type=radio] {
+    box-sizing: border-box;
+    padding: 0;
+    position: absolute !important;
 }
