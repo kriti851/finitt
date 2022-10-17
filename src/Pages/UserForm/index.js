@@ -291,16 +291,6 @@ const StepOne = (props) => {
 		}
 	})
 
-	// const GetStatus = () => {
-	// 	api.postApi('check-user-status', {},false, header).then(response => {
-	// 		if(response.status=='success') {
-	// 			setsUserResponse(response)
-	// 		}
-	// 	}).catch(error => {
-	// 	});
-
-	// }
-
 
 	return (
 		<>
@@ -650,12 +640,12 @@ const BusinessForm = (props) => {
 			legal_name: currentStep == 0 ? yup.string().required('Please enter legal name of your business').matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
 			state: currentStep == 0 ? yup.string().required('Please select state') : '',
 			city: currentStep == 0 ? yup.string().required('Please select city') : '',
-			houseno: currentStep == 0 ? yup.string().required('Please Enter Building name/flat no') : '',
+			houseno: currentStep == 0 ? yup.string().required('Please tnter building name/flat no') : '',
 			pincode: currentStep == 0 ? yup.string().required('Please select pincode') : '',
-			business_type: currentStep == 0 ? yup.string().required('Please select Business type') : '',
+			business_type: currentStep == 0 ? yup.string().required('Please select business type') : '',
 			type_of_nature: currentStep == 0 ? yup.string().required('Please select nature of your business') : '',
 			vintage: currentStep == 0 ? yup.number().typeError('you must specify a number').required('Please enter no of years in business') : '',
-			turn_over: currentStep == 0 ? yup.string().required('Please select Business turn over') : '',
+			turn_over: currentStep == 0 ? yup.string().required('Please select business turn over') : '',
 			desired_amount: currentStep == 0 ? yup.string().required('Please select desired loan amount') : '',
 			required_amount: currentStep == 0 ? yup.number().typeError('you must specify a number').required('please enter required amount') : '',
 			co_application: currentStep == 1 ? yup.array().of(
@@ -853,7 +843,7 @@ const BusinessForm = (props) => {
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>No. of years in Business</label>
-												<input type="number" name="vintage" {...form.getFieldProps("vintage")} className="" placeholder="Enter year" />
+												<input type="number" min="0" name="vintage" {...form.getFieldProps("vintage")} className="" placeholder="Enter year" />
 												{form.touched.vintage && form.errors.vintage ? <div className="text-danger">{form.errors.vintage}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
@@ -981,16 +971,19 @@ const BusinessForm = (props) => {
 														</div>
 													</div>
 													<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
-														{form.values['co_application']?.[index]?.['pancard_image_url'] ?
-															<img src={form.values['co_application']?.[index]?.['pancard_image_url']} alt="" width="100%" height="100%" />
-															:
-															<div className="dropzone-desc">
-																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-																<p className="mt-1">Upload Image(png/jpeg/jpg)</p>
-															</div>
-														}
-														<input type="file"  className="dropzone" accept="image/png, image/jpeg, image/jpg" onChange={(e) => acceptedFiles(e, `co_application.${index}.pancard_image`, 'uploads/merchant/pancard')} />
+														<label htmlFor="co_application_image" style={{cursor: "pointer"}}>
+															{form.values['co_application']?.[index]?.['pancard_image_url'] ?
+																<img src={form.values['co_application']?.[index]?.['pancard_image_url']} alt="" width="100%" height="100%" />
+																:
+																<div className="dropzone-desc">
+																	<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+																	<p className="mt-1">Upload Image(png/jpeg/jpg)</p>
+																</div>
+															}
+														</label>
 													</div>
+													<input type="file" id="co_application_image"  className="dropzone" accept="image/png, image/jpeg, image/jpg" onChange={(e) => acceptedFiles(e, `co_application.${index}.pancard_image`, 'uploads/merchant/pancard')}  style={{display:"none"}}/>
+
 													{form.touched['co_application']?.[index]?.['pancard_image'] && form.errors['co_application']?.[index]?.['pancard_image'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['pancard_image']}</div> : ''}
 
 												</div>
@@ -1412,13 +1405,13 @@ const PersonalForm = (props) => {
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Number of Kids</label>
-												<input type="number" name="number_of_kids" {...form.getFieldProps("number_of_kids")} className="" placeholder="Enter kids number" />
+												<input type="number" min="0" name="number_of_kids" {...form.getFieldProps("number_of_kids")} className="" placeholder="Enter kids number" />
 												{form.touched.number_of_kids && form.errors.number_of_kids ? <div className="text-danger">{form.errors.number_of_kids}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Vehicle Type</label>
 												<select name="vehicle_type" onChange={(e) => form.setFieldValue('vehicle_type', e.target.value)} >
-													<option>Select Vehicle Type</option>
+													<option>Select One</option>
 													<option value="2 wheeler">2 wheeler</option>
 													<option value="4 wheeler" >4 wheeler</option>
 													<option value="None">None</option>
@@ -1492,7 +1485,7 @@ const PersonalForm = (props) => {
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>No. of years in current organization</label>
-												<input type="number" className="" name="organization"  {...form.getFieldProps("organization")} placeholder="Enter year" />
+												<input type="number" min="0" className="" name="organization"  {...form.getFieldProps("organization")} placeholder="Enter year" />
 												{form.touched.organization && form.errors.organization ? <div className="text-danger">{form.errors.organization}</div> : ''}
 
 											</div>
@@ -1704,7 +1697,7 @@ const PersonalForm = (props) => {
 
 											</div>
 											<div className="col-12 col-md-6 col-lg-5">
-												<p className="mb-0">Upload Pan Aadhar Card</p>
+												<p className="mb-0">Upload Aadhar Card</p>
 												<div className="preview-zone hidden">
 													<div className="imgupload-box box-solid">
 														<div className="box-header with-border">
@@ -1856,7 +1849,7 @@ const LenderListForm = (props) => {
 
 	const [lenderList, setlenderList] = useState([]);
 	const GetLenderList = () => {
-		api.postApi('verifyLendersList', {}, false, props.header).then(response => {
+		api.postApi('verifyLendersList', {city:props.data.info.loan_type==1?props.data.personal_info.residence_city:props.data.business_info.city,pincode:props.data.info.loan_type==1?props.data.personal_info.residence_pincode:props.data.business_info.pincode}, false, props.header).then(response => {
 			if(response.status=='success') {
 				setlenderList(response.lenderList);
 			}
