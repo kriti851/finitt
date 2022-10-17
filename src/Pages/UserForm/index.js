@@ -5,9 +5,10 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import Service from './../../service';
 import uuid from 'react-uuid';
-// import DatePicker from 'react-date-picker';
 import toast, { Toaster } from 'react-hot-toast';
+// import DatePicker from 'react-date-picker';
 
+const config = require('./../../config.json')
 const api = new Service();
 
 const UserForm = () => {
@@ -162,8 +163,8 @@ const UserForm = () => {
 		setCurrentStep((prev) => prev - 1);
 	};
 
-	//Normal Form 
-	steps.push(<StepOne GetStates={GetStates} setHeader={setHeader} header={header} next={handleNextStep} prev={handlePrevStep} setData={setData} data={data} setCurrentStep={setCurrentStep} allStates={allStates} />)
+	// Normal Form 
+	// steps.push(<StepOne GetStates={GetStates} setHeader={setHeader} header={header} next={handleNextStep} prev={handlePrevStep} setData={setData} data={data} setCurrentStep={setCurrentStep} allStates={allStates} />)
 	// Personal Form
 	steps.push(<PersonalForm formResponse={formResponse} header={header} next={handleNextStep} prev={handlePrevStep} setData={setData} data={data} allStates={allStates} setCurrentStep={setCurrentStep} currentStep={currentStep} />)
 	// Business Form
@@ -555,28 +556,37 @@ const StepOne = (props) => {
 										<h1>Congratulations! <br></br> You are eligible for a loan.</h1>
 
 									</div>
+
+									
 									<div className="checkbox">
 										<p className="mb-33"><b>Employment type</b></p>
 										{/* <div className="checkbox"> */}
-										<input id="checkbox-1" name="employee_type" type="checkbox" value="1" onChange={(e) => form.setFieldValue('employee_type', e.target.value)} checked={form.values.employee_type == 1} />
+										<div className="col-md-12">
+										<div className="col-md-4">
+										<input id="checkbox-1"  className="styled-checkbox" name="employee_type" type="checkbox" value="1" onChange={(e) => form.setFieldValue('employee_type', e.target.value)} checked={form.values.employee_type == 1} />
 										<label htmlFor="checkbox-1" className="checkbox-label">&nbsp; Salaried &nbsp;</label>
+										</div>
 										{/* </div> */}
 										{/* <div className="checkbox"> */}
-										<input id="checkbox-2" name="employee_type" type="checkbox" value="2" onChange={(e) => form.setFieldValue('employee_type', e.target.value)} checked={form.values.employee_type == 2} />
+										<div className="col-md-4">
+										<input id="checkbox-2" className="styled-checkbox"  name="employee_type" type="checkbox" value="2" onChange={(e) => form.setFieldValue('employee_type', e.target.value)} checked={form.values.employee_type == 2} />
 										<label htmlFor="checkbox-2" className="checkbox-label"> Self Employed</label>
-										{/* </div> */}
+										</div>
+										</div>
 									</div>
 									<div className="checkbox" style={{ marginBottom: "10px" }}>
 										<p className="mb-33"><b>Loan Type</b></p>
 										{/* <div className="checkbox"> */}
-										<input id="checkbox-3" name="loan_type" type="checkbox" value="1" onChange={(e) => form.setFieldValue('loan_type', e.target.value)} checked={form.values.loan_type == 1} />
+										<div className="col-md-12">
+										<div className="col-md-4">
+										<input id="checkbox-3" className="styled-checkbox"  name="loan_type" type="checkbox" value="1" onChange={(e) => form.setFieldValue('loan_type', e.target.value)} checked={form.values.loan_type == 1} />
 										<label htmlFor="checkbox-3" className="checkbox-label">&nbsp; Personal &nbsp;</label>
-										{/* </div> */}
-										{/* <div className="checkbox"> */}
-										<input id="checkbox-4" name="loan_type" type="checkbox" value="2" onChange={(e) => form.setFieldValue('loan_type', e.target.value)} checked={form.values.loan_type == 2} />
+										</div>
+										<div className="col-md-4">
+										<input id="checkbox-4"  className="styled-checkbox" name="loan_type" type="checkbox" value="2" onChange={(e) => form.setFieldValue('loan_type', e.target.value)} checked={form.values.loan_type == 2} />
 										<label htmlFor="checkbox-4" className="checkbox-label">&nbsp; Business &nbsp;</label>
-										{/* </div> */}
-
+										</div>
+										</div>
 									</div>
 									<div className="col-xs-12 col-md-8 ">
 										{form.touched.loan_type && form.errors.loan_type ? <div className="text-danger">{form.errors.loan_type}</div> : ''}
@@ -610,7 +620,7 @@ const BusinessForm = (props) => {
 	const [currentStep, setCurrentStep] = useState(0);
 	const form = useFormik({
 		initialValues: props.data.business_info,
-		// enableReinitialize: true,
+		enableReinitialize: true,
 		validationSchema: yup.object({
 			email: currentStep == 0 ? yup.string().email('Please enter valid email address').required('Please enter email address') : '',
 			first_name: currentStep == 0 ? yup.string().required('Please enter your name').matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
@@ -633,16 +643,16 @@ const BusinessForm = (props) => {
 				yup.object({
 					name: yup.string().required("Please enter co-applicant name").matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
 					pan_number: yup.string().required("Please enter co-applicant pan card number"),
-					pancard_image: yup.string().required("Please upload co-applicant pan card image"),
+					pancard_image: yup.string().required("Please upload co-applicant pan card"),
 					relationship: yup.string().required("Please enter co-applicant relationship").matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
 				}),
 			) : '',
 			pan_number: currentStep == 2 ? yup.string().required('Please enter pan card number') : '',
-			pancard_image: currentStep == 2 ? yup.string().required('Please upload pan card image') : '',
+			pancard_image: currentStep == 2 ? yup.string().required('Please upload pan card') : '',
 			gst_number: currentStep == 2 ? yup.string().required('Please enter valid GST number') : '',
-			gstproof_image: currentStep == 2 ? yup.string().required('Please upload valid GST image') : '',
+			gstproof_image: currentStep == 2 ? yup.string().required('Please upload valid GST') : '',
 			business_address: currentStep == 2 ? yup.string().required('Please enter valid business address') : '',
-			business_address_proof: currentStep == 2 ? yup.string().required('Please enter business address proof image') : '',
+			business_address_proof: currentStep == 2 ? yup.string().required('Please enter business address proof') : '',
 			bank_statement: currentStep == 2 ? yup.string().required('Please upload bank statement') : '',
 			itr_docs: currentStep == 2 ? yup.string().required('Please upload ITR') : '',
 			loan_purpose: currentStep == 2 ? yup.number().required('Please select loan purpose') : '',
@@ -663,19 +673,46 @@ const BusinessForm = (props) => {
 		}
 	});
 
-	const acceptedFiles = (e, path, s3_path) => {
-		var filename = uuid() + '.' + e.target.files[0].name.split('.').pop()
-		var formData = new FormData();
-		formData.append('image', e.target.files[0])
-		formData.append('folder', s3_path + '/' + filename)
-		api.postApi('imageUpload', formData, true, props.header).then(response => {
-			form.setFieldValue(path, filename);
-			form.setFieldValue(path + '_url', response.url);
-			toast.success('Uploaded successfully');
-			// e.target.value = ''
-		}).catch(error => {
-			// e.target.value = ''
-		});
+	const acceptedFiles = (e, path, s3_path,co_index=0) => {
+		if(e.target.files.length) {
+			var formData;
+				formData = new FormData();
+				for (let i = 0; i < e.target.files.length; i++) {
+					formData.append('image', e.target.files[i])
+				}
+				formData.append('folder', s3_path)
+				api.postApi('multipleImageUpload', formData, true, props.header).then(response => {
+					if(path=='co_application') {
+						let fileNew = form.values.co_application[co_index].pancard_image ?form.values.co_application[co_index].pancard_image +','+response.fileName  :response.fileName;
+						// console.log(fileNew)
+						form.setFieldValue(`co_application.${co_index}.pancard_image`, fileNew);
+
+					} else {
+						form.setFieldValue(path, form.values[path]?form.values[path] +','+response.fileName : response.fileName);
+
+					}
+				}).catch(error => {
+
+				});
+		}
+	}
+
+	const removeImage = (e,index,path,co_index=0) => {
+		e.preventDefault()
+		var array;
+		if(path=='co_application') {
+		   console.log(form.values.co_application[co_index].pancard_image)
+		    array =form.values.co_application[co_index].pancard_image.split(',')
+			array.splice(index, 1)
+			form.setFieldValue(`co_application.${co_index}.pancard_image`, array.join(','));
+		} else {
+		    array = form.values[path].split(',')
+			array.splice(index, 1)
+			form.setFieldValue(path, array.join(','));
+		}
+		
+		console.log(array)
+		
 	}
 
 	const [cities, setCities] = useState([]);
@@ -701,6 +738,9 @@ const BusinessForm = (props) => {
 		}).catch(error => {
 		});
 
+	}
+	const checkURL= (url) => {
+		return(url.match(/\.(jpeg|jpg|gif|png)$/) != null);
 	}
 
 	const  capitalName = (text) => {
@@ -936,7 +976,45 @@ const BusinessForm = (props) => {
 													<input type="text" name={`form.values..co_application.${index}.pan_number`}  {...form.getFieldProps(`co_application.${index}.pan_number`)} className="mb-0" placeholder="Enter Number" />
 													{form.touched['co_application']?.[index]?.['pan_number'] && form.errors['co_application']?.[index]?.['pan_number'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['pan_number']}</div> : ''}
 												</div>
-												<div className="col-12 col-md-6 col-lg-5">
+												<div className="col-12 col-md-6 col-lg-10">
+													<div className="upload__box">
+														<div className="upload__btn-box">
+															<label className="upload__btn">
+															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+															<p>Upload Co-Applicants Pan Card</p>
+															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e,'co_application', 'uploads/merchant/pancard',index)} />
+
+															</label>
+														</div>
+														{form.values['co_application']?.[index]?.['pancard_image'] == '' && form.touched['co_application']?.[index]?.['pancard_image'] && form.errors['co_application']?.[index]?.['pancard_image'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['pancard_image']}</div> : ''}
+
+													</div>
+													{form.values['co_application']?.[index]?.['pancard_image'] && form.values['co_application']?.[index]?.['pancard_image'].split(',') && form.values['co_application']?.[index]?.['pancard_image'].split(',').length > 0  ?
+													<>
+														<ul className="imgpreview-newbx">
+																{form.values['co_application']?.[index]?.['pancard_image'] && form.values['co_application']?.[index]?.['pancard_image'].split(',').map((option, option_index) => (
+																	<li key={option_index} >
+																		
+																		{checkURL(config.s3_url+'uploads/merchant/pancard/'+option) ? 
+																		    <>
+																			<img src={config.s3_url+'uploads/merchant/pancard/'+option} alt="" />
+																				<Link to="" onClick={(e) => {removeImage(e,option_index,'co_application',index)}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																			<p>{option}</p>
+																			</>
+																		: 
+																		
+																		    <>
+																		     <Link to="" onClick={(e) => {removeImage(e,option_index,'co_application',index)}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																		     <p>{option}</p>
+																		   </>
+																		}
+																	</li>
+																))}
+														</ul>
+													</>
+													: ''}
+												</div>
+												{/* <div className="col-12 col-md-6 col-lg-5">
 													<p className="mb-0">Upload Co-Applicants Pan Card</p>
 													<div className="preview-zone hidden">
 														<div className="imgupload-box box-solid">
@@ -964,9 +1042,9 @@ const BusinessForm = (props) => {
 													</div>
 													<input type="file" id="co_application_image"  className="dropzone" accept="image/png, image/jpeg, image/jpg" onChange={(e) => acceptedFiles(e, `co_application.${index}.pancard_image`, 'uploads/merchant/pancard')}  style={{display:"none"}}/>
 
-													{form.touched['co_application']?.[index]?.['pancard_image'] && form.errors['co_application']?.[index]?.['pancard_image'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['pancard_image']}</div> : ''}
+													{form.values['co_application']?.[index]?.['pancard_image'] == '' && form.touched['co_application']?.[index]?.['pancard_image'] && form.errors['co_application']?.[index]?.['pancard_image'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['pancard_image']}</div> : ''}
 
-												</div>
+												</div> */}
 											</div>
 										)}
 									</div>
@@ -984,36 +1062,43 @@ const BusinessForm = (props) => {
 												{form.touched.pan_number && form.errors.pan_number ? <div className="text-danger">{form.errors.pan_number}</div> : ''}
 
 											</div>
-											<div className="col-12 col-md-6 col-lg-5">
-												<p className="mb-0">Upload Firm Pan Card</p>
-												<div className="preview-zone hidden">
-													<div className="imgupload-box box-solid">
-														<div className="box-header with-border">
-															<div className="box-tools pull-right">
-																<button type="button" className="btn btn-danger btn-xs remove-preview">
-																	<i className="fa-solid fa-trash fa-fw"></i>
-																</button>
-															</div>
+											<div className="col-12 col-md-6 col-lg-10">
+													<div className="upload__box">
+														<div className="upload__btn-box">
+															<label className="upload__btn">
+															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+															<p>Upload Pan Card</p>
+															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'pancard_image', 'uploads/merchant/pancard')} />
+
+															</label>
 														</div>
-														<div className="box-body"></div>
+														{form.values.pancard_image == '' && form.touched.pancard_image && form.errors.pancard_image ? <div className="text-danger">{form.errors.pancard_image}</div> : ''} 
+
 													</div>
-												</div>
-												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
-													<label htmlFor="pancard_image_2" style={{cursor: "pointer"}}>
-														{form.values.pancard_image_url ?
-															<img src={form.values.pancard_image_url} alt="" width="100%" height="100%" />
-															:
-															<div className="dropzone-desc">
-																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-																<p className="mt-1">Upload Image(png/jpeg/jpg)</p>
-															</div>
-														}
-													</label>
-												</div>
-												<input type="file" id="pancard_image_2" accept="image/png, image/jpeg, image/jpg" onChange={(e) => acceptedFiles(e, 'pancard_image', 'uploads/merchant/pancard')} className="dropzone"   style={{display:"none"}} />
-
-												{form.touched.pancard_image && form.errors.pancard_image ? <div className="text-danger">{form.errors.pancard_image}</div> : ''}
-
+													{form.values.pancard_image && form.values.pancard_image.split(',') && form.values.pancard_image.split(',').length > 0  ?
+													<>
+														<ul className="imgpreview-newbx">
+																{form.values.pancard_image && form.values.pancard_image.split(',').map((option, index) => (
+																	<li key={index} >
+																		
+																		{checkURL(config.s3_url+'uploads/merchant/pancard/'+option) ? 
+																		    <>
+																			<img src={config.s3_url+'uploads/merchant/pancard/'+option} alt="" />
+																				<Link to="" onClick={(e) => {removeImage(e,index,'pancard_image')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																			<p>{option}</p>
+																			</>
+																		: 
+																		
+																		    <>
+																		     <Link to="" onClick={(e) => {removeImage(e,index,'pancard_image')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																		     <p>{option}</p>
+																		   </>
+																		}
+																	</li>
+																))}
+														</ul>
+													</>
+													: ''}
 											</div>
 										</div>
 										<div className="row">
@@ -1023,142 +1108,171 @@ const BusinessForm = (props) => {
 												{form.touched.gst_number && form.errors.gst_number ? <div className="text-danger">{form.errors.gst_number}</div> : ''}
 
 											</div>
-											<div className="col-12 col-md-6 col-lg-5">
-												<p className="mb-0">Upload GST Registration</p>
-												<div className="preview-zone hidden">
-													<div className="imgupload-box box-solid">
-														<div className="box-header with-border">
-															<div className="box-tools pull-right">
-																<button type="button" className="btn btn-danger btn-xs remove-preview">
-																	<i className="fa-solid fa-trash fa-fw"></i>
-																</button>
-															</div>
+											<div className="col-12 col-md-6 col-lg-10">
+													<div className="upload__box">
+														<div className="upload__btn-box">
+															<label className="upload__btn">
+															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+															<p>Upload GST Registration</p>
+															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'gstproof_image', 'uploads/merchant/gst')} />
+
+															</label>
 														</div>
-														<div className="box-body"></div>
+														{form.values.gstproof_image == '' && form.touched.gstproof_image && form.errors.gstproof_image ? <div className="text-danger">{form.errors.gstproof_image}</div> : ''} 
+
 													</div>
-												</div>
-												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
-													<label htmlFor="gstproof_image_1" style={{cursor: "pointer"}}>
-														{form.values.gstproof_image_url ?
-															<img src={form.values.gstproof_image_url} alt="" width="100%" height="100%" />
-															:
-															<div className="dropzone-desc">
-																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-																<p className="mt-1">Upload Image(png/jpeg/jpg)</p>
-															</div>
-														}
-													</label>
-												</div>
-												<input type="file"  id="gstproof_image_1" accept="image/png, image/jpeg, image/jpg" onChange={(e) => acceptedFiles(e, 'gstproof_image', 'uploads/merchant/gst')} className="dropzone"  style={{display:"none"}}/>
-
-												{form.touched.gstproof_image && form.errors.gstproof_image ? <div className="text-danger">{form.errors.gstproof_image}</div> : ''}
-
+													{form.values.gstproof_image && form.values.gstproof_image.split(',') && form.values.gstproof_image.split(',').length > 0  ?
+													<>
+														<ul className="imgpreview-newbx">
+																{form.values.gstproof_image && form.values.gstproof_image.split(',').map((option, index) => (
+																	<li key={index} >
+																		
+																		{checkURL(config.s3_url+'uploads/merchant/gst/'+option) ? 
+																		    <>
+																			<img src={config.s3_url+'uploads/merchant/gst/'+option} alt="" />
+																				<Link to="" onClick={(e) => {removeImage(e,index,'gstproof_image')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																			<p>{option}</p>
+																			</>
+																		: 
+																		
+																		    <>
+																		     <Link to="" onClick={(e) => {removeImage(e,index,'gstproof_image')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																		     <p>{option}</p>
+																		   </>
+																		}
+																	</li>
+																))}
+														</ul>
+													</>
+													: ''}
 											</div>
 										</div>
 										<div className="row md-4">
 											<div className="col-xs-12 col-md-10 mb-3">
 												<label>Business Address </label>
 												<input type="text" name="business_address"  {...form.getFieldProps('business_address')} className="mb-0" placeholder="Enter address" />
-												{form.touched.business_address && form.errors.business_address ? <div className="text-danger">{form.errors.business_address}</div> : ''}
+												{form.values.business_address == '' &&  form.touched.business_address && form.errors.business_address ? <div className="text-danger">{form.errors.business_address}</div> : ''}
 
 											</div>
-											<div className="col-12 col-md-6 col-lg-5">
-												<p className="mb-0">Upload Address Proof</p>
-												<div className="preview-zone hidden">
-													<div className="imgupload-box box-solid">
-														<div className="box-header with-border">
-															<div className="box-tools pull-right">
-																<button type="button" className="btn btn-danger btn-xs remove-preview">
-																	<i className="fa-solid fa-trash fa-fw"></i>
-																</button>
-															</div>
+											<div className="col-12 col-md-6 col-lg-10">
+													<div className="upload__box">
+														<div className="upload__btn-box">
+															<label className="upload__btn">
+															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+															<p>Upload Address Proof</p>
+															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'business_address_proof', 'uploads/merchant/business')} />
+
+															</label>
 														</div>
-														<div className="box-body"></div>
+														{form.values.business_address_proof == '' && form.touched.business_address_proof && form.errors.business_address_proof ? <div className="text-danger">{form.errors.business_address_proof}</div> : ''} 
+
 													</div>
-												</div>
-												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
-													<label htmlFor="business_address_proof_1" style={{cursor: "pointer"}}>
-														{form.values.business_address_proof_url ?
-															<img src={form.values.business_address_proof_url} alt="" width="100%" height="100%" />
-															:
-															<div className="dropzone-desc">
-																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-																<p className="mt-1">Upload file (document/image)</p>
-															</div>
-														}
-													</label>
-												</div>
-												<input type="file"  id="business_address_proof_1"  onChange={(e) => acceptedFiles(e, 'business_address_proof', 'uploads/merchant/business')} className="dropzone" style={{display:"none"}} />
-
-												{form.touched.business_address_proof && form.errors.business_address_proof ? <div className="text-danger">{form.errors.business_address_proof}</div> : ''}
-
+													{form.values.business_address_proof && form.values.business_address_proof.split(',') && form.values.business_address_proof.split(',').length > 0  ?
+													<>
+														<ul className="imgpreview-newbx">
+																{form.values.business_address_proof && form.values.business_address_proof.split(',').map((option, index) => (
+																	<li key={index} >
+																		
+																		{checkURL(config.s3_url+'uploads/merchant/business/'+option) ? 
+																		    <>
+																			<img src={config.s3_url+'uploads/merchant/business/'+option} alt="" />
+																				<Link to="" onClick={(e) => {removeImage(e,index,'business_address_proof')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																			<p>{option}</p>
+																			</>
+																		: 
+																		
+																		    <>
+																		     <Link to="" onClick={(e) => {removeImage(e,index,'business_address_proof')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																		     <p>{option}</p>
+																		   </>
+																		}
+																	</li>
+																))}
+														</ul>
+													</>
+													: ''}
 											</div>
 										</div>
 										<div className="row">
-											<div className="col-12 col-md-6 col-lg-5">
-												<p className="mb-0">One Year Latest Bank Statement</p>
-												<div className="preview-zone hidden">
-													<div className="imgupload-box box-solid">
-														<div className="box-header with-border">
-															<div className="box-tools pull-right">
-																<button type="button" className="btn btn-danger btn-xs remove-preview">
-																	<i className="fa-solid fa-trash fa-fw"></i>
-																</button>
-															</div>
+												<div className="col-12 col-md-6 col-lg-10">
+													{/* <p>One Year Latest Bank Statement</p> */}
+													<div className="upload__box">
+														<div className="upload__btn-box">
+															<label className="upload__btn">
+															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+															<p>Upload One Year Latest Bank Statement (only pdf file)</p>
+															<input type="file" multiple accept=".pdf" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e,'bank_statement', 'uploads/merchant/bankstatement')} />
+
+															</label>
 														</div>
-														<div className="box-body"></div>
+														{form.values.bank_statement == '' && form.touched.bank_statement && form.errors.bank_statement ? <div className="text-danger">{form.errors.bank_statement}</div> : ''} 
+
 													</div>
-												</div>
-												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
-													<label htmlFor="bank_statement_2"  style={{cursor: "pointer",marginLeft: "27px"}}>
-														{form.values.bank_statement_url ?
-															<img src="/assets/img/pdf.png" alt="" height="127px" />
-															:
-															<div className="dropzone-desc">
-																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-																<p className="mt-1">Upload PDF</p>
-															</div>
-														}
-													</label>
-												</div>
-												<input type="file" id="bank_statement_2" className="dropzone" onChange={(e) => acceptedFiles(e, 'bank_statement', 'uploads/merchant/bankstatement')}  style={{display:"none"}}/>
-
-												{form.touched.bank_statement && form.errors.bank_statement ? <div className="text-danger">{form.errors.bank_statement}</div> : ''}
-
+													{form.values.bank_statement && form.values.bank_statement.split(',') && form.values.bank_statement.split(',').length > 0  ?
+													<>
+														<ul className="imgpreview-newbx">
+																{form.values.bank_statement && form.values.bank_statement.split(',').map((option, index) => (
+																	<li key={index} >
+																		
+																		{checkURL(config.s3_url+'uploads/merchant/bankstatement/'+option) ? 
+																		    <>
+																			<img src={config.s3_url+'uploads/merchant/bankstatement/'+option} alt="" />
+																				<Link to="" onClick={(e) => {removeImage(e,index,'bank_statement')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																			<p>{option}</p>
+																			</>
+																		: 
+																		
+																		    <>
+																		     <Link to="" onClick={(e) => {removeImage(e,index,'bank_statement')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																		     <p>{option}</p>
+																		   </>
+																		}
+																	</li>
+																))}
+														</ul>
+													</>
+													: ''}
 											</div>
-											<div className="col-12 col-md-6 col-lg-5">
-												<p className="mb-0">Upload ITR <small>Optional</small></p>
-												<div className="preview-zone hidden">
-													<div className="imgupload-box box-solid">
-														<div className="box-header with-border">
-															<div className="box-tools pull-right">
-																<button type="button" className="btn btn-danger btn-xs remove-preview">
-																	<i className="fa-solid fa-trash fa-fw"></i>
-																</button>
-															</div>
+												<div className="col-12 col-md-6 col-lg-10">
+													{/* <p>Upload ITR (Optional)</p> */}
+													<div className="upload__box">
+														<div className="upload__btn-box">
+															<label className="upload__btn">
+															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+															<p>Upload ITR (Optional)</p>
+															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e,'itr_docs', 'uploads/merchant/business')} />
+
+															</label>
 														</div>
-														<div className="box-body"></div>
+														{form.values.itr_docs == '' && form.touched.itr_docs && form.errors.itr_docs ? <div className="text-danger">{form.errors.itr_docs}</div> : ''} 
+
 													</div>
-												</div>
-												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
-													<label htmlFor="itr_docs_1"  style={{cursor: "pointer",marginLeft: "27px"}}>
-														{form.values.itr_docs_url ?
-															<img src="/assets/img/pdf.png" alt="" height="127px" />
-															:
-															<div className="dropzone-desc">
-																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-																<p className="mt-1">Upload PDF</p>
-															</div>
-														}
-													</label>
-												</div>
-												<input type="file" id="itr_docs_1" className="dropzone" accept="application/pdf"  onChange={(e) => acceptedFiles(e, 'itr_docs', 'uploads/merchant/business')}  style={{display:"none"}} />
-
-												{form.touched.itr_docs && form.errors.itr_docs ? <div className="text-danger">{form.errors.itr_docs}</div> : ''}
-
+													{form.values.itr_docs && form.values.itr_docs.split(',') && form.values.itr_docs.split(',').length > 0  ?
+													<>
+														<ul className="imgpreview-newbx">
+																{form.values.itr_docs && form.values.itr_docs.split(',').map((option, index) => (
+																	<li key={index} >
+																		
+																		{checkURL(config.s3_url+'uploads/merchant/business/'+option) ? 
+																		    <>
+																			<img src={config.s3_url+'uploads/merchant/business/'+option} alt="" />
+																				<Link to="" onClick={(e) => {removeImage(e,index,'itr_docs')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																			<p>{option}</p>
+																			</>
+																		: 
+																		
+																		    <>
+																		     <Link to="" onClick={(e) => {removeImage(e,index,'itr_docs')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																		     <p>{option}</p>
+																		   </>
+																		}
+																	</li>
+																))}
+														</ul>
+													</>
+													: ''}
 											</div>
 										</div>
-
 									</div>
 									<input type="submit" name="next" className="next action-button apply-now-btn mt-5 ml-00" value="Verify & Proceed" />
 								</fieldset>
@@ -1187,7 +1301,7 @@ const BusinessForm = (props) => {
 }
 
 const PersonalForm = (props) => {
-	const [currentStep, setCurrentStep] = useState(0);
+	const [currentStep, setCurrentStep] = useState(2);
 	const form = useFormik({
 		initialValues: props.data.personal_info,
 		// enableReinitialize: true,
@@ -1248,19 +1362,22 @@ const PersonalForm = (props) => {
 	});
 
 	const acceptedFiles = (e, path, s3_path) => {
-		var filename = uuid() + '.' + e.target.files[0].name.split('.').pop()
-		var formData = new FormData();
-		formData.append('image', e.target.files[0])
-		formData.append('folder', s3_path + '/' + filename)
-		api.postApi('imageUpload', formData, true, props.header).then(response => {
-			form.setFieldValue(path, filename);
-			form.setFieldValue(path + '_url', response.url);
-			toast.success('Uploaded successfully');
-			// e.target.value = ''
-		}).catch(error => {
-			// e.target.value = ''
-		});
+		if(e.target.files.length) {
+			var formData;
+				formData = new FormData();
+				for (let i = 0; i < e.target.files.length; i++) {
+					formData.append('image', e.target.files[i])
+				}
+				formData.append('folder', s3_path)
+				api.postApi('multipleImageUpload', formData, true, props.header).then(response => {
+					form.setFieldValue(path, form.values[path]?form.values[path] +','+response.fileName : response.fileName);
+					e.target.value='';
+				}).catch(error => {
+
+				});
+		}
 	}
+
 
 	const [cities, setCities] = useState([]);
 	const [residence_cities, setresidence_cities] = useState([]);
@@ -1306,6 +1423,27 @@ const PersonalForm = (props) => {
 		});
 
 	}
+	const removeImage = (e,index,path,co_index=0) => {
+		e.preventDefault()
+		var array;
+		if(path=='co_application') {
+		   console.log(form.values.co_application[co_index].pancard_image)
+		    array =form.values.co_application[co_index].pancard_image.split(',')
+			array.splice(index, 1)
+			form.setFieldValue(`co_application.${co_index}.pancard_image`, array.join(','));
+		} else {
+		    array = form.values[path].split(',')
+			array.splice(index, 1)
+			form.setFieldValue(path, array.join(','));
+		}
+		
+		console.log(array)
+		
+	}
+	const checkURL= (url) => {
+		return(url.match(/\.(jpeg|jpg|gif|png)$/) != null);
+	}
+
 
 	const  capitalName = (text) => {
 		text = text.toLowerCase();
@@ -1637,132 +1775,162 @@ const PersonalForm = (props) => {
 									<p className="mt-1">Instant Business & Personal Loan</p>
 									<div className="stepform-newdesign">
 										<div className="row">
-											<div className="col-12 col-md-6 col-lg-5">
-												<p className="mb-0">Upload Pan Card</p>
-												<div className="preview-zone hidden">
-													<div className="imgupload-box box-solid">
-														<div className="box-header with-border">
-															<div className="box-tools pull-right">
-																<button type="button" className="btn btn-danger btn-xs remove-preview">
-																	<i className="fa-solid fa-trash fa-fw"></i>
-																</button>
-															</div>
-														</div>
-														<div className="box-body"></div>
-													</div>
-												</div>
-												<div className="dropzone-wrapper"  style={{overflow:"hidden"}}>
-												<label htmlFor="pancad_1" style={{cursor: "pointer"}}>
-													{form.values.pancard_image_url ?
-														<img src={form.values.pancard_image_url} alt="" width="100%" height="100%" />
-														:
-														<div className="dropzone-desc" >
+										    <div className="col-12 col-md-6 col-lg-10">
+													<div className="upload__box">
+														<div className="upload__btn-box">
+															<label className="upload__btn">
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p className="mt-1">Upload Image(png/jpeg/jpg)</p>
+															<p>Upload Pan Card</p>
+															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'pancard_image', 'uploads/merchant/pancard')} />
+
+															</label>
 														</div>
-													}
+														{form.values.pancard_image == '' && form.touched.pancard_image && form.errors.pancard_image ? <div className="text-danger">{form.errors.pancard_image}</div> : ''} 
 
-												</label>
-												</div>
-												<input type="file" id="pancad_1" accept="image/png, image/jpeg , image/jpg"  className="dropzone" onChange={(e) => acceptedFiles(e, 'pancard_image', 'uploads/merchant/pancard')} style={{display:"none"}} />
-
-												{form.touched.pancard_image && form.errors.pancard_image ? <div className="text-danger">{form.errors.pancard_image}</div> : ''}
-
-											</div>
-											<div className="col-12 col-md-6 col-lg-5">
-												<p className="mb-0">Upload Aadhar Card</p>
-												<div className="preview-zone hidden">
-													<div className="imgupload-box box-solid">
-														<div className="box-header with-border">
-															<div className="box-tools pull-right">
-																<button type="button" className="btn btn-danger btn-xs remove-preview">
-																	<i className="fa-solid fa-trash fa-fw"></i>
-																</button>
-															</div>
-														</div>
-														<div className="box-body"></div>
 													</div>
-												</div>
-												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
-													<label htmlFor="aadhar_image_1" style={{cursor: "pointer"}}>
-														{form.values.aadhar_image_url ?
-															<img src={form.values.aadhar_image_url} alt="" width="100%" height="100%" />
-															:
-															<div className="dropzone-desc">
-																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-																<p className="mt-1">Upload Image(png/jpeg/jpg)</p>
-															</div>
-														}
-													</label>
-												</div>
-												<input type="file" id="aadhar_image_1"  className="dropzone" accept="image/png, image/jpeg, image/jpg" onChange={(e) => acceptedFiles(e, 'aadhar_image', 'uploads/merchant/aadharcard')} style={{display:"none"}} />
-
-												{form.touched.aadhar_image && form.errors.aadhar_image ? <div className="text-danger">{form.errors.aadhar_image}</div> : ''}
+													{form.values.pancard_image && form.values.pancard_image.split(',') && form.values.pancard_image.split(',').length > 0  ?
+													<>
+														<ul className="imgpreview-newbx">
+																{form.values.pancard_image && form.values.pancard_image.split(',').map((option, index) => (
+																	<li key={index} >
+																		
+																		{checkURL(config.s3_url+'uploads/merchant/pancard/'+option) ? 
+																		    <>
+																			<img src={config.s3_url+'uploads/merchant/pancard/'+option} alt="" />
+																				<Link to="" onClick={(e) => {removeImage(e,index,'pancard_image')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																			<p>{option}</p>
+																			</>
+																		: 
+																		
+																		    <>
+																		     <Link to="" onClick={(e) => {removeImage(e,index,'pancard_image')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																		     <p>{option}</p>
+																		   </>
+																		}
+																	</li>
+																))}
+														</ul>
+													</>
+													: ''}
 											</div>
+
+											<div className="col-12 col-md-6 col-lg-10">
+													<div className="upload__box">
+														<div className="upload__btn-box">
+															<label className="upload__btn">
+															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+															<p>Upload Aadhar Card</p>
+															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'aadhar_image', 'uploads/merchant/aadharcard')} />
+
+															</label>
+														</div>
+														{form.values.aadhar_image == '' && form.touched.aadhar_image && form.errors.aadhar_image ? <div className="text-danger">{form.errors.aadhar_image}</div> : ''} 
+
+													</div>
+													{form.values.aadhar_image && form.values.aadhar_image.split(',') && form.values.aadhar_image.split(',').length > 0  ?
+													<>
+														<ul className="imgpreview-newbx">
+																{form.values.aadhar_image && form.values.aadhar_image.split(',').map((option, index) => (
+																	<li key={index} >
+																		
+																		{checkURL(config.s3_url+'uploads/merchant/aadharcard/'+option) ? 
+																		    <>
+																			<img src={config.s3_url+'uploads/merchant/aadharcard/'+option} alt="" />
+																				<Link to="" onClick={(e) => {removeImage(e,index,'aadhar_image')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																			<p>{option}</p>
+																			</>
+																		: 
+																		
+																		    <>
+																		     <Link to="" onClick={(e) => {removeImage(e,index,'aadhar_image')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																		     <p>{option}</p>
+																		   </>
+																		}
+																	</li>
+																))}
+														</ul>
+													</>
+													: ''}
+											</div>
+											
 										</div>
 										<div className="row">
-											<div className="col-12 col-md-6 col-lg-5">
-												<p className="mb-0">One Year Latest Bank Statement</p>
-												<div className="preview-zone hidden">
-													<div className="imgupload-box box-solid">
-														<div className="box-header with-border">
-															<div className="box-tools pull-right">
-																<button type="button" className="btn btn-danger btn-xs remove-preview">
-																	<i className="fa-solid fa-trash fa-fw"></i>
-																</button>
-															</div>
+										    <div className="col-12 col-md-6 col-lg-10">
+													<div className="upload__box">
+														<div className="upload__btn-box">
+															<label className="upload__btn">
+															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+															<p>Upload One Year Latest Bank Statement (only pdf file)</p>
+															<input type="file" multiple accept=".pdf" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e,'bank_statement', 'uploads/merchant/bankstatement')} />
+
+															</label>
 														</div>
-														<div className="box-body"></div>
+														{form.values.bank_statement == '' && form.touched.bank_statement && form.errors.bank_statement ? <div className="text-danger">{form.errors.bank_statement}</div> : ''} 
+
 													</div>
-												</div>
-												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
-													<label htmlFor="bank_statement_1" style={{cursor: "pointer",marginLeft: "27px"}}>
-														{form.values.bank_statement_url ?
-															<img src={form.values.bank_statement_url} alt="" width="100%" height="100%" />
-															:
-															<div className="dropzone-desc">
-																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-																<p className="mt-1">Upload PDF</p>
-															</div>
-														}
-													
-													</label>
-												</div>
-												<input type="file"  id="bank_statement_1"   accept="application/pdf" className="dropzone" onChange={(e) => acceptedFiles(e, 'bank_statement', 'uploads/merchant/bankstatement')} style={{display:"none"}} />
-
-												{form.touched.bank_statement && form.errors.bank_statement ? <div className="text-danger">{form.errors.bank_statement}</div> : ''}
-
+													{form.values.bank_statement && form.values.bank_statement.split(',') && form.values.bank_statement.split(',').length > 0  ?
+													<>
+														<ul className="imgpreview-newbx">
+																{form.values.bank_statement && form.values.bank_statement.split(',').map((option, index) => (
+																	<li key={index} >
+																		
+																		{checkURL(config.s3_url+'uploads/merchant/bankstatement/'+option) ? 
+																		    <>
+																			<img src={config.s3_url+'uploads/merchant/bankstatement/'+option} alt="" />
+																				<Link to="" onClick={(e) => {removeImage(e,index,'bank_statement')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																			<p>{option}</p>
+																			</>
+																		: 
+																		
+																		    <>
+																		     <Link to="" onClick={(e) => {removeImage(e,index,'bank_statement')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																		     <p>{option}</p>
+																		   </>
+																		}
+																	</li>
+																))}
+														</ul>
+													</>
+													: ''}
 											</div>
-											<div className="col-12 col-md-6 col-lg-5">
-												<p className="mb-0">Upload latest 3 months salary slips</p>
-												<div className="preview-zone hidden">
-													<div className="imgupload-box box-solid">
-														<div className="box-header with-border">
-															<div className="box-tools pull-right">
-																<button type="button" className="btn btn-danger btn-xs remove-preview">
-																	<i className="fa-solid fa-trash fa-fw"></i>
-																</button>
-															</div>
+
+											<div className="col-12 col-md-6 col-lg-10">
+													<div className="upload__box">
+														<div className="upload__btn-box">
+															<label className="upload__btn">
+															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+															<p>Upload latest 3 months salary slips</p>
+															<input type="file" multiple  accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'salery_slip', 'uploads/merchant/salery_slip')} />
+
+															</label>
 														</div>
-														<div className="box-body"></div>
+														{form.values.salery_slip == '' && form.touched.salery_slip && form.errors.salery_slip ? <div className="text-danger">{form.errors.salery_slip}</div> : ''} 
+
 													</div>
-												</div>
-												<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
-													<label htmlFor="salery_slip_1" style={{cursor: "pointer",marginLeft: "27px"}}>
-														{form.values.salery_slip_url ?
-															<img src={form.values.salery_slip_url} alt="" width="100%" height="100%" />
-															:
-															<div className="dropzone-desc">
-																<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-																<p className="mt-1">Upload PDF</p>
-															</div>
-														}
-													</label>
-												</div>
-												<input type="file" id="salery_slip_1"  className="dropzone" onChange={(e) => acceptedFiles(e, 'salery_slip', 'uploads/merchant/salery_slip')} style={{display:"none"}}  />
-
-												{form.touched.salery_slip && form.errors.salery_slip ? <div className="text-danger">{form.errors.salery_slip}</div> : ''}
-
+													{form.values.salery_slip && form.values.salery_slip.split(',') && form.values.salery_slip.split(',').length > 0  ?
+													<>
+														<ul className="imgpreview-newbx">
+																{form.values.salery_slip && form.values.salery_slip.split(',').map((option, index) => (
+																	<li key={index} >
+																		
+																		{checkURL(config.s3_url+'uploads/merchant/salery_slip/'+option) ? 
+																		    <>
+																			<img src={config.s3_url+'uploads/merchant/salery_slip/'+option} alt="" />
+																				<Link to="" onClick={(e) => {removeImage(e,index,'salery_slip')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																			<p>{option}</p>
+																			</>
+																		: 
+																		
+																		    <>
+																		     <Link to="" onClick={(e) => {removeImage(e,index,'salery_slip')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																		     <p>{option}</p>
+																		   </>
+																		}
+																	</li>
+																))}
+														</ul>
+													</>
+													: ''}
 											</div>
 										</div>
 									</div>
@@ -1828,37 +1996,47 @@ const LenderListForm = (props) => {
 		<div className="container">		
 			<div className="row d-flex justify-content-center flexwrap">			
 				<div className="col-md-12">
-					{lenderList.length > 0 && lenderList.map((co, index) => (					
-						<div className="landerlist-loan" key={index}>
-							<label to="" className="link-website" style={{float:"left"}}> <input type="checkbox" id={co.user_id+"_lender_error"} value={co.user_id}  onChange={(e) => lenderPushArray(e)}/> <b>{co.company_name}</b></label>
-							<div className="review-body">
-							<div className="review-table table-responsive">
-							<table className="table table-bordered">
-								<thead>
-									<tr>
-										<th>Min-Max Rate Of Interest</th>
-										<th>Min-max Loan Range</th>
-										<th>Min-Max Tenure</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>{co.mini_rate_of_intrest}% - {co.max_rate_of_intrest}%</td>
-										<td>{co.mini_loan_range}-{co.max_loan_range}</td>
-										<td>{co.mini_tenure} Month - {co.max_tenure} Month</td>
-									</tr>
-								</tbody>
-							</table>
-							</div>
+					{lenderList.length > 0 && lenderList.map((co, index) => (		
+						
+						<div className="col-md-6"  key={index}>
+							<div className="landerlist-loan">
+									<div className="review-body">
+										<div className="review-right nonemobile">
+											<label className="control control--checkbox"> {co.company_name} 
+												<input type="checkbox" id={co.user_id+"_lender_error"} value={co.user_id}  
+onChange={(e) => lenderPushArray(e)} />
+											<div className="control__indicator"></div>
+											</label>
+										</div>
+									</div>
+									<div className="review-table">
+										<table>
+											<thead>
+												<tr>
+													<th>Min-Max Rate Of Interest</th>
+													<th>Min-max Loan Range</th>
+													<th>Min-Max Tenure</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+												<td>{co.mini_rate_of_intrest}% - {co.max_rate_of_intrest}%</td>
+												<td>{co.mini_loan_range}-{co.max_loan_range}</td>
+												<td>{co.mini_tenure} Month - {co.max_tenure} Month</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+							</div>			
 						</div>
-					</div>	  
 					))}
-					{errorMassege? <div className="text-danger" style={{textAlign:"end"}}>{errorMassege}</div> :''}
-				</div>				
-				<div className="col-md-12" style={{textAlign:"end"}}>
-					<button type="button" className="submit action-button apply-now-btn ml-00" onClick={() => submitForm() } style={{float:"right"}}>SUBMIT</button>
+						
+						{errorMassege? <div className="text-danger" style={{textAlign:"end"}}>{errorMassege}</div> :''}
+
+						<div className="col-md-12">
+							<button type="button" id="lender_detail"  onClick={() => submitForm() } className="sb-btn">SUBMIT</button>
+						</div>
 				</div>
-				
 			</div>			
 		</div>
 		{/* </form> */}

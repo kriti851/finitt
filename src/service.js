@@ -61,7 +61,7 @@ class Service {
                       })
                   }
                 } else {
-                    console.log(response)
+                    // console.log(response)
                     if(response){
                           response.json().then(json => { 
                                resolve(json)
