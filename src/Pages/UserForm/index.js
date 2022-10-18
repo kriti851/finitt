@@ -26,7 +26,7 @@ const UserForm = () => {
 			pan_number: '',
 			loan_type: 1,
 			employee_type: 1,
-			wrong_opt:false,
+			wrong_otp:false,
 			
 		},
 		business_info: {
@@ -37,9 +37,9 @@ const UserForm = () => {
 			date_of_birth: '',
 			company_name: '',
 			legal_name: '',
-			state_id: '',
+			// state_id: '',
 			state: '',
-			city_id: '',
+			// city_id: '',
 			city: '',
 			houseno: '',
 			pincode: '',
@@ -50,21 +50,16 @@ const UserForm = () => {
 			desired_amount: '',
 			required_amount: '',
 			co_application: [
-				{ name: "", pan_number: "", pancard_image: "", pancard_image_url: "", relationship: "" }
+				{ name: "", pan_number: "", pancard_image: "", relationship: "" }
 			],
 			pan_number: '',
 			pancard_image: '',
-			pancard_image_url: '',
 			gst_number: '',
 			gstproof_image: '',
-			gstproof_image_url: '',
 			business_address: '',
 			business_address_proof: '',
-			business_address_proof_url: '',
 			bank_statement: '',
-			bank_statement_url: '',
 			itr_docs: '',
-			itr_docs_url: '',
 			loan_purpose : ''
 		},
 		personal_info: {
@@ -104,13 +99,9 @@ const UserForm = () => {
 			salary_mode: '',
 			bank_name: '',
 			pancard_image: '',
-			pancard_image_url: '',
 			aadhar_image: '',
-			aadhar_image_url: '',
 			bank_statement: '',
-			bank_statement_url: '',
 			salery_slip: '',
-			salery_slip_url: '',
 			loan_purpose : ''
 		}
 	})
@@ -122,7 +113,6 @@ const UserForm = () => {
 
 	const getUserDetail = () => {
 		api.postApi('user-exist', { name: name }).then(response => {
-			console.log(response)
 			if (response.status == 'success') {
 				header.DSA = response.das_id;
 				setHeader(header)
@@ -147,12 +137,9 @@ const UserForm = () => {
 		setData((prev) => ({ ...prev, ...newData }));
 		
 		if (final) {
-			console.log(newData)
 			api.postApi(newData.info.loan_type == 2 ? 'businessInfoForm' : 'personalInForm', { ...newData }, false, header).then(response => {
-				console.log(response)
 				setformResponse(response)
 			}).catch(error => {
-				console.log(error)
 			});
 			return;
 		}
@@ -221,28 +208,123 @@ const StepOne = (props) => {
 						if (response.status == 'success' && response.data) {
 							props.header.Authorization = response.token
 							props.setHeader(props.header, props.GetStates())
-							if (response.exit == 1) {
-								setCurrentStep(4)
-								form.setFieldValue('wrong_opt',false)
+							
+							if (response.exit==1) {
+								
+								form.setFieldValue('wrong_otp',false)
+								let user = response.data.user;
+								
+								let user_detail = response.data.user_detail;
+								let user_merchant_detail = response.data.user_merchant_detail;
+								let full_name = user.full_name? user.full_name.split(' ') : []
+								let first_name = full_name.length > 0 ? full_name[0] : '';
+								let last_name = full_name.length > 1 ? full_name[1] : '';
 								// if(response.data && response.data.user) {
-								// 	props.data.info =  { ...props.data.info,
-								// 		loan_type: 1,
-								// 		employee_type: 1,
-								// 	}
+									// let user = response.data.user;
+									
+									props.data.info = 
+									{
+										mobile_number:props.data.info.mobile_number,
+										is_agree: props.data.info.is_agree,
+										otp_verified: props.data.info.otp_verified,
+										pan_number: user.loan_type=='Personal'?user_detail.pan_number:user_merchant_detail.pan_number,
+										loan_type: user.loan_type=='Personal'?1:2,
+										employee_type: 1,
+										wrong_otp:false
+									}
+									// props.setData(props.data);
 								// } 
 								// if(response.data && response.data.user_detail) {
+									// let user_detail = response.data.user_detail;
+									props.data.personal_info = 
+									{
+										email: user.email?user.email:'',
+										first_name: first_name,
+										last_name: last_name,
+										gender:user_detail.gender?user_detail.gender:'',
+										date_of_birth: user_detail.date_of_birth?user_detail.date_of_birth:'',
+										father_name: user_detail.father_name?user_detail.father_name:'',
+										qualification: user_detail.qualification?user_detail.qualification:'',
+										marital_status: user_detail.marital_status?user_detail.marital_status:'',
+										number_of_kids: user_detail.number_of_kids?user_detail.number_of_kids:'',
+										vehicle_type: user_detail.vehicle_type?user_detail.vehicle_type:'',
+										residence_building: user_detail.residence_building?user_detail.residence_building:'',
+										residence_area: user_detail.residence_area?user_detail.residence_area:'',
+										residence_state:user_detail.residence_state?user_detail.residence_state:'',
+										residence_state_id:user_detail.residence_state?user_detail.residence_state:'',
+										residence_city: user_detail.residence_city?user_detail.residence_city:'',
+										residence_city_id: user_detail.residence_city?user_detail.residence_city:'',
+										residence_pincode:user_detail.residence_pincode?user_detail.residence_pincode:'',
+										employer_name: user_detail.employer_name?user_detail.employer_name:'',
+										designation:user_detail.designation?user_detail.designation:'',
+										organization:user_detail.organization?user_detail.organization:'',
+										organization_type: user_detail.organization_type?user_detail.organization_type:'',
+										total_experience:user_detail.total_experience?user_detail.total_experience:'',
+										required_amount: user_detail.required_amount?user_detail.required_amount:'',
+										company_building: user_detail.company_building?user_detail.company_building:'',
+										company_area: user_detail.company_area?user_detail.company_area:'',
+										company_state: user_detail.company_state?user_detail.company_state:'',
+										company_state_id: user_detail.company_state?user_detail.company_state:'',
+										company_city: user_detail.company_city?user_detail.company_city:'',
+										company_city_id: user_detail.company_city?user_detail.company_city:'',
+										company_pincode: user_detail.company_pincode?user_detail.company_pincode:'',
+										company_website: user_detail.company_website?user_detail.company_website:'',
+										company_email: user_detail.company_email?user_detail.company_email:'',
+										salery_inhand: user_detail.salery_inhand?user_detail.salery_inhand:'',
+										salary_mode: user_detail.salary_mode?user_detail.salary_mode:'',
+										bank_name: user_detail.bank?user_detail.bank:'',
+										pancard_image: user_detail.pancard_image?user_detail.pancard_image:'',
+										aadhar_image:user_detail.aadhar_image?user_detail.aadhar_image:'',
+										bank_statement: user_detail.bank_statement?user_detail.bank_statement:'',
+										salery_slip: user_detail.salery_slip?user_detail.salery_slip:'',
+										loan_purpose : ''//user_detail.employer_name,
+									}
+									// props.setData(props.data)
 
-								// }
-								// if(response.data && response.data.user_detail) {
-									
-								// }
+									props.data.business_info = 
+									{
+										email: user.email?user.email:'',
+										first_name: first_name,
+										last_name: last_name,
+										gender:user_detail.gender?user_detail.gender:'',
+										date_of_birth: user_merchant_detail.date_of_birth?user_merchant_detail.date_of_birth:'',
+										company_name: user.company_name?user.company_name:'',
+										legal_name: user.legal_name?user.legal_name:'',
+										// state_id: user_merchant_detail.state?user_merchant_detail.state:'',
+										state: user_merchant_detail.state?user_merchant_detail.state:'',
+										// city_id: user_merchant_detail.city?user_merchant_detail.city:'',
+										city:  user_merchant_detail.city?user_merchant_detail.city:'',
+										houseno:  user_merchant_detail.houseno?user_merchant_detail.houseno:'',
+										pincode:  user_merchant_detail.pincode?user_merchant_detail.pincode:'',
+										business_type: user_merchant_detail.business_type?user_merchant_detail.business_type:'',
+										type_of_nature: user_merchant_detail.nature_of_business?user_merchant_detail.nature_of_business:'',
+										vintage:  user_merchant_detail.vintage?user_merchant_detail.vintage:'',
+										turn_over:  user_merchant_detail.turn_over?user_merchant_detail.turn_over:'',
+										desired_amount: user_merchant_detail.desired_amount?user_merchant_detail.desired_amount:'',
+										required_amount:  user_detail.required_amount?user_detail.required_amount:'',
+										co_application: [
+											{ name: "", pan_number: "", pancard_image: "", relationship: "" }
+										],
+										pan_number:  user_merchant_detail.pan_number?user_merchant_detail.pan_number:'',
+										pancard_image:  user_merchant_detail.pancard_image?user_merchant_detail.pancard_image:'',
+										gst_number:  user_merchant_detail.gst_number?user_merchant_detail.gst_number:'',
+										gstproof_image:  user_merchant_detail.gstproof_image?user_merchant_detail.gstproof_image:'',
+										business_address:  user_merchant_detail.business_address?user_merchant_detail.business_address:'',
+										business_address_proof: user_merchant_detail.business_address_proof?user_merchant_detail.business_address_proof:'',
+										bank_statement: user_detail.bank_statement?user_detail.bank_statement:'',
+										itr_docs:  user_detail.itr_docs?user_detail.itr_docs:'',
+										loan_purpose : ''
+									}
+
+									props.setData(props.data)
+									setCurrentStep(4)
 							} else {
 								setCurrentStep(currentStep + 1)
-								form.setFieldValue('wrong_opt',false)
+								form.setFieldValue('wrong_otp',false)
 							}							
 						}
 						else {
-							form.setFieldValue('wrong_opt',true)
+							form.setFieldValue('wrong_otp',true)
 						}
 					}).catch(error => {
 
@@ -440,10 +522,10 @@ const StepOne = (props) => {
 											<div className="col-12 col-md-10">
 												<label>Enter OTP</label>
 												<input type="text" className="mb-0"  value={form.values.otp_verified} onChange={(e) => updateNumber(e.target.value,'otp_verified',6) }  placeholder="Enter 6 Digit OTP"  />
-												{form.values.wrong_opt==false  && form.touched.otp_verified && form.errors.otp_verified ? <div className="text-danger">{form.errors.otp_verified}</div> : ''}
-												{form.values.wrong_opt?
+												{form.values.wrong_otp==false  && form.touched.otp_verified && form.errors.otp_verified ? <div className="text-danger">{form.errors.otp_verified}</div> : ''}
+												{form.values.wrong_otp?
                                                   <div className="text-danger">
-                                                       Please enter valid OPT.
+                                                       Please enter valid OTP.
 												  </div>
                                                 : ''}
 											</div>
@@ -684,7 +766,6 @@ const BusinessForm = (props) => {
 				api.postApi('multipleImageUpload', formData, true, props.header).then(response => {
 					if(path=='co_application') {
 						let fileNew = form.values.co_application[co_index].pancard_image ?form.values.co_application[co_index].pancard_image +','+response.fileName  :response.fileName;
-						// console.log(fileNew)
 						form.setFieldValue(`co_application.${co_index}.pancard_image`, fileNew);
 
 					} else {
@@ -702,7 +783,6 @@ const BusinessForm = (props) => {
 		e.preventDefault()
 		var array;
 		if(path=='co_application') {
-		   console.log(form.values.co_application[co_index].pancard_image)
 		    array =form.values.co_application[co_index].pancard_image.split(',')
 			array.splice(index, 1)
 			form.setFieldValue(`co_application.${co_index}.pancard_image`, array.join(','));
@@ -710,18 +790,14 @@ const BusinessForm = (props) => {
 		    array = form.values[path].split(',')
 			array.splice(index, 1)
 			form.setFieldValue(path, array.join(','));
-		}
-		
-		console.log(array)
-		
+		}		
 	}
 
 	const [cities, setCities] = useState([]);
-	const GetCities = (state_id) => {
-		var state = props.allStates.find(state => state.id == state_id);
-		api.postApi('cityList', { state_id: state_id }, false, props.header).then(response => {
-			form.setFieldValue('state', state.name)
-			form.setFieldValue('state_id', state_id)
+	const GetCities = (state_name) => {
+		var state = props.allStates.find(state => state.name == state_name);
+		api.postApi('cityList', { state_id: state.id }, false, props.header).then(response => {
+			form.setFieldValue('state', state_name)
 			setCities(response.cities);
 		}).catch(error => {
 		});
@@ -729,12 +805,11 @@ const BusinessForm = (props) => {
 	}
 
 	const [pincode, setPincode] = useState([]);
-	const GetPincode = (city_id) => {
-		var city = cities.find(city => city.id == city_id);
-
-		api.postApi('pincodeList', { city: city.name, state_id: form.values.state_id }, false, props.header).then(response => {
+	const GetPincode = (city_name) => {
+		var city = cities.find(city => city.name == city_name);
+		var state = props.allStates.find(state => state.name == form.values.state);
+		api.postApi('pincodeList', { city: city.name, state_id: state.id.toString()}, false, props.header).then(response => {
 			form.setFieldValue('city', city.name)
-			form.setFieldValue('city_id', city_id)
 			setPincode(response.pincode);
 		}).catch(error => {
 		});
@@ -746,7 +821,6 @@ const BusinessForm = (props) => {
 
 	const  capitalName = (text) => {
 		text = text.toLowerCase();
-		console.log(text.charAt(0).toUpperCase() + text.slice(1))
 		return text.charAt(0).toUpperCase() + text.slice(1);
 	}
 	return (
@@ -810,7 +884,7 @@ const BusinessForm = (props) => {
 												<select name="state" onChange={(e) => GetCities(e.target.value)} >
 													<option>Select One</option>
 													{props.allStates && props.allStates.length > 0 && props.allStates.map((option, index) => (
-														<option value={option.id} key={index}>{option.name}</option>
+														<option value={option.name} key={index}>{option.name}</option>
 													))}
 												</select>
 												{form.touched.state && form.errors.state ? <div className="text-danger">{form.errors.state}</div> : ''}
@@ -820,7 +894,7 @@ const BusinessForm = (props) => {
 												<select name="city" onChange={(e) => GetPincode(e.target.value)} >
 													<option>Select One</option>
 													{cities.length > 0 && cities.map((option, index) => (
-														<option value={option.id} key={index}>{capitalName(option.name)}</option>
+														<option value={option.name} key={index}>{capitalName(option.name)}</option>
 													))}
 												</select>
 												{form.touched.city && form.errors.city ? <div className="text-danger">{form.errors.city}</div> : ''}
@@ -1015,37 +1089,6 @@ const BusinessForm = (props) => {
 													</>
 													: ''}
 												</div>
-												{/* <div className="col-12 col-md-6 col-lg-5">
-													<p className="mb-0">Upload Co-Applicants Pan Card</p>
-													<div className="preview-zone hidden">
-														<div className="imgupload-box box-solid">
-															<div className="box-header with-border">
-																<div className="box-tools pull-right">
-																	<button type="button" className="btn btn-danger btn-xs remove-preview">
-																		<i className="fa-solid fa-trash fa-fw"></i>
-																	</button>
-																</div>
-															</div>
-															<div className="box-body"></div>
-														</div>
-													</div>
-													<div className="dropzone-wrapper" style={{overflow:"hidden"}}>
-														<label htmlFor="co_application_image" style={{cursor: "pointer"}}>
-															{form.values['co_application']?.[index]?.['pancard_image_url'] ?
-																<img src={form.values['co_application']?.[index]?.['pancard_image_url']} alt="" width="100%" height="100%" />
-																:
-																<div className="dropzone-desc">
-																	<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-																	<p className="mt-1">Upload Image(png/jpeg/jpg)</p>
-																</div>
-															}
-														</label>
-													</div>
-													<input type="file" id="co_application_image"  className="dropzone" accept="image/png, image/jpeg, image/jpg" onChange={(e) => acceptedFiles(e, `co_application.${index}.pancard_image`, 'uploads/merchant/pancard')}  style={{display:"none"}}/>
-
-													{form.values['co_application']?.[index]?.['pancard_image'] == '' && form.touched['co_application']?.[index]?.['pancard_image'] && form.errors['co_application']?.[index]?.['pancard_image'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['pancard_image']}</div> : ''}
-
-												</div> */}
 											</div>
 										)}
 									</div>
@@ -1429,7 +1472,6 @@ const PersonalForm = (props) => {
 		e.preventDefault()
 		var array;
 		if(path=='co_application') {
-		   console.log(form.values.co_application[co_index].pancard_image)
 		    array =form.values.co_application[co_index].pancard_image.split(',')
 			array.splice(index, 1)
 			form.setFieldValue(`co_application.${co_index}.pancard_image`, array.join(','));
@@ -1437,10 +1479,7 @@ const PersonalForm = (props) => {
 		    array = form.values[path].split(',')
 			array.splice(index, 1)
 			form.setFieldValue(path, array.join(','));
-		}
-		
-		console.log(array)
-		
+		}		
 	}
 	const checkURL= (url) => {
 		return(url.match(/\.(jpeg|jpg|gif|png)$/) != null);
@@ -1449,7 +1488,6 @@ const PersonalForm = (props) => {
 
 	const  capitalName = (text) => {
 		text = text.toLowerCase();
-		console.log(text.charAt(0).toUpperCase() + text.slice(1))
 		return text.charAt(0).toUpperCase() + text.slice(1);
 	}
 	return (
