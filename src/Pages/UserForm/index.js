@@ -4,7 +4,7 @@ import Header from '../layout/Header'; //Include Heder
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import Service from './../../service';
-import uuid from 'react-uuid';
+// import uuid from 'react-uuid';
 import toast, { Toaster } from 'react-hot-toast';
 // import DatePicker from 'react-date-picker';
 
@@ -65,7 +65,7 @@ const UserForm = () => {
 			bank_statement_url: '',
 			itr_docs: '',
 			itr_docs_url: '',
-			loan_purpose : 0
+			loan_purpose : ''
 		},
 		personal_info: {
 			email: '',
@@ -111,7 +111,7 @@ const UserForm = () => {
 			bank_statement_url: '',
 			salery_slip: '',
 			salery_slip_url: '',
-			loan_purpose : 0
+			loan_purpose : ''
 		}
 	})
 	useEffect(() => {
@@ -419,7 +419,7 @@ const StepOne = (props) => {
 														<label htmlFor="styled-checkbox-1">Get updates on WhatsApp</label>
 													</li>
 													<li>
-														<input className="styled-checkbox" id="styled-checkbox-2" type="checkbox" checked={form.values.is_agree == true} onChange={(e) => form.setFieldValue('is_agree', e.target.checked)} />
+														<input className="styled-checkbox doublecheck" id="styled-checkbox-2" type="checkbox" checked={form.values.is_agree == true} onChange={(e) => form.setFieldValue('is_agree', e.target.checked)} />
 														<label htmlFor="styled-checkbox-2">Please agree with the
 															<Link to=""> &nbsp;Terms & Conditions </Link> &nbsp;and&nbsp;<Link to=""> Privacy Policy </Link>
 														</label>
@@ -561,14 +561,14 @@ const StepOne = (props) => {
 									<div className="checkbox">
 										<p className="mb-33"><b>Employment type</b></p>
 										{/* <div className="checkbox"> */}
-										<div className="col-md-12">
-										<div className="col-md-4">
+										<div className="col-md-12 p-0">
+										<div className="col-md-5 p-0">
 										<input id="checkbox-1"  className="styled-checkbox" name="employee_type" type="checkbox" value="1" onChange={(e) => form.setFieldValue('employee_type', e.target.value)} checked={form.values.employee_type == 1} />
 										<label htmlFor="checkbox-1" className="checkbox-label">&nbsp; Salaried &nbsp;</label>
 										</div>
 										{/* </div> */}
 										{/* <div className="checkbox"> */}
-										<div className="col-md-4">
+										<div className="col-md-5 p-0">
 										<input id="checkbox-2" className="styled-checkbox"  name="employee_type" type="checkbox" value="2" onChange={(e) => form.setFieldValue('employee_type', e.target.value)} checked={form.values.employee_type == 2} />
 										<label htmlFor="checkbox-2" className="checkbox-label"> Self Employed</label>
 										</div>
@@ -577,12 +577,12 @@ const StepOne = (props) => {
 									<div className="checkbox" style={{ marginBottom: "10px" }}>
 										<p className="mb-33"><b>Loan Type</b></p>
 										{/* <div className="checkbox"> */}
-										<div className="col-md-12">
-										<div className="col-md-4">
+										<div className="col-md-12 p-0">
+										<div className="col-md-5 p-0">
 										<input id="checkbox-3" className="styled-checkbox"  name="loan_type" type="checkbox" value="1" onChange={(e) => form.setFieldValue('loan_type', e.target.value)} checked={form.values.loan_type == 1} />
 										<label htmlFor="checkbox-3" className="checkbox-label">&nbsp; Personal &nbsp;</label>
 										</div>
-										<div className="col-md-4">
+										<div className="col-md-5 p-0">
 										<input id="checkbox-4"  className="styled-checkbox" name="loan_type" type="checkbox" value="2" onChange={(e) => form.setFieldValue('loan_type', e.target.value)} checked={form.values.loan_type == 2} />
 										<label htmlFor="checkbox-4" className="checkbox-label">&nbsp; Business &nbsp;</label>
 										</div>
@@ -655,7 +655,7 @@ const BusinessForm = (props) => {
 			business_address_proof: currentStep == 2 ? yup.string().required('Please enter business address proof') : '',
 			bank_statement: currentStep == 2 ? yup.string().required('Please upload bank statement') : '',
 			itr_docs: currentStep == 2 ? yup.string().required('Please upload ITR') : '',
-			loan_purpose: currentStep == 2 ? yup.number().required('Please select loan purpose') : '',
+			loan_purpose: currentStep == 0 ? yup.string().required('Please select loan purpose') : '',
 
 		}),
 		onSubmit: values => {
@@ -691,6 +691,7 @@ const BusinessForm = (props) => {
 						form.setFieldValue(path, form.values[path]?form.values[path] +','+response.fileName : response.fileName);
 
 					}
+					toast.success('Upload Successful')
 				}).catch(error => {
 
 				});
@@ -853,7 +854,6 @@ const BusinessForm = (props) => {
 											<div className="col-xs-12 col-md-5">
 												<label>Nature of Business</label>
 												<select name="type_of_nature" onChange={(e) => form.setFieldValue('type_of_nature', e.target.value)}>
-												{form.touched.loan_purpose && form.errors.loan_purpose ? <div className="text-danger">{form.errors.loan_purpose}</div> : ''}
 													<option>Select One</option>
 													<option value="Retail">Retail</option>
 													<option value="Manufacturing">Manufacturing</option>
@@ -981,7 +981,8 @@ const BusinessForm = (props) => {
 														<div className="upload__btn-box">
 															<label className="upload__btn">
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p>Upload Co-Applicants Pan Card</p>
+															<p>Upload Co-Applicants Pan Card 
+															<small className="pdffile">(Only Jpg,Png,Pdf,Doc)</small></p>
 															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e,'co_application', 'uploads/merchant/pancard',index)} />
 
 															</label>
@@ -1067,7 +1068,7 @@ const BusinessForm = (props) => {
 														<div className="upload__btn-box">
 															<label className="upload__btn">
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p>Upload Pan Card</p>
+															<p>Upload Pan Card <small className="pdffile">(Only Jpg,Png,Pdf,Doc)</small></p>
 															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'pancard_image', 'uploads/merchant/pancard')} />
 
 															</label>
@@ -1113,7 +1114,7 @@ const BusinessForm = (props) => {
 														<div className="upload__btn-box">
 															<label className="upload__btn">
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p>Upload GST Registration</p>
+															<p>Upload GST Registration <small className="pdffile">(Only Jpg,Png,Pdf,Doc)</small></p>
 															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'gstproof_image', 'uploads/merchant/gst')} />
 
 															</label>
@@ -1159,7 +1160,7 @@ const BusinessForm = (props) => {
 														<div className="upload__btn-box">
 															<label className="upload__btn">
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p>Upload Address Proof</p>
+															<p>Upload Address Proof <small className="pdffile">(Only Jpg,Png,Pdf,Doc)</small></p>
 															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'business_address_proof', 'uploads/merchant/business')} />
 
 															</label>
@@ -1200,7 +1201,7 @@ const BusinessForm = (props) => {
 														<div className="upload__btn-box">
 															<label className="upload__btn">
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p>Upload One Year Latest Bank Statement (only pdf file)</p>
+															<p>Upload One Year Latest Bank Statement <small className="pdffile">(Only Pdf)</small></p>
 															<input type="file" multiple accept=".pdf" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e,'bank_statement', 'uploads/merchant/bankstatement')} />
 
 															</label>
@@ -1239,7 +1240,7 @@ const BusinessForm = (props) => {
 														<div className="upload__btn-box">
 															<label className="upload__btn">
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p>Upload ITR (Optional)</p>
+															<p>Upload ITR <small className="pdffile">(Only Jpg,Png,Pdf,Doc)</small></p>
 															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e,'itr_docs', 'uploads/merchant/business')} />
 
 															</label>
@@ -1345,7 +1346,7 @@ const PersonalForm = (props) => {
 			aadhar_image: currentStep == 2 ? yup.string().required('Please upload aadhar image') : '',
 			bank_statement: currentStep == 2 ? yup.string().required('Please upload bank statement') : '',
 			salery_slip: currentStep == 2 ? yup.string().required('Please upload salary slip') : '',
-			loan_purpose: currentStep == 1 ? yup.number().required('Please select loan purpose') : '',
+			loan_purpose: currentStep == 1 ? yup.string().required('Please select loan purpose') : '',
 		}),
 		onSubmit: values => {
 			props.data.personal_info = values;
@@ -1372,6 +1373,7 @@ const PersonalForm = (props) => {
 				api.postApi('multipleImageUpload', formData, true, props.header).then(response => {
 					form.setFieldValue(path, form.values[path]?form.values[path] +','+response.fileName : response.fileName);
 					e.target.value='';
+					toast.success('Upload Successful')
 				}).catch(error => {
 
 				});
@@ -1605,7 +1607,7 @@ const PersonalForm = (props) => {
 
 											</div>
 											<div className="col-xs-12 col-md-5">
-												<label>Type of <br></br>organization </label>
+												<label>Type of organization </label>
 												<select name="organization_type" onChange={(e) => form.setFieldValue('organization_type', e.target.value)}  >
 													<option >Select One</option>
 													<option value="Proprietorship" >Proprietorship</option>
@@ -1668,7 +1670,7 @@ const PersonalForm = (props) => {
 												<select name="loan_purpose" onChange={(e) => form.setFieldValue('loan_purpose', e.target.value)}>
 														<option >Select One</option>
 														<option value="1364">Appliance purchase</option>
-														<option value="1365" >Car 2 Weller</option>
+														<option value="1365" >Car 2 wheeler</option>
 														<option value="1367" >Education</option>
 														<option value="1368">Family event</option>
 														<option value="1369" >Home furnishing</option>
@@ -1780,7 +1782,7 @@ const PersonalForm = (props) => {
 														<div className="upload__btn-box">
 															<label className="upload__btn">
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p>Upload Pan Card</p>
+															<p>Upload Pan Card <small style={{display:"block",color: "#a5a5a5"}}>(Only Jpg,Png,Pdf,Doc)</small></p>
 															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'pancard_image', 'uploads/merchant/pancard')} />
 
 															</label>
@@ -1819,7 +1821,8 @@ const PersonalForm = (props) => {
 														<div className="upload__btn-box">
 															<label className="upload__btn">
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p>Upload Aadhar Card</p>
+															<p>Upload Aadhar Card 
+															<small style={{display: "block",color: "#a5a5a5"}}>(Only Jpg,Png,Pdf,Doc)</small></p>
 															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'aadhar_image', 'uploads/merchant/aadharcard')} />
 
 															</label>
@@ -1860,7 +1863,7 @@ const PersonalForm = (props) => {
 														<div className="upload__btn-box">
 															<label className="upload__btn">
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p>Upload One Year Latest Bank Statement (only pdf file)</p>
+															<p>Upload One Year Latest Bank Statement <small style={{display: "block",color: "#a5a5a5"}}>(Only PDF)</small></p>
 															<input type="file" multiple accept=".pdf" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e,'bank_statement', 'uploads/merchant/bankstatement')} />
 
 															</label>
@@ -1899,7 +1902,8 @@ const PersonalForm = (props) => {
 														<div className="upload__btn-box">
 															<label className="upload__btn">
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p>Upload latest 3 months salary slips</p>
+															<p>Upload latest 3 months salary slips 
+															<small style={{display: "block",color: "#a5a5a5"}}>(Only Jpg,Png,Pdf,Doc)</small></p>
 															<input type="file" multiple  accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'salery_slip', 'uploads/merchant/salery_slip')} />
 
 															</label>
@@ -1994,39 +1998,41 @@ const LenderListForm = (props) => {
 		<section className="newstep-form">
 		{/* <form id="msform" onSubmit={form.handleSubmit}> */}
 		<div className="container">		
-			<div className="row d-flex justify-content-center flexwrap">			
+			<div className="row d-flex flexwrap">			
 				<div className="col-md-12">
 					{lenderList.length > 0 && lenderList.map((co, index) => (		
 						
 						<div className="col-md-6"  key={index}>
 							<div className="landerlist-loan">
 									<div className="review-body">
-										<div className="review-right nonemobile">
-											<label className="control control--checkbox"> {co.company_name} 
-												<input type="checkbox" id={co.user_id+"_lender_error"} value={co.user_id}  
-onChange={(e) => lenderPushArray(e)} />
-											<div className="control__indicator"></div>
+										<div className="review-right">
+											<label className="control control--checkbox">  <span className="pdlrft"> {co.company_name} </span>
+												<input className="mlrft-15" type="checkbox" id={co.user_id+"_lender_error"} value={co.user_id}  onChange={(e) => lenderPushArray(e)} />
+											  <div className="control__indicator"></div>
+											  
+											  <div className="review-table">
+												<table>
+													<thead>
+														<tr>
+															<th>Min-Max Rate Of Interest</th>
+															<th>Min-max Loan Range</th>
+															<th>Min-Max Tenure</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr>
+														<td>{co.mini_rate_of_intrest}% - {co.max_rate_of_intrest}%</td>
+														<td>{co.mini_loan_range}-{co.max_loan_range}</td>
+														<td>{co.mini_tenure} Month - {co.max_tenure} Month</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+											  
 											</label>
 										</div>
 									</div>
-									<div className="review-table">
-										<table>
-											<thead>
-												<tr>
-													<th>Min-Max Rate Of Interest</th>
-													<th>Min-max Loan Range</th>
-													<th>Min-Max Tenure</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-												<td>{co.mini_rate_of_intrest}% - {co.max_rate_of_intrest}%</td>
-												<td>{co.mini_loan_range}-{co.max_loan_range}</td>
-												<td>{co.mini_tenure} Month - {co.max_tenure} Month</td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
+									
 							</div>			
 						</div>
 					))}

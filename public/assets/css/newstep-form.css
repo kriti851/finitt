@@ -1,4 +1,7 @@
 /*************** NEW STEP FORM HTML CSS 1 OCT ******************/
+body {
+	font-family: 'Josefin Sans', sans-serif;
+}
 .new-step-container {
     width: 95%!important;
 }
@@ -7,7 +10,7 @@
     font-family: 'Josefin Sans', sans-serif;
 }
 .form-newalign {
-	align-items: center;
+	align-items: flex-start;
     justify-content: flex-end;
     display: flex;
 }
@@ -64,9 +67,24 @@
 }
 .apply-now-btn:hover {
     background: #FF9000;
+	    text-decoration: none;
 }	
+a:focus {
+    outline: none;
+    outline-offset: 0px;
+    text-decoration: none;
+}
 .new-mt50 {
 	margin-top: 50px;
+}
+.stepform-newdesign .col-12 {
+	margin-bottom:15px;
+}
+.stepform-newdesign .col-md-10 {
+	margin-bottom:15px;
+}
+.stepform-newdesign .col-md-5 {
+	margin-bottom:15px;
 }
 
 .stepform-newdesign input {
@@ -79,9 +97,9 @@
     font-family: 'Josefin Sans';
     font-weight: 400;
     color: #424141;
-	margin-bottom: 15px;
+	margin-bottom: 3px;
 	position: relative;
-	    padding-right: 35px;
+	padding-right: 15px;
 }
 .stepform-newdesign input:focus {
     border: 1px solid #FF9000;
@@ -99,7 +117,7 @@
     font-weight: 400;
     color: #424141;
 	    position: relative;
-	margin-bottom: 15px;
+	margin-bottom: 3px;
 	    padding-right: 35px;
 }
 .stepform-newdesign select:focus {
@@ -246,7 +264,7 @@
 }
 .radio input[type=radio] {
   position: absolute;
-  opacity: 0;
+  opacity: 0;    width: 100px;
 }
 .radio input[type=radio] + .radio-label:before {
         content: "";
@@ -302,7 +320,6 @@
     right: 0px;
     z-index: 3;
 }
-
 .box-tools {
   position: absolute;
     right: 5px;
@@ -395,7 +412,11 @@
     margin-top: 30px;
 }
 .righimg {
-	max-width: 100%;
+    max-width: 100%;
+    height: 385px;
+    object-fit: cover;
+    border-radius: 14px;
+	margin-top: 25px;
 }
 .mt-1 {
 	margin-top:0px;
@@ -460,98 +481,154 @@
         box-shadow: inset 0px 0px 0px 30px #4bb71b;
     }
 }
-
-
-
-
-
-
-@media only screen and (max-width: 767px) {
-.newstep-form {
-    padding: 20px 0px;
-    font-family: 'Josefin Sans', sans-serif;
-}	
-.new-step-container {
-    width: 100%!important;
-}	
-.form-newalign {
-    align-items: center;
-    justify-content: flex-end;
-    display: block;
-    flex-wrap: unset;
-    width: auto;
+.leftfloat-withmr-1 {
+    margin-right: 15px;
+    float: left;
 }
-.newstep-form h1 {
-    font-size: 24px;
+
+
+.hidden {
+    display: none;
 }
-.checiocn li span {
+  .open {
+    display: block!important;
+}
+.modal-open {
+  overflow: hidden;
+}
+.modal {
+  display: none;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1050;
+  -webkit-overflow-scrolling: touch;
+  outline: 0;
+  background-color: #00000063;
+  padding-top: 100px;
+}
+.modal-dialog {
+  position: relative;
+  width: auto;
+  margin: 10px;
+}
+.modal-content {
+  position: relative;
+  background-color: #ffffff;
+  border: 1px solid #999999;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+  -webkit-background-clip: padding-box;
+  background-clip: padding-box;
+  outline: 0;
+}
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1040;
+  background-color: #000000;
+}
+.modal-header {
+  padding: 15px;
+  border-bottom: 1px solid #e5e5e5;
+  min-height: 16.42857143px;
+}
+.modal-header .close {
+  margin-top: -2px;
+}
+.modal-title {
+    margin: 0;
+    line-height: 1.42857143;
+    font-weight: bold;
+    font-family: 'Josefin Sans';
     font-size: 16px;
-    top: -2px;
 }
-.checiocn li span small {
-    font-size: 12px;;
+.modal-body {
+  position: relative;
+  padding: 15px;
 }
-.styled-checkbox + label a {
-    color: #FF9000;
-    display: contents;
+.modal-body .stepform-newdesign label {
+	font-family: 'Josefin Sans';
 }
-.radio {
-    margin-bottom: 15px;
+.modal-footer {
+  padding: 15px;
+  text-align: right;
+  border-top: 1px solid #e5e5e5;
 }
-.docutxt + label:before {
-    width: 100px;
+.close {
+    float: right;
+    font-size: 21px;
+    font-weight: bold;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    filter: alpha(opacity=20);
+    opacity: 1;
 }
-.file-upload-input {
-    width: 100% !important;
+button.close {
+  -webkit-appearance: none;
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
 }
+.close:hover, .close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+  filter: alpha(opacity=50);
+  opacity: .5;
 }
-
-
-@media (min-width: 768px) and (max-width: 991px) {
-.newstep-form {
-    padding: 20px 0px;
-    font-family: 'Josefin Sans', sans-serif;
-}	
-.new-step-container {
-    width: 100%!important;
-}	
-.form-newalign {
-    align-items: center;
-    justify-content: flex-end;
-    display: block;
-    flex-wrap: unset;
-    width: auto;
+@media (min-width: 768px) {
+  .modal-dialog {
+    width: 500px;
+    margin: 30px auto;
 }
-.newstep-form h1 {
-    font-size: 24px;
+  .modal-content {
+    -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  }
+  .modal-sm {
+    width: 300px;
+  }
 }
-.checiocn li span {
-    font-size: 18px;
-    top: -3px;
+@media (min-width: 992px) {
+  .modal-lg {
+    width: 900px;
+  }
 }
-.checiocn li span small {
-    font-size: 14px;;
+[role="button"] {
+  cursor: pointer;
 }
-.styled-checkbox + label a {
-    color: #FF9000;
-    display: contents;
+.hide {
+  display: none !important;
 }
-.radio {
-    margin-bottom: 15px;
+.show {
+  display: block !important;
 }
-.docutxt + label:before {
-    width: 45px;
+.invisible {
+  visibility: hidden;
 }
-.file-upload-input {
-    width: 100% !important;
+.text-hide {
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
 }
+.hidden {
+  display: none !important;
 }
-
-
-@media (min-width: 1440px) and (max-width: 3000px) {
-.docutxt + label:before {
-       width: 30px;
-}
+.affix {
+  position: fixed;
 }
 
 
@@ -572,7 +649,7 @@
     overflow: hidden;
     border-top: 3px solid #64984b !important;
     border: 1px solid #ddd;
-    margin-bottom: 20px;
+margin-bottom: 20px;
 }
 .review-body .review-left {
     display: inline-block;
@@ -640,10 +717,10 @@
 .review-body .review-right {
     display: inline-block;
     vertical-align: top;
-    float: left;
-    width: 100%;
-    text-align: left;
-    margin: 0px 0px 0px 10px;
+    float: right;
+    width: 110px;
+    text-align: center;
+    margin: 8px 15px 0 0;
 }
 .our-rating {
     padding-top: 10px;
@@ -725,10 +802,400 @@
     background: #ff8700;
 } 
 .control {
+  display: block;
+    position: relative;
+    padding-left: 0px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 15px;
+}
+.control input {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+}
+.control__indicator {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background: #b5b5b5;
+}
+.control--radio .control__indicator {
+  border-radius: 50%;
+}
+.control:hover input ~ .control__indicator,
+.control input:focus ~ .control__indicator {
+  background: #ccc;
+}
+.control input:checked ~ .control__indicator {
+  background: #ff8700;
+}
+.control input:checked ~ .control__indicator {
+  background: #ff8700;
+}
+.control:hover input:not([disabled]):checked ~ .control__indicator,
+.control input:checked:focus ~ .control__indicator {
+  background: #ff8700;
+}
+.control__indicator:after {
+  content: '';
+  position: absolute;
+  display: none;
+}
+.control input:checked ~ .control__indicator:after {
+  display: block;
+}
+.control--checkbox .control__indicator:after {
+    left: 8px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+.justify-content-center {
+    -ms-flex-pack: center!important;
+    justify-content: center!important;
+}
+.d-flex {
+    display: -ms-flexbox!important;
+    display: flex!important;
+}
+.flexwrap {
+    flex-wrap: wrap;
+}
+.pdffile {
+   display: block;
+   color: #a5a5a5;
+}
+.landerlist-loan {
+	margin-bottom:15px;
+}
+
+@media (min-width: 320px) and (max-width: 767px) {	
+.review-body .review-middle {
+    width: 100%;    margin-left: 0px;
+}
+.mobileshow {
+	display:block !important;
+}
+.nonemobile {
+	display:none !important;
+}
+.review-table table thead {
+    background-color: white;
+    border-top: 1px solid #ddd;
+    border-bottom: none;
+    position: relative;
+    margin: 0px;
+    height: auto;
+    width: 100%;
+}
+table tr {
+    border-bottom: none;
+    display: table-row;
+    margin-bottom: 0px;
+    padding: 0px;
+}
+.review-table table tbody td:first-child {
+    height: 35px;
+    width: auto;
+    border: none;
+}
+.review-table table thead th {
+    width: auto;
+    display: table-cell;
+}
+.review-table table tbody td {
+    width: auto;
+    display: table-cell;
+    padding: 1px;
+}
+.doublecheck + label:before {
+    width: 25px;
+}
+
+}
+
+
+
+
+
+@media only screen and (max-width: 767px) {
+.newstep-form {
+    padding: 20px 0px;
+    font-family: 'Josefin Sans', sans-serif;
+}	
+.new-step-container {
+    width: 100%!important;
+}	
+.form-newalign {
+    align-items: center;
+    justify-content: flex-end;
+    display: block;
+    flex-wrap: unset;
+    width: auto;
+}
+.newstep-form h1 {
+    font-size: 24px;
+}
+.checiocn li span {
+    font-size: 16px;
+    top: -2px;
+}
+.checiocn li span small {
+    font-size: 12px;;
+}
+.styled-checkbox + label a {
+    color: #FF9000;
+    display: contents;
+}
+.radio {
+    margin-bottom: 15px;
+}
+.docutxt + label:before {
+    width: 100px;
+}
+.file-upload-input {
+    width: 100% !important;
+}
+.apply-now-btn {
+    padding: 10px 30px;
+}
+}
+
+
+@media (min-width: 768px) and (max-width: 991px) {
+.newstep-form {
+    padding: 20px 0px;
+    font-family: 'Josefin Sans', sans-serif;
+}	
+.new-step-container {
+    width: 100%!important;
+}	
+.form-newalign {
+    align-items: center;
+    justify-content: flex-end;
+    display: block;
+    flex-wrap: unset;
+    width: auto;
+}
+.newstep-form h1 {
+    font-size: 24px;
+}
+.checiocn li span {
+    font-size: 18px;
+    top: -3px;
+}
+.checiocn li span small {
+    font-size: 14px;;
+}
+.styled-checkbox + label a {
+    color: #FF9000;
+    display: contents;
+}
+.radio {
+    margin-bottom: 15px;
+}
+.docutxt + label:before {
+    width: 45px;
+}
+.file-upload-input {
+    width: 100% !important;
+}
+}
+
+
+@media (min-width: 1440px) and (max-width: 3000px) {
+.docutxt + label:before {
+       width: 30px;
+}
+}
+
+
+
+/* Leander css */
+
+.leanderlist-padding { padding-top: 50px;}
+.f-24-size {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+.link-website {font-size: 24px; text-decoration: underline; color: black; font-weight: 700;}
+.review-body {
+    padding-top: 3px;
+    background-color: #fff;
+    position: relative;
+    overflow: hidden;
+    border-top: 3px solid #64984b !important;
+    border: 1px solid #ddd;
+    margin-bottom: 0px;
+}
+.review-body .review-left {
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+    margin-top: 10px;
+    width: 150px;
+}
+.review-body .review-left a.card-thumbnail {
+    position: relative;
+    left: 1px;
+    min-height: 35px;
+    width: 170px;
+    margin-bottom: 18px;
+    display: block;
+}
+.review-body .review-left a.card-thumbnail img {
+    width: 130px;
+    height: auto;
+}
+.review-body .review-left a.button {
+    display: block;
+    height: 77px;
+    width: 165px;
+    position: relative;
+    bottom: 18px;
+}
+.review-body .review-left a.button .bc-btn {
+    top: 18px;
+	position: relative;
+    height: 42px;
+    width: 144px;
+    margin-left: 10px;
+    font-size: 17px;
+    line-height: 28px;
+    text-align: center;
+    background-color: #319b0a;
+    box-shadow: 0 1px 5px #555;
+    border-radius: 3px;
+}
+.bc-btn .jump-text {
+    position: relative;
+    left: 1px;
+    background: #ff8700;
+    color: white;
+    padding: 10px 15px;
+    display: inline-block;
+    margin-top: 20px;
+    border-radius: 5px;
+}
+.review-body .review-middle {
+    display: inline-block;
+    vertical-align: top;
+    width: 365px;
+    font-size: 16px;
+    color: #333;
+    line-height: 1.5;
+    margin-left: 20px;
+    min-height: 150px;
+}
+.review-body .review-middle ul {
+    list-style-type: square;
+    margin-bottom: 20px;
+}
+.review-body .review-right {
+    display: inline-block;
+    vertical-align: top;
+    float: left;
+    width: 100%;
+    text-align: left;
+    margin: 0px 0px 0px 0px;
+}
+.pdlrft {
+    padding-left: 35px;
+}
+
+.our-rating {
+    padding-top: 10px;
+    background-color: #eaeaea;
+    position: relative;
+    padding-bottom: 10px;
+}
+.review-body .review-right .our-rating .stars {
+    font-size: 16px;
+    letter-spacing: 2px;
+    padding-bottom: 0;
+}
+.stars {
+    color: #e5bb0f;
+    padding: 5px 0;
+}
+.review-body .review-right .our-rating h4 {
+    color: #333;
+    font-size: 42px;
+    line-height: 48px;
+    margin: 0;
+}
+.review-body .review-right .our-rating .overall-rating {
+    margin: 0;
+    font-size: 13px;
+}
+.review-body .review-middle a {
+    color: #319b0a;
+    text-decoration: underline;
+    font-weight: 700;
+}
+.review-table table {
+    width: 100%;
+}
+.review-table table thead {
+    background-color: #f7f7f7;
+    border-top: none;
+    border-bottom: none;
+    border: none;
+}
+
+.review-table table thead th {
+    width: 25%;
+    height: 25px;
+    text-align: center;
+    font-size: 14px;
+    color: #333;
+}
+.review-table table tbody td:first-child {
+    height: 35px;
+    width: 155px;
+    border: 1px solid #ddd;
+}
+.review-table table tbody td {
+    font-weight: 700;
+    text-align: center;
+    border: 1px solid #ddd;
+    font-size: 12px;
+    color: #333;
+}
+.review-table table th {
+    background-color: #ebecef;
+    padding: 10px 5px !important;
+}
+.mobileshow {
+	display:none !important;
+}
+.sb-btn {
+    background: #00387a;
+    color: white;
+    padding: 15px 15px;
+    border: none;transition: all 0.3s linear;
+    display: block;    font-weight: 800;
+    margin: 15px auto;
+    width: 250px;    text-transform: uppercase;
+	 margin-bottom: 20px;
+	 border-radius: 100px;
+}
+.sb-btn:hover {
+    background: #ff8700;
+} 
+.control {
     display: block;
     position: relative;
-    padding-left: 30px;
-    margin-bottom: 10px;
+    padding-left: 0px;
+    margin-bottom: 0px;
     cursor: pointer;
     font-size: 16px;
     margin-top: 0px;
@@ -741,7 +1208,7 @@
 .control__indicator {
     position: absolute;
     top: 0px;
-    left: 0;
+        left: 10px;
     height: 20px;
     width: 20px;
     background: #b5b5b5;
@@ -874,21 +1341,23 @@
     column-gap: 15px;
 }
 .imgpreview-newbx li {
-    width: 150px;
+    width: 130px;
+	height: 130px;
     padding: 0 0px;
     margin-bottom: 12px;
     position: relative;
     border: 1px solid #cfcfcf;
     background: white;
-    height: 130px;
 }
 .imgpreview-newbx li img {
-    width: 150px;
+    width: 130px;
+	height: 130px;
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
     position: relative;
     padding-bottom: 0%;
+    object-fit: cover;
 }
 .imgpreview-newbx p {
     margin-top: 0px;
@@ -902,7 +1371,10 @@
     text-overflow: ellipsis;
     position: absolute;
     width: 100%;
-    bottom: 0px;
+    bottom: -2px;
+    line-height: 20px;
+    height: 20px;
+    font-family: 'Josefin Sans', sans-serif;
 }
 
 .upload__btn input {
@@ -918,6 +1390,10 @@
 .imgpreview-newbx li img {
        width: 100%;
 }
+.righimg {
+    height: 250px;
+}
+
 }
 
 @media (min-width: 451px) and (max-width: 575px) {
@@ -928,6 +1404,18 @@
        width: 100%;
 }
 }
+
+@media (min-width: 1000px) and (max-width: 1100px) {
+.imgpreview-newbx li {
+    width: 100px;
+    height: 100px;
+}	
+.imgpreview-newbx li img {
+    width: 100px;
+    height: 100px;
+}
+}
+
 
 input[type=checkbox], input[type=radio] {
     box-sizing: border-box;

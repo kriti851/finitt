@@ -1,11 +1,11 @@
-.text-danger{
-    color:red;
+.text-danger {
+  color: red;
+  position: relative;
+}
+.display-block {
+  display: block !important;
 }
 
-.display-block {
-    display: block !important;
-  }
-  
-  .display-none {
-    display: none !important;
-  }
+.display-none {
+  display: none !important;
+}
