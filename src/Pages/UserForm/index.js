@@ -843,12 +843,12 @@ const BusinessForm = (props) => {
 											<div className="col-12 col-md-5">
 												<label>Last Name</label>
 												<input type="text" name="last_name" {...form.getFieldProps("last_name")} className="" placeholder="Enter last name" />
-												{form.touched.last_name && form.errors.last_name ? <div className="text-danger">{form.errors.last_name}</div> : ''}
+												{form.touched.last_name && !form.errors.first_name && form.errors.last_name ? <div className="text-danger">{form.errors.last_name}</div> : ''}
 											</div>
 											<div className="col-12 col-md-5">
 												<label>Email Address</label>
 												<input type="text" name="email" {...form.getFieldProps("email")} className="" placeholder="Enter email" />
-												{form.touched.email && form.errors.email ? <div className="text-danger">{form.errors.email}</div> : ''}
+												{form.touched.email && !form.errors.last_name  && form.errors.email ? <div className="text-danger">{form.errors.email}</div> : ''}
 											</div>
  
 											<div className="col-12 col-md-5"> 
@@ -856,7 +856,7 @@ const BusinessForm = (props) => {
 												
 												<input type="date"      
        max="1999-12-31" name="date_of_birth" {...form.getFieldProps("date_of_birth")} className="" placeholder="Enter Date of birth" />
-												{form.touched.date_of_birth && form.errors.date_of_birth ? <div className="text-danger">{form.errors.date_of_birth}</div> : ''}
+												{form.touched.date_of_birth && !form.errors.email && form.errors.date_of_birth ? <div className="text-danger">{form.errors.date_of_birth}</div> : ''}
 											</div>
 										    <div className="col-xs-12 col-md-10">
 												<label>Gender</label>
@@ -867,17 +867,17 @@ const BusinessForm = (props) => {
 													<option value="Other">Other</option>
 													<option value="Prefer not to disclose">Prefer not to disclose</option>
 												</select>
-												{form.touched.gender && form.errors.gender ? <div className="text-danger">{form.errors.gender}</div> : ''}
+												{form.touched.gender && !form.errors.date_of_birth && form.errors.gender ? <div className="text-danger">{form.errors.gender}</div> : ''}
 											</div>
 											<div className="col-12 col-md-10">
 												<label>Business Name</label>
 												<input type="text" name="company_name" {...form.getFieldProps("company_name")} className="" placeholder="Enter name" />
-												{form.touched.company_name && form.errors.company_name ? <div className="text-danger">{form.errors.company_name}</div> : ''}
+												{form.touched.company_name && !form.errors.gender && form.errors.company_name ? <div className="text-danger">{form.errors.company_name}</div> : ''}
 											</div>
 											<div className="col-12 col-md-10">
 												<label>Legal Name</label>
 												<input type="text" name="legal_name" {...form.getFieldProps("legal_name")} className="" placeholder="Enter name" />
-												{form.touched.legal_name && form.errors.legal_name ? <div className="text-danger">{form.errors.legal_name}</div> : ''}
+												{form.touched.legal_name && !form.errors.company_name && form.errors.legal_name ? <div className="text-danger">{form.errors.legal_name}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>State</label>
@@ -887,7 +887,7 @@ const BusinessForm = (props) => {
 														<option value={option.name} key={index}>{option.name}</option>
 													))}
 												</select>
-												{form.touched.state && form.errors.state ? <div className="text-danger">{form.errors.state}</div> : ''}
+												{form.touched.state && !form.errors.legal_name && form.errors.state ? <div className="text-danger">{form.errors.state}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>City</label>
@@ -897,12 +897,12 @@ const BusinessForm = (props) => {
 														<option value={option.name} key={index}>{capitalName(option.name)}</option>
 													))}
 												</select>
-												{form.touched.city && form.errors.city ? <div className="text-danger">{form.errors.city}</div> : ''}
+												{form.touched.city && !form.errors.state && form.errors.city ? <div className="text-danger">{form.errors.city}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Flat No./building no./street no.</label>
 												<input type="text" name="houseno" {...form.getFieldProps("houseno")} className="" placeholder="Enter House No." />
-												{form.touched.houseno && form.errors.houseno ? <div className="text-danger">{form.errors.houseno}</div> : ''}
+												{form.touched.houseno && !form.errors.city && form.errors.houseno ? <div className="text-danger">{form.errors.houseno}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Pin Code</label>
@@ -912,7 +912,7 @@ const BusinessForm = (props) => {
 														<option value={option.pincode} key={index}>{option.pincode}</option>
 													))}
 												</select>
-												{form.touched.pincode && form.errors.pincode ? <div className="text-danger">{form.errors.pincode}</div> : ''}
+												{form.touched.pincode && !form.errors.houseno && form.errors.pincode ? <div className="text-danger">{form.errors.pincode}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Type of Firm</label>
@@ -923,7 +923,7 @@ const BusinessForm = (props) => {
 													<option value="Partnership">Partnership</option>
 													<option value="PVT .ltd">PVT .ltd</option>
 												</select>
-												{form.touched.business_type && form.errors.business_type ? <div className="text-danger">{form.errors.business_type}</div> : ''}
+												{form.touched.business_type && !form.errors.pincode && form.errors.business_type ? <div className="text-danger">{form.errors.business_type}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Nature of Business</label>
@@ -934,12 +934,12 @@ const BusinessForm = (props) => {
 													<option value="Service">Service</option>
 													<option value="Wholesale" >Wholesale</option>
 												</select>
-												{form.touched.type_of_nature && form.errors.type_of_nature ? <div className="text-danger">{form.errors.type_of_nature}</div> : ''}
+												{form.touched.type_of_nature && !form.errors.business_type && form.errors.type_of_nature ? <div className="text-danger">{form.errors.type_of_nature}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>No. of years in Business</label>
 												<input type="number" min="0" name="vintage" {...form.getFieldProps("vintage")} className="" placeholder="Enter year" />
-												{form.touched.vintage && form.errors.vintage ? <div className="text-danger">{form.errors.vintage}</div> : ''}
+												{form.touched.vintage && !form.errors.type_of_nature && form.errors.vintage ? <div className="text-danger">{form.errors.vintage}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Monthly Turnover</label>
@@ -969,7 +969,7 @@ const BusinessForm = (props) => {
 													<option value="95 - 99 lac">95 - 99 lac</option>
 													<option value="99 above">99 above</option>
 												</select>
-												{form.touched.turn_over && form.errors.turn_over ? <div className="text-danger">{form.errors.turn_over}</div> : ''}
+												{form.touched.turn_over && !form.errors.vintage && form.errors.turn_over ? <div className="text-danger">{form.errors.turn_over}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Desired Loan Amount</label>
@@ -999,12 +999,12 @@ const BusinessForm = (props) => {
 													<option value="95 - 99 lac">95 - 99 lac</option>
 													<option value="99 above">99 above</option>
 												</select>
-												{form.touched.desired_amount && form.errors.desired_amount ? <div className="text-danger">{form.errors.desired_amount}</div> : ''}
+												{form.touched.desired_amount && !form.errors.turn_over && form.errors.desired_amount ? <div className="text-danger">{form.errors.desired_amount}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Required Amount</label>
 												<input type="text" name="required_amount" {...form.getFieldProps("required_amount")} className="" placeholder="Enter amount" />
-												{form.touched.required_amount && form.errors.required_amount ? <div className="text-danger">{form.errors.required_amount}</div> : ''}
+												{form.touched.required_amount && !form.errors.desired_amount && form.errors.required_amount ? <div className="text-danger">{form.errors.required_amount}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-10">
 												    <label>Loan purpose </label>
@@ -1019,7 +1019,7 @@ const BusinessForm = (props) => {
 														<option value="90156975">Top up Loan</option>
 														<option value="1373">Wedding</option>
 													</select>
-												{form.touched.loan_purpose && form.errors.loan_purpose ? <div className="text-danger">{form.errors.loan_purpose}</div> : ''}
+													{form.touched.loan_purpose && !form.errors.required_amount && form.errors.loan_purpose ? <div className="text-danger">{form.errors.loan_purpose}</div> : ''}
 
 											</div>
 										</div>
@@ -1043,12 +1043,12 @@ const BusinessForm = (props) => {
 												<div className="col-12 col-md-5">
 													<label>Relationship</label>
 													<input type="text" name={`form.values..co_application.${index}.relationship`} {...form.getFieldProps(`co_application.${index}.relationship`)} className="" placeholder="Enter relationship" />
-													{form.touched['co_application']?.[index]?.['relationship'] && form.errors['co_application']?.[index]?.['relationship'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['relationship']}</div> : ''}
+													{form.touched['co_application']?.[index]?.['relationship'] && !form.errors['co_application']?.[index]?.['name'] && form.errors['co_application']?.[index]?.['relationship'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['relationship']}</div> : ''}
 												</div>
 												<div className="col-xs-12 col-md-10 mb-3">
 													<label>Pan Card Number </label>
 													<input type="text" name={`form.values..co_application.${index}.pan_number`}  {...form.getFieldProps(`co_application.${index}.pan_number`)} className="mb-0" placeholder="Enter Number" />
-													{form.touched['co_application']?.[index]?.['pan_number'] && form.errors['co_application']?.[index]?.['pan_number'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['pan_number']}</div> : ''}
+													{form.touched['co_application']?.[index]?.['pan_number'] && !form.errors['co_application']?.[index]?.['relationship']  && form.errors['co_application']?.[index]?.['pan_number'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['pan_number']}</div> : ''}
 												</div>
 												<div className="col-12 col-md-6 col-lg-10">
 													<div className="upload__box">
@@ -1061,7 +1061,7 @@ const BusinessForm = (props) => {
 
 															</label>
 														</div>
-														{form.values['co_application']?.[index]?.['pancard_image'] == '' && form.touched['co_application']?.[index]?.['pancard_image'] && form.errors['co_application']?.[index]?.['pancard_image'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['pancard_image']}</div> : ''}
+														{form.values['co_application']?.[index]?.['pancard_image'] == '' && form.touched['co_application']?.[index]?.['pancard_image'] && !form.errors['co_application']?.[index]?.['pan_number'] && form.errors['co_application']?.[index]?.['pancard_image'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['pancard_image']}</div> : ''}
 
 													</div>
 													{form.values['co_application']?.[index]?.['pancard_image'] && form.values['co_application']?.[index]?.['pancard_image'].split(',') && form.values['co_application']?.[index]?.['pancard_image'].split(',').length > 0  ?
@@ -1116,7 +1116,7 @@ const BusinessForm = (props) => {
 
 															</label>
 														</div>
-														{form.values.pancard_image == '' && form.touched.pancard_image && form.errors.pancard_image ? <div className="text-danger">{form.errors.pancard_image}</div> : ''} 
+														{form.values.pancard_image == '' && form.touched.pancard_image && !form.errors.pan_number && form.errors.pancard_image ? <div className="text-danger">{form.errors.pancard_image}</div> : ''} 
 
 													</div>
 													{form.values.pancard_image && form.values.pancard_image.split(',') && form.values.pancard_image.split(',').length > 0  ?
@@ -1149,7 +1149,7 @@ const BusinessForm = (props) => {
 											<div className="col-xs-12 col-md-10 mb-3">
 												<label>Firm GST Number </label>
 												<input type="text" name="gst_number" {...form.getFieldProps('gst_number')} className="" placeholder="Enter Number" />
-												{form.touched.gst_number && form.errors.gst_number ? <div className="text-danger">{form.errors.gst_number}</div> : ''}
+												{form.touched.gst_number && !form.errors.pancard_image && form.errors.gst_number ? <div className="text-danger">{form.errors.gst_number}</div> : ''}
 
 											</div>
 											<div className="col-12 col-md-6 col-lg-10">
@@ -1162,7 +1162,7 @@ const BusinessForm = (props) => {
 
 															</label>
 														</div>
-														{form.values.gstproof_image == '' && form.touched.gstproof_image && form.errors.gstproof_image ? <div className="text-danger">{form.errors.gstproof_image}</div> : ''} 
+														{form.values.gstproof_image == '' && form.touched.gstproof_image && !form.errors.gst_number && form.errors.gstproof_image ? <div className="text-danger">{form.errors.gstproof_image}</div> : ''} 
 
 													</div>
 													{form.values.gstproof_image && form.values.gstproof_image.split(',') && form.values.gstproof_image.split(',').length > 0  ?
@@ -1195,7 +1195,7 @@ const BusinessForm = (props) => {
 											<div className="col-xs-12 col-md-10 mb-3">
 												<label>Business Address </label>
 												<input type="text" name="business_address"  {...form.getFieldProps('business_address')} className="mb-0" placeholder="Enter address" />
-												{form.values.business_address == '' &&  form.touched.business_address && form.errors.business_address ? <div className="text-danger">{form.errors.business_address}</div> : ''}
+												{form.values.business_address == '' &&  form.touched.business_address && !form.values.gstproof_image && form.errors.business_address ? <div className="text-danger">{form.errors.business_address}</div> : ''}
 
 											</div>
 											<div className="col-12 col-md-6 col-lg-10">
@@ -1208,7 +1208,7 @@ const BusinessForm = (props) => {
 
 															</label>
 														</div>
-														{form.values.business_address_proof == '' && form.touched.business_address_proof && form.errors.business_address_proof ? <div className="text-danger">{form.errors.business_address_proof}</div> : ''} 
+														{form.values.business_address_proof == '' && form.touched.business_address_proof && !form.errors.gstproof_image && form.errors.business_address_proof ? <div className="text-danger">{form.errors.business_address_proof}</div> : ''} 
 
 													</div>
 													{form.values.business_address_proof && form.values.business_address_proof.split(',') && form.values.business_address_proof.split(',').length > 0  ?
@@ -1249,7 +1249,7 @@ const BusinessForm = (props) => {
 
 															</label>
 														</div>
-														{form.values.bank_statement == '' && form.touched.bank_statement && form.errors.bank_statement ? <div className="text-danger">{form.errors.bank_statement}</div> : ''} 
+														{form.values.bank_statement == '' && form.touched.bank_statement && !form.errors.business_address_proof && form.errors.bank_statement ? <div className="text-danger">{form.errors.bank_statement}</div> : ''} 
 
 													</div>
 													{form.values.bank_statement && form.values.bank_statement.split(',') && form.values.bank_statement.split(',').length > 0  ?
@@ -1288,7 +1288,7 @@ const BusinessForm = (props) => {
 
 															</label>
 														</div>
-														{form.values.itr_docs == '' && form.touched.itr_docs && form.errors.itr_docs ? <div className="text-danger">{form.errors.itr_docs}</div> : ''} 
+														{form.values.itr_docs == '' && form.touched.itr_docs && !form.errors.bank_statement && form.errors.itr_docs ? <div className="text-danger">{form.errors.itr_docs}</div> : ''} 
 
 													</div>
 													{form.values.itr_docs && form.values.itr_docs.split(',') && form.values.itr_docs.split(',').length > 0  ?
@@ -1511,22 +1511,22 @@ const PersonalForm = (props) => {
 											<div className="col-12 col-md-5">
 												<label>Last Name</label>
 												<input type="text" name="last_name" {...form.getFieldProps("last_name")} className="" placeholder="Enter last name" />
-												{form.touched.last_name && form.errors.last_name ? <div className="text-danger">{form.errors.last_name}</div> : ''}
+												{form.touched.last_name && !form.errors.first_name && form.errors.last_name ? <div className="text-danger">{form.errors.last_name}</div> : ''}
 											</div>
 											<div className="col-12 col-md-5">
 												<label>Email Address</label>
 												<input type="text" name="email" {...form.getFieldProps("email")} className="" placeholder="Enter email" />
-												{form.touched.email && form.errors.email ? <div className="text-danger">{form.errors.email}</div> : ''}
+												{form.touched.email && !form.errors.last_name && form.errors.email ? <div className="text-danger">{form.errors.email}</div> : ''}
 											</div>
 											<div className="col-12 col-md-5">
 												<label>Date of birth</label>
 												<input type="date"   max="1999-12-31" name="date_of_birth" {...form.getFieldProps("date_of_birth")} className="" placeholder="Enter Date of birth" />
-												{form.touched.date_of_birth && form.errors.date_of_birth ? <div className="text-danger">{form.errors.date_of_birth}</div> : ''}
+												{form.touched.date_of_birth && !form.errors.email && form.errors.date_of_birth ? <div className="text-danger">{form.errors.date_of_birth}</div> : ''}
 											</div>
 											<div className="col-12 col-md-10">
 												<label>Father's Name</label>
 												<input type="text" name="father_name" {...form.getFieldProps("father_name")} className="" placeholder="Enter father name" />
-												{form.touched.father_name && form.errors.father_name ? <div className="text-danger">{form.errors.father_name}</div> : ''}
+												{form.touched.father_name && !form.errors.date_of_birth && form.errors.father_name ? <div className="text-danger">{form.errors.father_name}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Gender</label>
@@ -1537,7 +1537,7 @@ const PersonalForm = (props) => {
 													<option value="Other">Other</option>
 													<option value="Prefer not to disclose">Prefer not to disclose</option>
 												</select>
-												{form.touched.gender && form.errors.gender ? <div className="text-danger">{form.errors.gender}</div> : ''}
+												{form.touched.gender && !form.errors.father_name && form.errors.gender ? <div className="text-danger">{form.errors.gender}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Qualification</label>
@@ -1547,7 +1547,7 @@ const PersonalForm = (props) => {
 													<option value="Graduate">Graduate</option>
 													<option value="Post Graduate">Post Graduate</option>
 												</select>
-												{form.touched.qualification && form.errors.qualification ? <div className="text-danger">{form.errors.qualification}</div> : ''}
+												{form.touched.qualification && !form.errors.gender && form.errors.qualification ? <div className="text-danger">{form.errors.qualification}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Marital Status</label>
@@ -1557,12 +1557,12 @@ const PersonalForm = (props) => {
 													<option value="Single">Single</option>
 													<option value="Prefer Not to Say">Prefer Not to Say</option>
 												</select>
-												{form.touched.marital_status && form.errors.marital_status ? <div className="text-danger">{form.errors.marital_status}</div> : ''}
+												{form.touched.marital_status && !form.errors.qualification && form.errors.marital_status ? <div className="text-danger">{form.errors.marital_status}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Number of Kids</label>
 												<input type="number" min="0" name="number_of_kids" {...form.getFieldProps("number_of_kids")} className="" placeholder="Enter kids number" />
-												{form.touched.number_of_kids && form.errors.number_of_kids ? <div className="text-danger">{form.errors.number_of_kids}</div> : ''}
+												{form.touched.number_of_kids && !form.errors.marital_status && form.errors.number_of_kids ? <div className="text-danger">{form.errors.number_of_kids}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Vehicle Type</label>
@@ -1572,12 +1572,12 @@ const PersonalForm = (props) => {
 													<option value="4 wheeler" >4 wheeler</option>
 													<option value="None">None</option>
 												</select>
-												{form.touched.vehicle_type && form.errors.vehicle_type ? <div className="text-danger">{form.errors.vehicle_type}</div> : ''}
+												{form.touched.vehicle_type  && !form.errors.marital_status  && form.errors.vehicle_type ? <div className="text-danger">{form.errors.vehicle_type}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Flat No./Building No./Street No.</label>
 												<input type="text" name="residence_building" {...form.getFieldProps("residence_building")} className="" placeholder="Enter House No." />
-												{form.touched.residence_building && form.errors.residence_building ? <div className="text-danger">{form.errors.residence_building}</div> : ''}
+												{form.touched.residence_building && !form.errors.vehicle_type && form.errors.residence_building ? <div className="text-danger">{form.errors.residence_building}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>State</label>
@@ -1587,7 +1587,7 @@ const PersonalForm = (props) => {
 														<option value={option.id} key={index}>{option.name}</option>
 													))}
 												</select>
-												{form.touched.residence_state && form.errors.residence_state ? <div className="text-danger">{form.errors.residence_state}</div> : ''}
+												{form.touched.residence_state && !form.errors.residence_building  && form.errors.residence_state ? <div className="text-danger">{form.errors.residence_state}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>City</label>
@@ -1598,12 +1598,12 @@ const PersonalForm = (props) => {
 														<option value={option.id} key={index}>{capitalName(option.name)}</option>
 													))}
 												</select>
-												{form.touched.residence_city && form.errors.residence_city ? <div className="text-danger">{form.errors.residence_city}</div> : ''}
+												{form.touched.residence_city && !form.errors.residence_state && form.errors.residence_city ? <div className="text-danger">{form.errors.residence_city}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Locality/Area</label>
 												<input type="text" name="residence_area" {...form.getFieldProps("residence_area")} className="" placeholder="Enter Locality/Area" />
-												{form.touched.residence_area && form.errors.residence_area ? <div className="text-danger">{form.errors.residence_area}</div> : ''}
+												{form.touched.residence_area && !form.errors.residence_city && form.errors.residence_area ? <div className="text-danger">{form.errors.residence_area}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Pincode</label>
@@ -1613,7 +1613,7 @@ const PersonalForm = (props) => {
 														<option value={option.pincode} key={index}>{option.pincode}</option>
 													))}
 												</select>
-												{form.touched.residence_pincode && form.errors.residence_pincode ? <div className="text-danger">{form.errors.residence_pincode}</div> : ''}
+												{form.touched.residence_pincode && !form.errors.residence_area && form.errors.residence_pincode ? <div className="text-danger">{form.errors.residence_pincode}</div> : ''}
 											</div>
 										</div>
 									</div>
@@ -1635,13 +1635,13 @@ const PersonalForm = (props) => {
 											<div className="col-12 col-md-5">
 												<label>Designation</label>
 												<input type="text" className="" name="designation"  {...form.getFieldProps("designation")} placeholder="Enter designation" />
-												{form.touched.designation && form.errors.designation ? <div className="text-danger">{form.errors.designation}</div> : ''}
+												{form.touched.designation && !form.errors.employer_name && form.errors.designation ? <div className="text-danger">{form.errors.designation}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>No. of years in organization</label>
 												<input type="number" min="0" className="" name="organization"  {...form.getFieldProps("organization")} placeholder="Enter year" />
-												{form.touched.organization && form.errors.organization ? <div className="text-danger">{form.errors.organization}</div> : ''}
+												{form.touched.organization && !form.errors.designation && form.errors.organization ? <div className="text-danger">{form.errors.organization}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
@@ -1655,7 +1655,7 @@ const PersonalForm = (props) => {
 													<option value="Government">Government</option>
 													<option value="Other">OTHER</option>
 												</select>
-												{form.touched.organization_type && form.errors.organization_type ? <div className="text-danger">{form.errors.organization_type}</div> : ''}
+												{form.touched.organization_type && !form.errors.organization && form.errors.organization_type ? <div className="text-danger">{form.errors.organization_type}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
@@ -1695,13 +1695,13 @@ const PersonalForm = (props) => {
 													<option value="30">30</option>
 													<option value="Greater than 30">Greater than 30</option>
 												</select>
-												{form.touched.total_experience && form.errors.total_experience ? <div className="text-danger">{form.errors.total_experience}</div> : ''}
+												{form.touched.total_experience && !form.errors.organization_type  && form.errors.total_experience ? <div className="text-danger">{form.errors.total_experience}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Required Amount</label>
 												<input type="text" name="required_amount"  {...form.getFieldProps("required_amount")} className="" placeholder="Enter amount" />
-												{form.touched.required_amount && form.errors.required_amount ? <div className="text-danger">{form.errors.required_amount}</div> : ''}
+												{form.touched.required_amount && !form.errors.total_experience && form.errors.required_amount ? <div className="text-danger">{form.errors.required_amount}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-10">
 												<label>Loan purpose </label>
@@ -1721,13 +1721,13 @@ const PersonalForm = (props) => {
 														<option value="1368" >Family event</option>
 														<option value="1366" >Debt consolidationl</option>
 													</select> 
-													{form.touched.loan_purpose && form.errors.loan_purpose ? <div className="text-danger">{form.errors.loan_purpose}</div> : ''}
+													{form.touched.loan_purpose && !form.errors.required_amount && form.errors.loan_purpose ? <div className="text-danger">{form.errors.loan_purpose}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Building No./Plot No.</label>
 												<input type="text" name="company_building"  {...form.getFieldProps("company_building")} className="" placeholder="Enter house no." />
-												{form.touched.company_building && form.errors.company_building ? <div className="text-danger">{form.errors.company_building}</div> : ''}
+												{form.touched.company_building && !form.errors.loan_purpose && form.errors.company_building ? <div className="text-danger">{form.errors.company_building}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
@@ -1738,7 +1738,7 @@ const PersonalForm = (props) => {
 														<option value={option.id} key={index}>{option.name}</option>
 													))}
 												</select>
-												{form.touched.company_state && form.errors.company_state ? <div className="text-danger">{form.errors.company_state}</div> : ''}
+												{form.touched.company_state && !form.errors.company_building  && form.errors.company_state ? <div className="text-danger">{form.errors.company_state}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
@@ -1749,13 +1749,13 @@ const PersonalForm = (props) => {
 														<option value={option.id} key={index}>{capitalName(option.name)}</option>
 													))}
 												</select>
-												{form.touched.company_city && form.errors.company_city ? <div className="text-danger">{form.errors.company_city}</div> : ''}
+												{form.touched.company_city && !form.errors.company_state && form.errors.company_city ? <div className="text-danger">{form.errors.company_city}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Locality/Area </label>
 												<input type="text" name="company_area"  {...form.getFieldProps("company_area")} className="" placeholder="Enter area." />
-												{form.touched.company_area && form.errors.company_area ? <div className="text-danger">{form.errors.company_area}</div> : ''}
+												{form.touched.company_area && !form.errors.company_city  && form.errors.company_area ? <div className="text-danger">{form.errors.company_area}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
@@ -1766,25 +1766,25 @@ const PersonalForm = (props) => {
 														<option value={option.pincode} key={index}>{option.pincode}</option>
 													))}
 												</select>
-												{form.touched.company_pincode && form.errors.company_pincode ? <div className="text-danger">{form.errors.company_pincode}</div> : ''}
+												{form.touched.company_pincode && !form.errors.company_area && form.errors.company_pincode ? <div className="text-danger">{form.errors.company_pincode}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Company Website</label>
 												<input type="text" name="company_website"  {...form.getFieldProps("company_website")} className="" placeholder="Enter website URL" />
-												{form.touched.company_website && form.errors.company_website ? <div className="text-danger">{form.errors.company_website}</div> : ''}
+												{form.touched.company_website && !form.errors.company_pincode && form.errors.company_website ? <div className="text-danger">{form.errors.company_website}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Official Email Address</label>
 												<input type="text" name="company_email"  {...form.getFieldProps("company_email")} className="" placeholder="Enter official email" />
-												{form.touched.company_email && form.errors.company_email ? <div className="text-danger">{form.errors.company_email}</div> : ''}
+												{form.touched.company_email && !form.errors.company_website && form.errors.company_email ? <div className="text-danger">{form.errors.company_email}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Monthly take home</label>
 												<input type="text" name="salery_inhand"  {...form.getFieldProps("salery_inhand")} className="" placeholder="Enter monthly income" />
-												{form.touched.salery_inhand && form.errors.salery_inhand ? <div className="text-danger">{form.errors.salery_inhand}</div> : ''}
+												{form.touched.salery_inhand && !form.errors.company_email && form.errors.salery_inhand ? <div className="text-danger">{form.errors.salery_inhand}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
@@ -1795,13 +1795,13 @@ const PersonalForm = (props) => {
 													<option value="Cheque" >Cheque</option>
 													<option value="Cash">Cash</option>
 												</select>
-												{form.touched.salary_mode && form.errors.salary_mode ? <div className="text-danger">{form.errors.salary_mode}</div> : ''}
+												{form.touched.salary_mode && !form.errors.salery_inhand && form.errors.salary_mode ? <div className="text-danger">{form.errors.salary_mode}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Bank Name</label>
 												<input type="text" name="bank_name"  {...form.getFieldProps("bank_name")} className="" placeholder="Enter your bank name" />
-												{form.touched.bank_name && form.errors.bank_name ? <div className="text-danger">{form.errors.bank_name}</div> : ''}
+												{form.touched.bank_name && !form.errors.salary_mode  && form.errors.bank_name ? <div className="text-danger">{form.errors.bank_name}</div> : ''}
 
 											</div>
 										</div>
@@ -1865,7 +1865,7 @@ const PersonalForm = (props) => {
 
 															</label>
 														</div>
-														{form.values.aadhar_image == '' && form.touched.aadhar_image && form.errors.aadhar_image ? <div className="text-danger">{form.errors.aadhar_image}</div> : ''} 
+														{form.values.aadhar_image == '' && form.touched.aadhar_image && !form.touched.pancard_image && form.errors.aadhar_image ? <div className="text-danger">{form.errors.aadhar_image}</div> : ''} 
 
 													</div>
 													{form.values.aadhar_image && form.values.aadhar_image.split(',') && form.values.aadhar_image.split(',').length > 0  ?
@@ -1906,7 +1906,7 @@ const PersonalForm = (props) => {
 
 															</label>
 														</div>
-														{form.values.bank_statement == '' && form.touched.bank_statement && form.errors.bank_statement ? <div className="text-danger">{form.errors.bank_statement}</div> : ''} 
+														{form.values.bank_statement == '' && form.touched.bank_statement && !form.errors.aadhar_image && form.errors.bank_statement ? <div className="text-danger">{form.errors.bank_statement}</div> : ''} 
 
 													</div>
 													{form.values.bank_statement && form.values.bank_statement.split(',') && form.values.bank_statement.split(',').length > 0  ?
@@ -1946,7 +1946,7 @@ const PersonalForm = (props) => {
 
 															</label>
 														</div>
-														{form.values.salery_slip == '' && form.touched.salery_slip && form.errors.salery_slip ? <div className="text-danger">{form.errors.salery_slip}</div> : ''} 
+														{form.values.salery_slip == '' && form.touched.salery_slip && !form.errors.bank_statement && form.errors.salery_slip ? <div className="text-danger">{form.errors.salery_slip}</div> : ''} 
 
 													</div>
 													{form.values.salery_slip && form.values.salery_slip.split(',') && form.values.salery_slip.split(',').length > 0  ?
