@@ -31,78 +31,134 @@ const UserForm = () => {
 		},
 		business_info: {
 			email: '',
+			email_true: false,
 			first_name: '',
+			first_name_true: false,
 			last_name: '',
+			last_name_true: false,
 			gender: '',
+			gender_true: false,
 			date_of_birth: '',
+			date_of_birth_true: false,
 			company_name: '',
+			company_name_true: false,
 			legal_name: '',
-			// state_id: '',
+			legal_name_true: false,
 			state: '',
-			// city_id: '',
+			state_true: false,
 			city: '',
+			city_true: false,
 			houseno: '',
+			houseno_true: false,
 			pincode: '',
+			pincode_true: false,
 			business_type: '',
+			business_type_true: false,
 			type_of_nature: '',
+			type_of_nature_true: false,
 			vintage: '',
+			vintage_true: false,
 			turn_over: '',
+			turn_over_true: false,
 			desired_amount: '',
+			desired_amount_true: false,
 			required_amount: '',
+			required_amount_true: false,
 			co_application: [
-				{ name: "", pan_number: "", pancard_image: "", relationship: "" }
+			{ name: "", pan_number: "", pancard_image: "", relationship: "" }
 			],
+			co_application_true: "",
 			pan_number: '',
+			pan_number_true: false,
 			pancard_image: '',
+			pancard_image_true: false,
 			gst_number: '',
+			gst_number_true: false,
 			gstproof_image: '',
+			gstproof_image_true: false,
 			business_address: '',
+			business_address_true: false,
 			business_address_proof: '',
+			business_address_proof_true: false,
 			bank_statement: '',
+			bank_statement_true: false,
 			itr_docs: '',
-			loan_purpose : ''
+			itr_docs_true: false,
+			loan_purpose : '',
+			loan_purpose_true: false,
 		},
 		personal_info: {
-			email: '',
-			first_name: '',
-			last_name: '',
-			gender: '',
-			date_of_birth: '',
-			father_name: '',
-			qualification: '',
-			marital_status: '',
-			number_of_kids: 0,
-			vehicle_type: '',
-			residence_building: '',
-			residence_area: '',
-			residence_state: '',
-			residence_state_id: '',
-			residence_city: '',
-			residence_city_id: '',
-			residence_pincode: '',
-			employer_name: '',
-			designation: '',
-			organization: '',
-			organization_type: '',
-			total_experience: '',
-			required_amount: '',
-			company_building: '',
-			company_area: '',
-			company_state: '',
-			company_state_id: '',
-			company_city: '',
-			company_city_id: '',
-			company_pincode: '',
-			company_website: '',
-			company_email: '',
-			salery_inhand: '',
-			salary_mode: '',
-			bank_name: '',
-			pancard_image: '',
-			aadhar_image: '',
-			bank_statement: '',
-			salery_slip: '',
-			loan_purpose : ''
+				email: '',
+				email_true: false,
+				first_name: '',
+				first_name_true: false,
+				last_name: '',
+				last_name_true:'',
+				gender: '',
+				gender_true: false,
+				date_of_birth: '',
+				date_of_birth_true: false,
+				father_name: '',
+				father_name_true: false,
+				qualification: '',
+				qualification_true: false,
+				marital_status: '',
+				marital_status_true: false,
+				number_of_kids: 0,
+				number_of_kids_true: 0,
+				vehicle_type: '',
+				vehicle_type_true: false,
+				residence_building: '',
+				residence_building_true: false,
+				residence_area: '',
+				residence_area_true: false,
+				residence_state: '',
+				residence_state_true: false,
+				residence_city: '',
+				residence_city_true: false,
+				residence_pincode: '',
+				residence_pincode_true: false,
+				employer_name: '',
+				employer_name_true: false,
+				designation: '',
+				designation_true: false,
+				organization: '',
+				organization_true: false,
+				organization_type_true: false,
+				total_experience: '',
+				total_experience_true: false,
+				required_amount: '',
+				required_amount_true: false,
+				company_building: '',
+				company_building_true: false,
+				company_area: '',
+				company_area_true: false,
+				company_state: '',
+				company_state_true: false,
+				company_city: '',
+				company_city_true: false,
+				company_pincode: '',
+				company_pincode_true: false,
+				company_website: '',
+				company_website_true: false,
+				company_email: '',
+				company_email_true: false,
+				salery_inhand: '',
+				salery_inhand_true: false,
+				salary_mode: '',
+				salary_mode_true: false,
+				bank_name: '',
+				bank_name_true: false,
+				pancard_image: '',
+				pancard_image_true: false,
+				aadhar_image: '',
+				aadhar_image_true: false,
+				bank_statement: '',
+				bank_statement_true: false,
+				salery_slip: '',
+				salery_slip_true: false,
+				loan_purpose : '',
+				loan_purpose_true: false,
 		}
 	})
 	useEffect(() => {
@@ -174,7 +230,7 @@ const StepOne = (props) => {
 	const [currentStep, setCurrentStep] = useState(0);
 	const form = useFormik({
 		initialValues: props.data.info,
-		// enableReinitialize: true,
+		enableReinitialize: true,
 		validationSchema: yup.object({
 			mobile_number: currentStep == 1 ? yup.string().required('Please enter mobile number').min(10, 'Please enter valid mobile number')
 				.max(10, 'Please enter valid mobile number.').matches(phoneRegExp, 'Please enter valid mobile number') : '',
@@ -216,6 +272,7 @@ const StepOne = (props) => {
 								
 								let user_detail = response.data.user_detail;
 								let user_merchant_detail = response.data.user_merchant_detail;
+								let co_applicants = response.data.co_applicants;
 								let full_name = user.full_name? user.full_name.split(' ') : []
 								let first_name = full_name.length > 0 ? full_name[0] : '';
 								let last_name = full_name.length > 1 ? full_name[1] : '';
@@ -239,81 +296,138 @@ const StepOne = (props) => {
 									props.data.personal_info = 
 									{
 										email: user.email?user.email:'',
+										email_true: user.email?true:false,
 										first_name: first_name,
+										first_name_true: first_name?true:false,
 										last_name: last_name,
+										last_name_true: last_name?true:false,
 										gender:user_detail.gender?user_detail.gender:'',
+										gender_true:user_detail.gender?true:false,
 										date_of_birth: user_detail.date_of_birth?user_detail.date_of_birth:'',
+										date_of_birth_true: user_detail.date_of_birth?true:false,
 										father_name: user_detail.father_name?user_detail.father_name:'',
+										father_name_true: user_detail.father_name?true:false,
 										qualification: user_detail.qualification?user_detail.qualification:'',
+										qualification_true: user_detail.qualification?true:false,
 										marital_status: user_detail.marital_status?user_detail.marital_status:'',
+										marital_status_true: user_detail.marital_status?true:false,
 										number_of_kids: user_detail.number_of_kids?user_detail.number_of_kids:'',
+										number_of_kids_true: user_detail.number_of_kids?true:false,
 										vehicle_type: user_detail.vehicle_type?user_detail.vehicle_type:'',
+										vehicle_type_true: user_detail.vehicle_type?true:false,
 										residence_building: user_detail.residence_building?user_detail.residence_building:'',
+										residence_building_true: user_detail.residence_building?true:false,
 										residence_area: user_detail.residence_area?user_detail.residence_area:'',
+										residence_area_true: user_detail.residence_area?true:false,
 										residence_state:user_detail.residence_state?user_detail.residence_state:'',
-										residence_state_id:user_detail.residence_state?user_detail.residence_state:'',
+										residence_state_true:user_detail.residence_state?true:false,
 										residence_city: user_detail.residence_city?user_detail.residence_city:'',
-										residence_city_id: user_detail.residence_city?user_detail.residence_city:'',
+										residence_city_true: user_detail.residence_city?true:false,
 										residence_pincode:user_detail.residence_pincode?user_detail.residence_pincode:'',
+										residence_pincode_true:user_detail.residence_pincode?true:false,
 										employer_name: user_detail.employer_name?user_detail.employer_name:'',
+										employer_name_true: user_detail.employer_name?true:false,
 										designation:user_detail.designation?user_detail.designation:'',
+										designation_true:user_detail.designation?true:false,
 										organization:user_detail.organization?user_detail.organization:'',
+										organization_true:user_detail.organization?true:false,
 										organization_type: user_detail.organization_type?user_detail.organization_type:'',
+										organization_type_true: user_detail.organization_type?true:false,
 										total_experience:user_detail.total_experience?user_detail.total_experience:'',
+										total_experience_true:user_detail.total_experience?true:false,
 										required_amount: user_detail.required_amount?user_detail.required_amount:'',
+										required_amount_true: user_detail.required_amount?true:false,
 										company_building: user_detail.company_building?user_detail.company_building:'',
+										company_building_true: user_detail.company_building?true:false,
 										company_area: user_detail.company_area?user_detail.company_area:'',
+										company_area_true: user_detail.company_area?true:false,
 										company_state: user_detail.company_state?user_detail.company_state:'',
-										company_state_id: user_detail.company_state?user_detail.company_state:'',
+										company_state_true: user_detail.company_state?true:false,
 										company_city: user_detail.company_city?user_detail.company_city:'',
-										company_city_id: user_detail.company_city?user_detail.company_city:'',
+										company_city_true: user_detail.company_city?true:false,
 										company_pincode: user_detail.company_pincode?user_detail.company_pincode:'',
+										company_pincode_true: user_detail.company_pincode?true:false,
 										company_website: user_detail.company_website?user_detail.company_website:'',
+										company_website_true: user_detail.company_website?true:false,
 										company_email: user_detail.company_email?user_detail.company_email:'',
+										company_email_true: user_detail.company_email?true:false,
 										salery_inhand: user_detail.salery_inhand?user_detail.salery_inhand:'',
+										salery_inhand_true: user_detail.salery_inhand?true:false,
 										salary_mode: user_detail.salary_mode?user_detail.salary_mode:'',
+										salary_mode_true: user_detail.salary_mode?true:false,
 										bank_name: user_detail.bank?user_detail.bank:'',
+										bank_name_true: user_detail.bank?true:false,
 										pancard_image: user_detail.pancard_image?user_detail.pancard_image:'',
+										pancard_image_true: user_detail.pancard_image?true:false,
 										aadhar_image:user_detail.aadhar_image?user_detail.aadhar_image:'',
+										aadhar_image_true:user_detail.aadhar_image?true:false,
 										bank_statement: user_detail.bank_statement?user_detail.bank_statement:'',
+										bank_statement_true: user_detail.bank_statement?true:false,
 										salery_slip: user_detail.salery_slip?user_detail.salery_slip:'',
-										loan_purpose : ''//user_detail.employer_name,
+										salery_slip_true: user_detail.salery_slip?true:false,
+										loan_purpose :user_detail.loan_purpose?user_detail.loan_purpose:'',
+										loan_purpose_true :user_detail.loan_purpose?true:false,
 									}
 									// props.setData(props.data)
 
-									props.data.business_info = 
+									props.data.business_info =  
 									{
 										email: user.email?user.email:'',
+										email_true: user.email?true:false,
 										first_name: first_name,
+										first_name_true: first_name?true:false,
 										last_name: last_name,
+										last_name_true: last_name?true:false,
 										gender:user_detail.gender?user_detail.gender:'',
+										gender_true:user_detail.gender?true:false,
 										date_of_birth: user_merchant_detail.date_of_birth?user_merchant_detail.date_of_birth:'',
+										date_of_birth_true: user_merchant_detail.date_of_birth?true:false,
 										company_name: user.company_name?user.company_name:'',
-										legal_name: user.legal_name?user.legal_name:'',
-										// state_id: user_merchant_detail.state?user_merchant_detail.state:'',
+										company_name_true: user.company_name?true:false,
+										legal_name: user.legal_name?user.legal_name:'', 
+										legal_name_true: user.legal_name?true:false,
 										state: user_merchant_detail.state?user_merchant_detail.state:'',
-										// city_id: user_merchant_detail.city?user_merchant_detail.city:'',
+										state_true: user_merchant_detail.state?true:false,
 										city:  user_merchant_detail.city?user_merchant_detail.city:'',
+										city_true:  user_merchant_detail.city?true:false,
 										houseno:  user_merchant_detail.houseno?user_merchant_detail.houseno:'',
+										houseno_true:  user_merchant_detail.houseno?true:false,
 										pincode:  user_merchant_detail.pincode?user_merchant_detail.pincode:'',
+										pincode_true:  user_merchant_detail.pincode?true:false,
 										business_type: user_merchant_detail.business_type?user_merchant_detail.business_type:'',
+										business_type_true: user_merchant_detail.business_type?true:false,
 										type_of_nature: user_merchant_detail.nature_of_business?user_merchant_detail.nature_of_business:'',
+										type_of_nature_true: user_merchant_detail.nature_of_business?true:false,
 										vintage:  user_merchant_detail.vintage?user_merchant_detail.vintage:'',
+										vintage_true:  user_merchant_detail.vintage?true:false,
 										turn_over:  user_merchant_detail.turn_over?user_merchant_detail.turn_over:'',
+										turn_over_true:  user_merchant_detail.turn_over?true:false,
 										desired_amount: user_merchant_detail.desired_amount?user_merchant_detail.desired_amount:'',
+										desired_amount_true: user_merchant_detail.desired_amount?true:false,
 										required_amount:  user_detail.required_amount?user_detail.required_amount:'',
-										co_application: [
+										required_amount_true:  user_detail.required_amount?true:false,
+										co_application: co_applicants && co_applicants.length ? co_applicants : [
 											{ name: "", pan_number: "", pancard_image: "", relationship: "" }
 										],
+										co_application_true:  co_applicants && co_applicants.length?true:false,
 										pan_number:  user_merchant_detail.pan_number?user_merchant_detail.pan_number:'',
+										pan_number_true:  user_merchant_detail.pan_number?true:false,
 										pancard_image:  user_merchant_detail.pancard_image?user_merchant_detail.pancard_image:'',
+										pancard_image_true:  user_merchant_detail.pancard_image?true:false,
 										gst_number:  user_merchant_detail.gst_number?user_merchant_detail.gst_number:'',
+										gst_number_true:  user_merchant_detail.gst_number?true:false,
 										gstproof_image:  user_merchant_detail.gstproof_image?user_merchant_detail.gstproof_image:'',
+										gstproof_image_true:  user_merchant_detail.gstproof_image?true:false,
 										business_address:  user_merchant_detail.business_address?user_merchant_detail.business_address:'',
+										business_address_true:  user_merchant_detail.business_address?true:false,
 										business_address_proof: user_merchant_detail.business_address_proof?user_merchant_detail.business_address_proof:'',
+										business_address_proof_true: user_merchant_detail.business_address_proof?true:false,
 										bank_statement: user_detail.bank_statement?user_detail.bank_statement:'',
+										bank_statement_true: user_detail.bank_statement?true:false,
 										itr_docs:  user_detail.itr_docs?user_detail.itr_docs:'',
-										loan_purpose : ''
+										itr_docs_true:  user_detail.itr_docs?true:false,
+										loan_purpose : user_merchant_detail.loan_purpose?user_merchant_detail.loan_purpose:'',
+										loan_purpose_true : user_merchant_detail.loan_purpose?true:false,
 									}
 
 									props.setData(props.data)
@@ -505,7 +619,7 @@ const StepOne = (props) => {
 														<label htmlFor="styled-checkbox-2">Please agree with the
 															<Link to=""> &nbsp;Terms & Conditions </Link> &nbsp;and&nbsp;<Link to=""> Privacy Policy </Link>
 														</label>
-														{form.touched.is_agree && form.errors.is_agree ? <div className="text-danger">{form.errors.is_agree}</div> : ''}
+														{form.touched.is_agree && !form.errors.mobile_number && form.errors.is_agree ? <div className="text-danger">{form.errors.is_agree}</div> : ''}
 													</li>
 												</ul>
 											</div>
@@ -699,6 +813,25 @@ const StepOne = (props) => {
 }
 
 const BusinessForm = (props) => {
+
+	const [cities, setCities] = useState([]);
+	const [pincode, setPincode] = useState([]);
+
+	const [pincodeOnload, setPincodeOnload] = useState(false);
+	useEffect(() => {
+		if (props.data.business_info.state) {
+			GetCities(props.data.business_info.state,true)
+		}
+	}, [])
+
+	useEffect(() => {
+		if (pincodeOnload) {
+			console.log(props.data.business_info.city)
+			GetPincode(props.data.business_info.city)
+		}
+	}, [pincodeOnload])
+
+
 	const [currentStep, setCurrentStep] = useState(0);
 	const form = useFormik({
 		initialValues: props.data.business_info,
@@ -773,6 +906,7 @@ const BusinessForm = (props) => {
 
 					}
 					toast.success('Upload Successful')
+					e.target.value = '';
 				}).catch(error => {
 
 				});
@@ -793,18 +927,24 @@ const BusinessForm = (props) => {
 		}		
 	}
 
-	const [cities, setCities] = useState([]);
-	const GetCities = (state_name) => {
+	
+	const GetCities = (state_name,send=false) => {
 		var state = props.allStates.find(state => state.name == state_name);
 		api.postApi('cityList', { state_id: state.id }, false, props.header).then(response => {
 			form.setFieldValue('state', state_name)
+			
 			setCities(response.cities);
+			setPincodeOnload(send)
+			// if (props.data.business_info.city) {
+			// 	GetPincode(props.data.business_info.city)
+			// }
 		}).catch(error => {
 		});
 
 	}
 
-	const [pincode, setPincode] = useState([]);
+	
+	
 	const GetPincode = (city_name) => {
 		var city = cities.find(city => city.name == city_name);
 		var state = props.allStates.find(state => state.name == form.values.state);
@@ -838,112 +978,153 @@ const BusinessForm = (props) => {
 										    <div className="col-12 col-md-5">
 												<label>First Name</label>
 												<input type="text" name="first_name" {...form.getFieldProps("first_name")} className="" placeholder="Enter first name" />
+												{form.values.first_name_true?
+												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.first_name && form.errors.first_name ? <div className="text-danger">{form.errors.first_name}</div> : ''}
 											</div>
 											<div className="col-12 col-md-5">
 												<label>Last Name</label>
 												<input type="text" name="last_name" {...form.getFieldProps("last_name")} className="" placeholder="Enter last name" />
+												{form.values.last_name_true?
+												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.last_name && !form.errors.first_name && form.errors.last_name ? <div className="text-danger">{form.errors.last_name}</div> : ''}
 											</div>
 											<div className="col-12 col-md-5">
 												<label>Email Address</label>
 												<input type="text" name="email" {...form.getFieldProps("email")} className="" placeholder="Enter email" />
+												{form.values.email_true?
+												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.email && !form.errors.last_name  && form.errors.email ? <div className="text-danger">{form.errors.email}</div> : ''}
 											</div>
  
 											<div className="col-12 col-md-5"> 
 												<label>Date of birth</label>
 												
-												<input type="date"      
-       max="1999-12-31" name="date_of_birth" {...form.getFieldProps("date_of_birth")} className="" placeholder="Enter Date of birth" />
+												<input type="date" max="1999-12-31" name="date_of_birth" {...form.getFieldProps("date_of_birth")} className="" placeholder="Enter Date of birth" />
+	                                            {form.values.date_of_birth_true?
+												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.date_of_birth && !form.errors.email && form.errors.date_of_birth ? <div className="text-danger">{form.errors.date_of_birth}</div> : ''}
 											</div>
 										    <div className="col-xs-12 col-md-10">
 												<label>Gender</label>
-												<select name="gender" onChange={(e) => form.setFieldValue('gender', e.target.value)} >
+												<select name="gender"  onChange={(e) => form.setFieldValue('gender', e.target.value)} value={form.values.gender} >
 													<option>Select One</option>
 													<option value="Male" >Male</option>
 													<option value="Female">Female</option>
 													<option value="Other">Other</option>
 													<option value="Prefer not to disclose">Prefer not to disclose</option>
 												</select>
+												{form.values.gender_true?
+												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.gender && !form.errors.date_of_birth && form.errors.gender ? <div className="text-danger">{form.errors.gender}</div> : ''}
 											</div>
 											<div className="col-12 col-md-10">
 												<label>Business Name</label>
 												<input type="text" name="company_name" {...form.getFieldProps("company_name")} className="" placeholder="Enter name" />
+												{form.values.company_name_true?
+												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.company_name && !form.errors.gender && form.errors.company_name ? <div className="text-danger">{form.errors.company_name}</div> : ''}
 											</div>
 											<div className="col-12 col-md-10">
 												<label>Legal Name</label>
 												<input type="text" name="legal_name" {...form.getFieldProps("legal_name")} className="" placeholder="Enter name" />
+												{form.values.legal_name_true?
+												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.legal_name && !form.errors.company_name && form.errors.legal_name ? <div className="text-danger">{form.errors.legal_name}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>State</label>
-												<select name="state" onChange={(e) => GetCities(e.target.value)} >
+												<select name="state" onChange={(e) => GetCities(e.target.value)} value={form.values.state}  >
 													<option>Select One</option>
 													{props.allStates && props.allStates.length > 0 && props.allStates.map((option, index) => (
 														<option value={option.name} key={index}>{option.name}</option>
 													))}
 												</select>
+												{form.values.state_true?
+												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.state && !form.errors.legal_name && form.errors.state ? <div className="text-danger">{form.errors.state}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>City</label>
-												<select name="city" onChange={(e) => GetPincode(e.target.value)} >
+												<select name="city" onChange={(e) => GetPincode(e.target.value)} value={form.values.city}  >
 													<option>Select One</option>
 													{cities.length > 0 && cities.map((option, index) => (
 														<option value={option.name} key={index}>{capitalName(option.name)}</option>
 													))}
 												</select>
+												{form.values.city_true?
+												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.city && !form.errors.state && form.errors.city ? <div className="text-danger">{form.errors.city}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Flat No./building no./street no.</label>
 												<input type="text" name="houseno" {...form.getFieldProps("houseno")} className="" placeholder="Enter House No." />
+												{form.values.houseno_true?
+												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.houseno && !form.errors.city && form.errors.houseno ? <div className="text-danger">{form.errors.houseno}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Pin Code</label>
-												<select name="pincode" onChange={(e) => form.setFieldValue('pincode', e.target.value)} >
+												<select name="pincode" onChange={(e) => form.setFieldValue('pincode', e.target.value)} value={form.values.pincode}  >
 													<option>Select One</option>
 													{pincode.length > 0 && pincode.map((option, index) => (
 														<option value={option.pincode} key={index}>{option.pincode}</option>
 													))}
 												</select>
+												{form.values.pincode_true?
+												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.pincode && !form.errors.houseno && form.errors.pincode ? <div className="text-danger">{form.errors.pincode}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Type of Firm</label>
-												<select name="business_type" onChange={(e) => form.setFieldValue('business_type', e.target.value)}>
+												<select name="business_type" onChange={(e) => form.setFieldValue('business_type', e.target.value)} value={form.values.business_type} >
 													<option>Select One</option>
 													<option value="Individual">Individual</option>
 													<option value="Proprietorship">Proprietorship</option>
 													<option value="Partnership">Partnership</option>
 													<option value="PVT .ltd">PVT .ltd</option>
 												</select>
+												{form.values.business_type_true?
+												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.business_type && !form.errors.pincode && form.errors.business_type ? <div className="text-danger">{form.errors.business_type}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Nature of Business</label>
-												<select name="type_of_nature" onChange={(e) => form.setFieldValue('type_of_nature', e.target.value)}>
+												<select name="type_of_nature"  value={form.values.type_of_nature}  onChange={(e) => form.setFieldValue('type_of_nature', e.target.value)}>
 													<option>Select One</option>
 													<option value="Retail">Retail</option>
 													<option value="Manufacturing">Manufacturing</option>
 													<option value="Service">Service</option>
 													<option value="Wholesale" >Wholesale</option>
 												</select>
+												{form.values.type_of_nature_true?
+												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.type_of_nature && !form.errors.business_type && form.errors.type_of_nature ? <div className="text-danger">{form.errors.type_of_nature}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>No. of years in Business</label>
 												<input type="number" min="0" name="vintage" {...form.getFieldProps("vintage")} className="" placeholder="Enter year" />
+												{form.values.vintage_true?
+												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.vintage && !form.errors.type_of_nature && form.errors.vintage ? <div className="text-danger">{form.errors.vintage}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Monthly Turnover</label>
-												<select name="turn_over" onChange={(e) => form.setFieldValue('turn_over', e.target.value)}>
+												<select name="turn_over"   value={form.values.turn_over}  onChange={(e) => form.setFieldValue('turn_over', e.target.value)}>
 													<option>Select One</option>
 													<option value="0.5 - 0.75 lac">0.5 - 0.75 lac</option>
 													<option value="0.75 - 1 lac">0.75 - 1 lac</option>
@@ -969,11 +1150,14 @@ const BusinessForm = (props) => {
 													<option value="95 - 99 lac">95 - 99 lac</option>
 													<option value="99 above">99 above</option>
 												</select>
+												{form.values.turn_over_true?
+												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.turn_over && !form.errors.vintage && form.errors.turn_over ? <div className="text-danger">{form.errors.turn_over}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Desired Loan Amount</label>
-												<select name="desired_amount" onChange={(e) => form.setFieldValue('desired_amount', e.target.value)}>
+												<select name="desired_amount"  value={form.values.desired_amount} onChange={(e) => form.setFieldValue('desired_amount', e.target.value)}>
 													<option>Select One</option>
 													<option value="0.5 - 0.75 lac">0.5 - 0.75 lac</option>
 													<option value="0.75 - 1 lac">0.75 - 1 lac</option>
@@ -999,16 +1183,22 @@ const BusinessForm = (props) => {
 													<option value="95 - 99 lac">95 - 99 lac</option>
 													<option value="99 above">99 above</option>
 												</select>
+												{form.values.desired_amount_true?
+												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.desired_amount && !form.errors.turn_over && form.errors.desired_amount ? <div className="text-danger">{form.errors.desired_amount}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Required Amount</label>
 												<input type="text" name="required_amount" {...form.getFieldProps("required_amount")} className="" placeholder="Enter amount" />
+												{form.values.required_amount_true?
+												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.required_amount && !form.errors.desired_amount && form.errors.required_amount ? <div className="text-danger">{form.errors.required_amount}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-10">
 												    <label>Loan purpose </label>
-												    <select name="loan_purpose" onChange={(e) => form.setFieldValue('loan_purpose', e.target.value)}>
+												    <select name="loan_purpose" value={form.values.loan_purpose} onChange={(e) => form.setFieldValue('loan_purpose', e.target.value)}>
 														<option>Select One</option>
 														<option value="90000111" >Business Funding</option>
 														<option value="90133283">Business working capital</option>
@@ -1019,6 +1209,9 @@ const BusinessForm = (props) => {
 														<option value="90156975">Top up Loan</option>
 														<option value="1373">Wedding</option>
 													</select>
+													{form.values.loan_purpose_true?
+												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 													{form.touched.loan_purpose && !form.errors.required_amount && form.errors.loan_purpose ? <div className="text-danger">{form.errors.loan_purpose}</div> : ''}
 
 											</div>
@@ -1037,7 +1230,9 @@ const BusinessForm = (props) => {
 												<div className="col-12 col-md-5">
 													<label>Name</label>
 													<input type="text" name={`form.values.co_application.${index}.name`}  {...form.getFieldProps(`co_application.${index}.name`)} className="" placeholder="Enter name" />
-
+													{/* {form.values.loan_purpose_true?
+													<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+													: '' } */}
 													{form.touched['co_application']?.[index]?.['name'] && form.errors['co_application']?.[index]?.['name'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['name']}</div> : ''}
 												</div>
 												<div className="col-12 col-md-5">
@@ -1103,6 +1298,9 @@ const BusinessForm = (props) => {
 											<div className="col-xs-12 col-md-10 mb-3">
 												<label>Firm Pan Number </label>
 												<input type="text" name="pan_number" {...form.getFieldProps('pan_number')} className="mb-0" placeholder="Enter Number" />
+												{form.values.pan_number_true?
+												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.pan_number && form.errors.pan_number ? <div className="text-danger">{form.errors.pan_number}</div> : ''}
 
 											</div>
@@ -1113,7 +1311,9 @@ const BusinessForm = (props) => {
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
 															<p>Upload Pan Card <small className="pdffile">(Only Jpg,Png,Pdf,Doc)</small></p>
 															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'pancard_image', 'uploads/merchant/pancard')} />
-
+															{form.values.pancard_image_true?
+																<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+																: '' }
 															</label>
 														</div>
 														{form.values.pancard_image == '' && form.touched.pancard_image && !form.errors.pan_number && form.errors.pancard_image ? <div className="text-danger">{form.errors.pancard_image}</div> : ''} 
@@ -1149,6 +1349,9 @@ const BusinessForm = (props) => {
 											<div className="col-xs-12 col-md-10 mb-3">
 												<label>Firm GST Number </label>
 												<input type="text" name="gst_number" {...form.getFieldProps('gst_number')} className="" placeholder="Enter Number" />
+												{form.values.gst_number_true?
+												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.gst_number && !form.errors.pancard_image && form.errors.gst_number ? <div className="text-danger">{form.errors.gst_number}</div> : ''}
 
 											</div>
@@ -1159,10 +1362,13 @@ const BusinessForm = (props) => {
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
 															<p>Upload GST Registration <small className="pdffile">(Only Jpg,Png,Pdf,Doc)</small></p>
 															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'gstproof_image', 'uploads/merchant/gst')} />
+															{form.values.gstproof_image_true?
+															<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+															: '' }
 
 															</label>
 														</div>
-														{form.values.gstproof_image == '' && form.touched.gstproof_image && !form.errors.gst_number && form.errors.gstproof_image ? <div className="text-danger">{form.errors.gstproof_image}</div> : ''} 
+														{form.values.gstproof_image == '' && !form.errors.gst_number && form.touched.gstproof_image && !form.errors.gst_number && form.errors.gstproof_image ? <div className="text-danger">{form.errors.gstproof_image}</div> : ''} 
 
 													</div>
 													{form.values.gstproof_image && form.values.gstproof_image.split(',') && form.values.gstproof_image.split(',').length > 0  ?
@@ -1195,6 +1401,9 @@ const BusinessForm = (props) => {
 											<div className="col-xs-12 col-md-10 mb-3">
 												<label>Business Address </label>
 												<input type="text" name="business_address"  {...form.getFieldProps('business_address')} className="mb-0" placeholder="Enter address" />
+												{form.values.business_address_true?
+															<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+															: '' }
 												{form.values.business_address == '' &&  form.touched.business_address && !form.values.gstproof_image && form.errors.business_address ? <div className="text-danger">{form.errors.business_address}</div> : ''}
 
 											</div>
@@ -1205,10 +1414,12 @@ const BusinessForm = (props) => {
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
 															<p>Upload Address Proof <small className="pdffile">(Only Jpg,Png,Pdf,Doc)</small></p>
 															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'business_address_proof', 'uploads/merchant/business')} />
-
+															{form.values.business_address_proof_true?
+															<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+															: '' }
 															</label>
 														</div>
-														{form.values.business_address_proof == '' && form.touched.business_address_proof && !form.errors.gstproof_image && form.errors.business_address_proof ? <div className="text-danger">{form.errors.business_address_proof}</div> : ''} 
+														{form.values.business_address_proof == '' && form.touched.business_address_proof && !form.errors.business_address && form.errors.business_address_proof ? <div className="text-danger">{form.errors.business_address_proof}</div> : ''} 
 
 													</div>
 													{form.values.business_address_proof && form.values.business_address_proof.split(',') && form.values.business_address_proof.split(',').length > 0  ?
@@ -1246,7 +1457,9 @@ const BusinessForm = (props) => {
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
 															<p>Upload One Year Latest Bank Statement <small className="pdffile">(Only Pdf)</small></p>
 															<input type="file" multiple accept=".pdf" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e,'bank_statement', 'uploads/merchant/bankstatement')} />
-
+															{form.values.bank_statement_true?
+															<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+															: '' }
 															</label>
 														</div>
 														{form.values.bank_statement == '' && form.touched.bank_statement && !form.errors.business_address_proof && form.errors.bank_statement ? <div className="text-danger">{form.errors.bank_statement}</div> : ''} 
@@ -1285,7 +1498,9 @@ const BusinessForm = (props) => {
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
 															<p>Upload ITR <small className="pdffile">(Only Jpg,Png,Pdf,Doc)</small></p>
 															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e,'itr_docs', 'uploads/merchant/business')} />
-
+															{form.values.itr_docs_true?
+															<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+															: '' }
 															</label>
 														</div>
 														{form.values.itr_docs == '' && form.touched.itr_docs && !form.errors.bank_statement && form.errors.itr_docs ? <div className="text-danger">{form.errors.itr_docs}</div> : ''} 
@@ -1345,10 +1560,39 @@ const BusinessForm = (props) => {
 }
 
 const PersonalForm = (props) => {
+
 	const [currentStep, setCurrentStep] = useState(0);
+	const [cities, setCities] = useState([]);
+	const [residence_cities, setresidence_cities] = useState([]);
+	const [residence_pincode, setresidence_pincode] = useState([]);
+	const [pincode, setPincode] = useState([]);
+	useEffect(() => {
+		if (props.data.personal_info.residence_state && currentStep==0) {
+			GetCities(props.data.personal_info.residence_state,'residence_state')
+		}
+
+	
+		if (props.data.personal_info.company_state && currentStep==1) {
+			GetCities(props.data.personal_info.company_state,'company_state')
+		}
+	}, [currentStep])
+
+
+	useEffect(() => {
+		if (cities.length>0 &&  currentStep==1) {
+			GetPincode(props.data.personal_info.company_city,'company_city')
+		}
+	}, [cities])
+
+	useEffect(() => {
+		if (residence_cities.length>0 && currentStep==0) {
+			GetPincode(props.data.personal_info.residence_city,'residence_city')
+		}
+	}, [residence_cities])
+	
 	const form = useFormik({
 		initialValues: props.data.personal_info,
-		// enableReinitialize: true,
+		enableReinitialize: true,
 		validationSchema: yup.object({
 			first_name: currentStep == 0 ? yup.string().required('Please enter your name').matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
 			last_name: currentStep == 0 ? yup.string().required('Please enter your surname').matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
@@ -1372,6 +1616,7 @@ const PersonalForm = (props) => {
 			organization_type: currentStep == 1 ? yup.string().required('Please select organization') : '',
 			total_experience: currentStep == 1 ? yup.string().required('Please select total experience') : '',
 			required_amount: currentStep == 1 ? yup.number().typeError('you must specify a number').required('Please enter required amount') : '',
+			loan_purpose: currentStep == 1 ? yup.string().required('Please select loan purpose') : '',
 			company_building: currentStep == 1 ? yup.string().required('Please enter Flat No./Building No./Street No') : '',
 			company_area: currentStep == 1 ? yup.string().required('Please enter area') : '',
 			company_state: currentStep == 1 ? yup.string().required('Please select state') : '',
@@ -1389,7 +1634,7 @@ const PersonalForm = (props) => {
 			aadhar_image: currentStep == 2 ? yup.string().required('Please upload aadhar image') : '',
 			bank_statement: currentStep == 2 ? yup.string().required('Please upload bank statement') : '',
 			salery_slip: currentStep == 2 ? yup.string().required('Please upload salary slip') : '',
-			loan_purpose: currentStep == 1 ? yup.string().required('Please select loan purpose') : '',
+			
 		}),
 		onSubmit: values => {
 			props.data.personal_info = values;
@@ -1399,6 +1644,7 @@ const PersonalForm = (props) => {
 				props.setCurrentStep(parseInt(props.currentStep) + 2)
 				window.scrollTo(0, 0);
 			} else {
+				
 				setCurrentStep(currentStep + 1)
 				window.scrollTo(0, 0);
 			}
@@ -1417,6 +1663,7 @@ const PersonalForm = (props) => {
 					form.setFieldValue(path, form.values[path]?form.values[path] +','+response.fileName : response.fileName);
 					e.target.value='';
 					toast.success('Upload Successful')
+					e.target.value = '';
 				}).catch(error => {
 
 				});
@@ -1424,44 +1671,43 @@ const PersonalForm = (props) => {
 	}
 
 
-	const [cities, setCities] = useState([]);
-	const [residence_cities, setresidence_cities] = useState([]);
-	const GetCities = (state_id, path = '') => {
-		var state = props.allStates.find(state => state.id == state_id);
-		api.postApi('cityList', { state_id: state_id }, false, props.header).then(response => {
+
+	const GetCities = (state_name, path = '') => {
+		var state = props.allStates.find(state => state.name == state_name);
+		api.postApi('cityList', { state_id: state.id }, false, props.header).then(response => {
 			if (path == 'residence_state') {
-				form.setFieldValue('residence_state', state.name)
-				form.setFieldValue('residence_state_id', state_id)
+				form.setFieldValue('residence_state', state_name)
 				setresidence_cities(response.cities);
 			} else {
-				form.setFieldValue('company_state', state.name)
-				form.setFieldValue('company_state_id', state_id)
+				form.setFieldValue('company_state', state_name)
 				setCities(response.cities);
 			}
 		}).catch(error => {
 		});
 	}
-	const [residence_pincode, setresidence_pincode] = useState([]);
-	const [pincode, setPincode] = useState([]);
-	const GetPincode = (city_id, path = '') => {
+	
+	const GetPincode = (city_name, path = '') => {
 		var city;
 		var state_id;
+		var state
+		
 		if (path == 'residence_city') {
-			city = residence_cities.find(city => city.id == city_id);
-			state_id = form.values.residence_state_id
+			city = residence_cities.find(city => city.name == city_name);
+			state = props.allStates.find(state => state.name == form.values.residence_state);
+			state_id = state.id.toString()
 		} else {
-			city = cities.find(city => city.id == city_id);
-			state_id = form.values.company_state_id
+			city = cities.find(city => city.id == city_name);
+			state = props.allStates.find(state => state.name == form.values.company_state);
+			state_id = state.id.toString()
 		}
 
-		api.postApi('pincodeList', { city: city.name, state_id: state_id }, false, props.header).then(response => {
+		api.postApi('pincodeList', { city: city_name, state_id: state_id }, false, props.header).then(response => {
+			console.log(response.pincode)
 			if (path == 'residence_city') {
-				form.setFieldValue('residence_city', city.name)
-				form.setFieldValue('residence_city_id', city_id)
+				form.setFieldValue('residence_city', city_name)
 				setresidence_pincode(response.pincode);
 			} else {
-				form.setFieldValue('company_city', city.name)
-				form.setFieldValue('company_city_id', city_id)
+				form.setFieldValue('company_city', city_name)
 				setPincode(response.pincode);
 			}
 		}).catch(error => {
@@ -1506,113 +1752,158 @@ const PersonalForm = (props) => {
 										    <div className="col-12 col-md-5">
 												<label>First Name</label>
 												<input type="text" name="first_name" {...form.getFieldProps("first_name")} className="" placeholder="Enter first name" />
+												{form.values.first_name_true?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.first_name && form.errors.first_name ? <div className="text-danger">{form.errors.first_name}</div> : ''}
 											</div>
 											<div className="col-12 col-md-5">
 												<label>Last Name</label>
 												<input type="text" name="last_name" {...form.getFieldProps("last_name")} className="" placeholder="Enter last name" />
+												{form.values.last_name_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.last_name && !form.errors.first_name && form.errors.last_name ? <div className="text-danger">{form.errors.last_name}</div> : ''}
 											</div>
 											<div className="col-12 col-md-5">
-												<label>Email Address</label>
+												<label>Email Address{form.values.email_true}</label>
 												<input type="text" name="email" {...form.getFieldProps("email")} className="" placeholder="Enter email" />
+												{form.values.email_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.email && !form.errors.last_name && form.errors.email ? <div className="text-danger">{form.errors.email}</div> : ''}
 											</div>
 											<div className="col-12 col-md-5">
 												<label>Date of birth</label>
 												<input type="date"   max="1999-12-31" name="date_of_birth" {...form.getFieldProps("date_of_birth")} className="" placeholder="Enter Date of birth" />
+												{form.values.date_of_birth_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.date_of_birth && !form.errors.email && form.errors.date_of_birth ? <div className="text-danger">{form.errors.date_of_birth}</div> : ''}
 											</div>
 											<div className="col-12 col-md-10">
 												<label>Father's Name</label>
 												<input type="text" name="father_name" {...form.getFieldProps("father_name")} className="" placeholder="Enter father name" />
+												{form.values.father_name_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.father_name && !form.errors.date_of_birth && form.errors.father_name ? <div className="text-danger">{form.errors.father_name}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Gender</label>
-												<select name="gender" onChange={(e) => form.setFieldValue('gender', e.target.value)} >
+												<select name="gender" value={form.values.gender} onChange={(e) => form.setFieldValue('gender', e.target.value)} >
 													<option>Select One</option>
 													<option value="Male" >Male</option>
 													<option value="Female">Female</option>
 													<option value="Other">Other</option>
 													<option value="Prefer not to disclose">Prefer not to disclose</option>
 												</select>
+												{form.values.gender_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.gender && !form.errors.father_name && form.errors.gender ? <div className="text-danger">{form.errors.gender}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Qualification</label>
-												<select name="qualification" onChange={(e) => form.setFieldValue('qualification', e.target.value)}>
+												<select name="qualification" value={form.values.qualification} onChange={(e) => form.setFieldValue('qualification', e.target.value)}>
 													<option>Select One</option>
 													<option value="Under Graduate" >Under Graduate</option>
 													<option value="Graduate">Graduate</option>
 													<option value="Post Graduate">Post Graduate</option>
 												</select>
+												{form.values.qualification_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.qualification && !form.errors.gender && form.errors.qualification ? <div className="text-danger">{form.errors.qualification}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Marital Status</label>
-												<select name="marital_status" onChange={(e) => form.setFieldValue('marital_status', e.target.value)} >
+												<select name="marital_status" value={form.values.marital_status} onChange={(e) => form.setFieldValue('marital_status', e.target.value)} >
 													<option value="">Select One</option>
 													<option value="Married" >Married</option>
 													<option value="Single">Single</option>
 													<option value="Prefer Not to Say">Prefer Not to Say</option>
 												</select>
+												{form.values.marital_status_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.marital_status && !form.errors.qualification && form.errors.marital_status ? <div className="text-danger">{form.errors.marital_status}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Number of Kids</label>
 												<input type="number" min="0" name="number_of_kids" {...form.getFieldProps("number_of_kids")} className="" placeholder="Enter kids number" />
+												{form.values.number_of_kids_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.number_of_kids && !form.errors.marital_status && form.errors.number_of_kids ? <div className="text-danger">{form.errors.number_of_kids}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Vehicle Type</label>
-												<select name="vehicle_type" onChange={(e) => form.setFieldValue('vehicle_type', e.target.value)} >
+												<select name="vehicle_type" value={form.values.vehicle_type} onChange={(e) => form.setFieldValue('vehicle_type', e.target.value)} >
 													<option>Select One</option>
 													<option value="2 wheeler">2 wheeler</option>
 													<option value="4 wheeler" >4 wheeler</option>
 													<option value="None">None</option>
 												</select>
+												{form.values.vehicle_type_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.vehicle_type  && !form.errors.marital_status  && form.errors.vehicle_type ? <div className="text-danger">{form.errors.vehicle_type}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Flat No./Building No./Street No.</label>
 												<input type="text" name="residence_building" {...form.getFieldProps("residence_building")} className="" placeholder="Enter House No." />
+												{form.values.residence_building_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.residence_building && !form.errors.vehicle_type && form.errors.residence_building ? <div className="text-danger">{form.errors.residence_building}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>State</label>
-												<select name="residence_state" onChange={(e) => GetCities(e.target.value, 'residence_state')} >
+												<select name="residence_state" value={form.values.residence_state}  onChange={(e) => GetCities(e.target.value, 'residence_state')} >
 													<option>Select One</option>
 													{props.allStates.length > 0 && props.allStates.map((option, index) => (
-														<option value={option.id} key={index}>{option.name}</option>
+														<option value={option.name} key={index}>{option.name}</option>
 													))}
 												</select>
+												{form.values.residence_state_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.residence_state && !form.errors.residence_building  && form.errors.residence_state ? <div className="text-danger">{form.errors.residence_state}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>City</label>
-												<select name="residence_city" onChange={(e) => GetPincode(e.target.value, 'residence_city')}  >
+												<select name="residence_city" value={form.values.residence_city}  onChange={(e) => GetPincode(e.target.value, 'residence_city')}  >
 													{/* <option>Select City</option> */}
 													<option >Select One</option>
 													{residence_cities.length > 0 && residence_cities.map((option, index) => (
-														<option value={option.id} key={index}>{capitalName(option.name)}</option>
+														<option value={option.name} key={index}>{capitalName(option.name)}</option>
 													))}
 												</select>
+												{form.values.residence_city_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.residence_city && !form.errors.residence_state && form.errors.residence_city ? <div className="text-danger">{form.errors.residence_city}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Locality/Area</label>
 												<input type="text" name="residence_area" {...form.getFieldProps("residence_area")} className="" placeholder="Enter Locality/Area" />
+												{form.values.residence_area_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.residence_area && !form.errors.residence_city && form.errors.residence_area ? <div className="text-danger">{form.errors.residence_area}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Pincode</label>
-												<select name="residence_pincode" onChange={(e) => form.setFieldValue('residence_pincode', e.target.value)} >
+												<select name="residence_pincode" value={form.values.residence_pincode}   onChange={(e) => form.setFieldValue('residence_pincode', e.target.value)} >
 													<option>Select One</option>
 													{residence_pincode.length > 0 && residence_pincode.map((option, index) => (
 														<option value={option.pincode} key={index}>{option.pincode}</option>
 													))}
 												</select>
+												{form.values.residence_pincode_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.residence_pincode && !form.errors.residence_area && form.errors.residence_pincode ? <div className="text-danger">{form.errors.residence_pincode}</div> : ''}
 											</div>
 										</div>
@@ -1629,24 +1920,33 @@ const PersonalForm = (props) => {
 											<div className="col-12 col-md-5">
 												<label>Name of current employer</label>
 												<input type="text" name="employer_name"  {...form.getFieldProps("employer_name")} className="" placeholder="Enter name" />
+												{form.values.employer_name_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.employer_name && form.errors.employer_name ? <div className="text-danger">{form.errors.employer_name}</div> : ''}
 
 											</div>
 											<div className="col-12 col-md-5">
 												<label>Designation</label>
 												<input type="text" className="" name="designation"  {...form.getFieldProps("designation")} placeholder="Enter designation" />
+												{form.values.designation_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.designation && !form.errors.employer_name && form.errors.designation ? <div className="text-danger">{form.errors.designation}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>No. of years in organization</label>
 												<input type="number" min="0" className="" name="organization"  {...form.getFieldProps("organization")} placeholder="Enter year" />
+												{form.values.organization_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.organization && !form.errors.designation && form.errors.organization ? <div className="text-danger">{form.errors.organization}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Type of organization </label>
-												<select name="organization_type" onChange={(e) => form.setFieldValue('organization_type', e.target.value)}  >
+												<select name="organization_type" value={form.values.organization_type} onChange={(e) => form.setFieldValue('organization_type', e.target.value)}  >
 													<option >Select One</option>
 													<option value="Proprietorship" >Proprietorship</option>
 													<option value="Partnership">Partnership</option>
@@ -1655,12 +1955,15 @@ const PersonalForm = (props) => {
 													<option value="Government">Government</option>
 													<option value="Other">OTHER</option>
 												</select>
+												{form.values.organization_type_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.organization_type && !form.errors.organization && form.errors.organization_type ? <div className="text-danger">{form.errors.organization_type}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Total Experience (In Year) </label>
-												<select name="total_experience" onChange={(e) => form.setFieldValue('total_experience', e.target.value)}  >
+												<select name="total_experience"   value={form.values.total_experience}  onChange={(e) => form.setFieldValue('total_experience', e.target.value)}  >
 													<option >Select One</option>
 													<option value="Less than 1">Less than Year</option>
 													<option value="1">1</option>
@@ -1695,17 +1998,23 @@ const PersonalForm = (props) => {
 													<option value="30">30</option>
 													<option value="Greater than 30">Greater than 30</option>
 												</select>
+												{form.values.total_experience_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.total_experience && !form.errors.organization_type  && form.errors.total_experience ? <div className="text-danger">{form.errors.total_experience}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Required Amount</label>
 												<input type="text" name="required_amount"  {...form.getFieldProps("required_amount")} className="" placeholder="Enter amount" />
+												{form.values.required_amount_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.required_amount && !form.errors.total_experience && form.errors.required_amount ? <div className="text-danger">{form.errors.required_amount}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-10">
 												<label>Loan purpose </label>
-												<select name="loan_purpose" onChange={(e) => form.setFieldValue('loan_purpose', e.target.value)}>
+												<select name="loan_purpose" value={form.values.loan_purpose}  onChange={(e) => form.setFieldValue('loan_purpose', e.target.value)}>
 														<option >Select One</option>
 														<option value="1364">Appliance purchase</option>
 														<option value="1365" >Car 2 wheeler</option>
@@ -1721,86 +2030,119 @@ const PersonalForm = (props) => {
 														<option value="1368" >Family event</option>
 														<option value="1366" >Debt consolidationl</option>
 													</select> 
+													{form.values.loan_purpose_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 													{form.touched.loan_purpose && !form.errors.required_amount && form.errors.loan_purpose ? <div className="text-danger">{form.errors.loan_purpose}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Building No./Plot No.</label>
 												<input type="text" name="company_building"  {...form.getFieldProps("company_building")} className="" placeholder="Enter house no." />
+												{form.values.company_building_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.company_building && !form.errors.loan_purpose && form.errors.company_building ? <div className="text-danger">{form.errors.company_building}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>State</label>
-												<select name="company_state" onChange={(e) => GetCities(e.target.value, 'company_state')} >
+												<select name="company_state" value={form.values.company_state} onChange={(e) => GetCities(e.target.value, 'company_state')} >
 													<option>Select One</option>
 													{props.allStates.length > 0 && props.allStates.map((option, index) => (
-														<option value={option.id} key={index}>{option.name}</option>
+														<option value={option.name} key={index}>{option.name}</option>
 													))}
 												</select>
+												{form.values.company_state_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.company_state && !form.errors.company_building  && form.errors.company_state ? <div className="text-danger">{form.errors.company_state}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>City</label>
-												<select name="company_city" onChange={(e) => GetPincode(e.target.value, 'company_city')} >
+												<select name="company_city" value={form.values.company_city} onChange={(e) => GetPincode(e.target.value, 'company_city')} >
 													<option>Select One</option>
 													{cities.length > 0 && cities.map((option, index) => (
-														<option value={option.id} key={index}>{capitalName(option.name)}</option>
+														<option value={option.name} key={index}>{capitalName(option.name)}</option>
 													))}
 												</select>
+												{form.values.company_city_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.company_city && !form.errors.company_state && form.errors.company_city ? <div className="text-danger">{form.errors.company_city}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Locality/Area </label>
 												<input type="text" name="company_area"  {...form.getFieldProps("company_area")} className="" placeholder="Enter area." />
+												{form.values.company_area_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.company_area && !form.errors.company_city  && form.errors.company_area ? <div className="text-danger">{form.errors.company_area}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Pincode </label>
-												<select name="company_pincode" onChange={(e) => form.setFieldValue('company_pincode', e.target.value)} >
+												<select name="company_pincode" value={form.values.company_pincode}  onChange={(e) => form.setFieldValue('company_pincode', e.target.value)} >
 													<option>Select One</option>
 													{pincode.length > 0 && pincode.map((option, index) => (
 														<option value={option.pincode} key={index}>{option.pincode}</option>
 													))}
 												</select>
+												{form.values.company_pincode_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.company_pincode && !form.errors.company_area && form.errors.company_pincode ? <div className="text-danger">{form.errors.company_pincode}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Company Website</label>
 												<input type="text" name="company_website"  {...form.getFieldProps("company_website")} className="" placeholder="Enter website URL" />
+												{form.values.company_website_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.company_website && !form.errors.company_pincode && form.errors.company_website ? <div className="text-danger">{form.errors.company_website}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Official Email Address</label>
 												<input type="text" name="company_email"  {...form.getFieldProps("company_email")} className="" placeholder="Enter official email" />
+												{form.values.company_email_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.company_email && !form.errors.company_website && form.errors.company_email ? <div className="text-danger">{form.errors.company_email}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Monthly take home</label>
 												<input type="text" name="salery_inhand"  {...form.getFieldProps("salery_inhand")} className="" placeholder="Enter monthly income" />
+												{form.values.salery_inhand_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.salery_inhand && !form.errors.company_email && form.errors.salery_inhand ? <div className="text-danger">{form.errors.salery_inhand}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Mode of receiving salary</label>
-												<select name="salary_mode" onChange={(e) => form.setFieldValue('salary_mode', e.target.value)} >
+												<select name="salary_mode" value={form.values.salary_mode}  onChange={(e) => form.setFieldValue('salary_mode', e.target.value)} >
 													<option>Select One</option>
 													<option value="Bank account transfer">Bank account transfer</option>
 													<option value="Cheque" >Cheque</option>
 													<option value="Cash">Cash</option>
 												</select>
+												{form.values.salary_mode_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.salary_mode && !form.errors.salery_inhand && form.errors.salary_mode ? <div className="text-danger">{form.errors.salary_mode}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Bank Name</label>
 												<input type="text" name="bank_name"  {...form.getFieldProps("bank_name")} className="" placeholder="Enter your bank name" />
+												{form.values.bank_name_true ?
+												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.bank_name && !form.errors.salary_mode  && form.errors.bank_name ? <div className="text-danger">{form.errors.bank_name}</div> : ''}
 
 											</div>
@@ -1822,7 +2164,9 @@ const PersonalForm = (props) => {
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
 															<p>Upload Pan Card <small style={{display:"block",color: "#a5a5a5"}}>(Only Jpg,Png,Pdf,Doc)</small></p>
 															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'pancard_image', 'uploads/merchant/pancard')} />
-
+															{form.values.pancard_image_true ?
+																<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+																: '' }
 															</label>
 														</div>
 														{form.values.pancard_image == '' && form.touched.pancard_image && form.errors.pancard_image ? <div className="text-danger">{form.errors.pancard_image}</div> : ''} 
@@ -1862,7 +2206,9 @@ const PersonalForm = (props) => {
 															<p>Upload Aadhar Card 
 															<small style={{display: "block",color: "#a5a5a5"}}>(Only Jpg,Png,Pdf,Doc)</small></p>
 															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'aadhar_image', 'uploads/merchant/aadharcard')} />
-
+															{form.values.aadhar_image_true?
+																<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+																: '' }
 															</label>
 														</div>
 														{form.values.aadhar_image == '' && form.touched.aadhar_image && !form.touched.pancard_image && form.errors.aadhar_image ? <div className="text-danger">{form.errors.aadhar_image}</div> : ''} 
@@ -1903,7 +2249,9 @@ const PersonalForm = (props) => {
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
 															<p>Upload One Year Latest Bank Statement <small style={{display: "block",color: "#a5a5a5"}}>(Only PDF)</small></p>
 															<input type="file" multiple accept=".pdf" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e,'bank_statement', 'uploads/merchant/bankstatement')} />
-
+															{form.values.bank_statement_true?
+																<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+																: '' }
 															</label>
 														</div>
 														{form.values.bank_statement == '' && form.touched.bank_statement && !form.errors.aadhar_image && form.errors.bank_statement ? <div className="text-danger">{form.errors.bank_statement}</div> : ''} 
@@ -1943,7 +2291,9 @@ const PersonalForm = (props) => {
 															<p>Upload latest 3 months salary slips 
 															<small style={{display: "block",color: "#a5a5a5"}}>(Only Jpg,Png,Pdf,Doc)</small></p>
 															<input type="file" multiple  accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'salery_slip', 'uploads/merchant/salery_slip')} />
-
+															{form.values.salery_slip_true?
+																<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+																: '' }
 															</label>
 														</div>
 														{form.values.salery_slip == '' && form.touched.salery_slip && !form.errors.bank_statement && form.errors.salery_slip ? <div className="text-danger">{form.errors.salery_slip}</div> : ''} 
