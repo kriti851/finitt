@@ -1,5 +1,8 @@
 
+import axios from "axios";
+
 const config = require('./config.json');
+// const axios = require('axios')
 const api_base_url =config.API_URL;
 
 class Service {   
@@ -74,6 +77,24 @@ class Service {
                 
             });
         });
+    }
+
+    uploadPostApi(path,body, is_formData = false,object= {},setProgress ) {
+        return new Promise(function(resolve, reject) {
+            axios.request({
+                method: "post", 
+                url: api_base_url+''+path, 
+                data: body, 
+                headers: object,
+                onUploadProgress: (data) => {
+                    setProgress(Math.round((100 * data.loaded) / data.total))
+                }
+            }).then((response) => {
+                resolve(response.data)
+            }).catch((response) => {
+                
+            });
+        });   
     }
 }
 export default Service;

@@ -1,7 +1,7 @@
 {
     "PRODUCTION_MODE" : 1,
-    "API_URL":"https://api.finitt.com:8000/api/",
-    "DOMAIN" : "https://api.finitt.com/",
-    "WEB_DOMAIN" : "https://api.finitt.com/",
+    "API_URL":"https://devapi.finitt.com:8001/api/",
+    "DOMAIN" : "https://devapi.finitt.com/",
+    "WEB_DOMAIN" : "https://devapi.finitt.com/",
     "s3_url" : "https://fintranxect.s3.ap-south-1.amazonaws.com/"
 } 

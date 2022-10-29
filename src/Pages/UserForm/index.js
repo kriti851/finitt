@@ -3,9 +3,11 @@ import { Link, useLocation, useParams, useNavigate } from 'react-router-dom';
 import Header from '../layout/Header'; //Include Heder
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import moment from 'moment'
 import Service from './../../service';
 // import uuid from 'react-uuid';
 import toast, { Toaster } from 'react-hot-toast';
+import { toHaveFocus } from '@testing-library/jest-dom/dist/matchers';
 // import DatePicker from 'react-date-picker';
 
 const config = require('./../../config.json')
@@ -23,7 +25,8 @@ const UserForm = () => {
 			mobile_number: '',
 			is_agree: false,
 			otp_verified: '',
-			pan_number: '',
+			pancard_image : '',
+			pancard_image_true : false,
 			loan_type: 1,
 			employee_type: 1,
 			wrong_otp:false,
@@ -65,7 +68,7 @@ const UserForm = () => {
 			required_amount: '',
 			required_amount_true: false,
 			co_application: [
-			{ name: "", pan_number: "", pancard_image: "", relationship: "" }
+			{ id:0,name: "",name_true:false, relationship: "",relationship_true:false, pan_number: "", pan_number_true:false,pancard_image: "",pancard_image_true:false }
 			],
 			co_application_true: "",
 			pan_number: '',
@@ -165,6 +168,7 @@ const UserForm = () => {
 		if (name !== undefined) {
 			getUserDetail()
 		}
+		GetStates()
 	}, [])
 
 	const getUserDetail = () => {
@@ -225,7 +229,21 @@ const UserForm = () => {
 }
 
 const StepOne = (props) => {
+	const [uploadBr, setUploadBr] = 
+	useState({'pancard_image':0})
+	const [progress, setProgress] = useState(0)
+	const [progressName, setProgressName] = useState('')
+	useEffect(() => {
+		setuploadBr()
+	}, [progress])
 
+	const setuploadBr = () => { 
+		uploadBr[progressName] =progress
+		setUploadBr(uploadBr)
+	}
+	const checkURL= (url) => {
+		return(url.match(/\.(jpeg|jpg|gif|png)$/) != null);
+	}
 	const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 	const [currentStep, setCurrentStep] = useState(0);
 	const form = useFormik({
@@ -237,7 +255,7 @@ const StepOne = (props) => {
 			is_agree: currentStep == 1 ? yup.boolean().required('Please select terms and conditions').oneOf([true], 'Please select terms and conditions') : '',
 			otp_verified: currentStep == 2 ? yup.string().required('Please enter OTP').min(6, 'Please enter valid OTP')
 				.max(6, 'Please enter valid OTP.') : '',
-			pan_number: currentStep == 3 ? yup.string().required('Please enter pan card number') : '',
+			pancard_image: currentStep == 3 ? yup.string().required('Please upload pan card') : '',
 			loan_type: currentStep == 4 ? yup.number().test('is boolean',
 				'Please select loan type',
 				(value) => value === 2 || value === 1) : '',
@@ -260,6 +278,7 @@ const StepOne = (props) => {
 
 					});
 				} else if (currentStep == 2) {
+					console.log(currentStep)
 					api.postApi('verifyOtp', { mobile_number: values.mobile_number, otp: values.otp_verified },false,props.header).then(response => {
 						if (response.status == 'success' && response.data) {
 							props.header.Authorization = response.token
@@ -273,165 +292,175 @@ const StepOne = (props) => {
 								let user_detail = response.data.user_detail;
 								let user_merchant_detail = response.data.user_merchant_detail;
 								let co_applicants = response.data.co_applicants;
+								if(co_applicants) {
+									co_applicants.forEach(item => { 
+										for (let val in item) item[val] = item[val] === null ? '' : item[val] 
+									});
+								}
+
+								
 								let full_name = user.full_name? user.full_name.split(' ') : []
 								let first_name = full_name.length > 0 ? full_name[0] : '';
 								let last_name = full_name.length > 1 ? full_name[1] : '';
-								// if(response.data && response.data.user) {
-									// let user = response.data.user;
 									
 									props.data.info = 
 									{
 										mobile_number:props.data.info.mobile_number,
 										is_agree: props.data.info.is_agree,
 										otp_verified: props.data.info.otp_verified,
-										pan_number: user.loan_type=='Personal'?user_detail.pan_number:user_merchant_detail.pan_number,
-										loan_type: user.loan_type=='Personal'?1:2,
+										pan_number: user && user.pan_number?user.pan_number:'',
+										loan_type: user &&  user.loan_type=='Personal'?1:2,
 										employee_type: 1,
-										wrong_otp:false
+										wrong_otp:false,
+										pancard_image : user_detail && user_detail.pancard_image?user_detail.pancard_image: user_merchant_detail && user_merchant_detail.pancard_image? user_merchant_detail.pancard_image:'',
+										pancard_image_true : user_detail && user_detail.pancard_image?true: user_merchant_detail && user_merchant_detail.pancard_image? true:false,
+									
 									}
-									// props.setData(props.data);
-								// } 
-								// if(response.data && response.data.user_detail) {
-									// let user_detail = response.data.user_detail;
-									props.data.personal_info = 
-									{
-										email: user.email?user.email:'',
-										email_true: user.email?true:false,
-										first_name: first_name,
-										first_name_true: first_name?true:false,
-										last_name: last_name,
-										last_name_true: last_name?true:false,
-										gender:user_detail.gender?user_detail.gender:'',
-										gender_true:user_detail.gender?true:false,
-										date_of_birth: user_detail.date_of_birth?user_detail.date_of_birth:'',
-										date_of_birth_true: user_detail.date_of_birth?true:false,
-										father_name: user_detail.father_name?user_detail.father_name:'',
-										father_name_true: user_detail.father_name?true:false,
-										qualification: user_detail.qualification?user_detail.qualification:'',
-										qualification_true: user_detail.qualification?true:false,
-										marital_status: user_detail.marital_status?user_detail.marital_status:'',
-										marital_status_true: user_detail.marital_status?true:false,
-										number_of_kids: user_detail.number_of_kids?user_detail.number_of_kids:'',
-										number_of_kids_true: user_detail.number_of_kids?true:false,
-										vehicle_type: user_detail.vehicle_type?user_detail.vehicle_type:'',
-										vehicle_type_true: user_detail.vehicle_type?true:false,
-										residence_building: user_detail.residence_building?user_detail.residence_building:'',
-										residence_building_true: user_detail.residence_building?true:false,
-										residence_area: user_detail.residence_area?user_detail.residence_area:'',
-										residence_area_true: user_detail.residence_area?true:false,
-										residence_state:user_detail.residence_state?user_detail.residence_state:'',
-										residence_state_true:user_detail.residence_state?true:false,
-										residence_city: user_detail.residence_city?user_detail.residence_city:'',
-										residence_city_true: user_detail.residence_city?true:false,
-										residence_pincode:user_detail.residence_pincode?user_detail.residence_pincode:'',
-										residence_pincode_true:user_detail.residence_pincode?true:false,
-										employer_name: user_detail.employer_name?user_detail.employer_name:'',
-										employer_name_true: user_detail.employer_name?true:false,
-										designation:user_detail.designation?user_detail.designation:'',
-										designation_true:user_detail.designation?true:false,
-										organization:user_detail.organization?user_detail.organization:'',
-										organization_true:user_detail.organization?true:false,
-										organization_type: user_detail.organization_type?user_detail.organization_type:'',
-										organization_type_true: user_detail.organization_type?true:false,
-										total_experience:user_detail.total_experience?user_detail.total_experience:'',
-										total_experience_true:user_detail.total_experience?true:false,
-										required_amount: user_detail.required_amount?user_detail.required_amount:'',
-										required_amount_true: user_detail.required_amount?true:false,
-										company_building: user_detail.company_building?user_detail.company_building:'',
-										company_building_true: user_detail.company_building?true:false,
-										company_area: user_detail.company_area?user_detail.company_area:'',
-										company_area_true: user_detail.company_area?true:false,
-										company_state: user_detail.company_state?user_detail.company_state:'',
-										company_state_true: user_detail.company_state?true:false,
-										company_city: user_detail.company_city?user_detail.company_city:'',
-										company_city_true: user_detail.company_city?true:false,
-										company_pincode: user_detail.company_pincode?user_detail.company_pincode:'',
-										company_pincode_true: user_detail.company_pincode?true:false,
-										company_website: user_detail.company_website?user_detail.company_website:'',
-										company_website_true: user_detail.company_website?true:false,
-										company_email: user_detail.company_email?user_detail.company_email:'',
-										company_email_true: user_detail.company_email?true:false,
-										salery_inhand: user_detail.salery_inhand?user_detail.salery_inhand:'',
-										salery_inhand_true: user_detail.salery_inhand?true:false,
-										salary_mode: user_detail.salary_mode?user_detail.salary_mode:'',
-										salary_mode_true: user_detail.salary_mode?true:false,
-										bank_name: user_detail.bank?user_detail.bank:'',
-										bank_name_true: user_detail.bank?true:false,
-										pancard_image: user_detail.pancard_image?user_detail.pancard_image:'',
-										pancard_image_true: user_detail.pancard_image?true:false,
-										aadhar_image:user_detail.aadhar_image?user_detail.aadhar_image:'',
-										aadhar_image_true:user_detail.aadhar_image?true:false,
-										bank_statement: user_detail.bank_statement?user_detail.bank_statement:'',
-										bank_statement_true: user_detail.bank_statement?true:false,
-										salery_slip: user_detail.salery_slip?user_detail.salery_slip:'',
-										salery_slip_true: user_detail.salery_slip?true:false,
-										loan_purpose :user_detail.loan_purpose?user_detail.loan_purpose:'',
-										loan_purpose_true :user_detail.loan_purpose?true:false,
-									}
-									// props.setData(props.data)
 
-									props.data.business_info =  
-									{
-										email: user.email?user.email:'',
-										email_true: user.email?true:false,
-										first_name: first_name,
-										first_name_true: first_name?true:false,
-										last_name: last_name,
-										last_name_true: last_name?true:false,
-										gender:user_detail.gender?user_detail.gender:'',
-										gender_true:user_detail.gender?true:false,
-										date_of_birth: user_merchant_detail.date_of_birth?user_merchant_detail.date_of_birth:'',
-										date_of_birth_true: user_merchant_detail.date_of_birth?true:false,
-										company_name: user.company_name?user.company_name:'',
-										company_name_true: user.company_name?true:false,
-										legal_name: user.legal_name?user.legal_name:'', 
-										legal_name_true: user.legal_name?true:false,
-										state: user_merchant_detail.state?user_merchant_detail.state:'',
-										state_true: user_merchant_detail.state?true:false,
-										city:  user_merchant_detail.city?user_merchant_detail.city:'',
-										city_true:  user_merchant_detail.city?true:false,
-										houseno:  user_merchant_detail.houseno?user_merchant_detail.houseno:'',
-										houseno_true:  user_merchant_detail.houseno?true:false,
-										pincode:  user_merchant_detail.pincode?user_merchant_detail.pincode:'',
-										pincode_true:  user_merchant_detail.pincode?true:false,
-										business_type: user_merchant_detail.business_type?user_merchant_detail.business_type:'',
-										business_type_true: user_merchant_detail.business_type?true:false,
-										type_of_nature: user_merchant_detail.nature_of_business?user_merchant_detail.nature_of_business:'',
-										type_of_nature_true: user_merchant_detail.nature_of_business?true:false,
-										vintage:  user_merchant_detail.vintage?user_merchant_detail.vintage:'',
-										vintage_true:  user_merchant_detail.vintage?true:false,
-										turn_over:  user_merchant_detail.turn_over?user_merchant_detail.turn_over:'',
-										turn_over_true:  user_merchant_detail.turn_over?true:false,
-										desired_amount: user_merchant_detail.desired_amount?user_merchant_detail.desired_amount:'',
-										desired_amount_true: user_merchant_detail.desired_amount?true:false,
-										required_amount:  user_detail.required_amount?user_detail.required_amount:'',
-										required_amount_true:  user_detail.required_amount?true:false,
-										co_application: co_applicants && co_applicants.length ? co_applicants : [
-											{ name: "", pan_number: "", pancard_image: "", relationship: "" }
-										],
-										co_application_true:  co_applicants && co_applicants.length?true:false,
-										pan_number:  user_merchant_detail.pan_number?user_merchant_detail.pan_number:'',
-										pan_number_true:  user_merchant_detail.pan_number?true:false,
-										pancard_image:  user_merchant_detail.pancard_image?user_merchant_detail.pancard_image:'',
-										pancard_image_true:  user_merchant_detail.pancard_image?true:false,
-										gst_number:  user_merchant_detail.gst_number?user_merchant_detail.gst_number:'',
-										gst_number_true:  user_merchant_detail.gst_number?true:false,
-										gstproof_image:  user_merchant_detail.gstproof_image?user_merchant_detail.gstproof_image:'',
-										gstproof_image_true:  user_merchant_detail.gstproof_image?true:false,
-										business_address:  user_merchant_detail.business_address?user_merchant_detail.business_address:'',
-										business_address_true:  user_merchant_detail.business_address?true:false,
-										business_address_proof: user_merchant_detail.business_address_proof?user_merchant_detail.business_address_proof:'',
-										business_address_proof_true: user_merchant_detail.business_address_proof?true:false,
-										bank_statement: user_detail.bank_statement?user_detail.bank_statement:'',
-										bank_statement_true: user_detail.bank_statement?true:false,
-										itr_docs:  user_detail.itr_docs?user_detail.itr_docs:'',
-										itr_docs_true:  user_detail.itr_docs?true:false,
-										loan_purpose : user_merchant_detail.loan_purpose?user_merchant_detail.loan_purpose:'',
-										loan_purpose_true : user_merchant_detail.loan_purpose?true:false,
+									
+									if(user_detail) {
+										props.data.personal_info = 
+										{
+											first_name: first_name,
+											first_name_true: first_name?true:false,
+											last_name: last_name,
+											last_name_true: last_name?true:false,
+											email: user.email?user.email:'',
+											email_true: user.email?true:false,
+											gender:user_detail.gender?user_detail.gender:'',
+											gender_true:user_detail.gender?true:false,
+											date_of_birth: user_detail.date_of_birth?user_detail.date_of_birth:'',
+											date_of_birth_true: user_detail.date_of_birth?true:false,
+											father_name: user_detail.father_name?user_detail.father_name:'',
+											father_name_true: user_detail.father_name?true:false,
+											qualification: user_detail.qualification?user_detail.qualification:'',
+											qualification_true: user_detail.qualification?true:false,
+											marital_status: user_detail.marital_status?user_detail.marital_status:'',
+											marital_status_true: user_detail.marital_status?true:false,
+											number_of_kids: user_detail.number_of_kids?user_detail.number_of_kids:'',
+											number_of_kids_true: user_detail.number_of_kids?true:false,
+											vehicle_type: user_detail.vehicle_type?user_detail.vehicle_type:'',
+											vehicle_type_true: user_detail.vehicle_type?true:false,
+											residence_building: user_detail.residence_building?user_detail.residence_building:'',
+											residence_building_true: user_detail.residence_building?true:false,
+											residence_area: user_detail.residence_area?user_detail.residence_area:'',
+											residence_area_true: user_detail.residence_area?true:false,
+											residence_state:user_detail.residence_state?user_detail.residence_state:'',
+											residence_state_true:user_detail.residence_state?true:false,
+											residence_city: user_detail.residence_city?user_detail.residence_city:'',
+											residence_city_true: user_detail.residence_city?true:false,
+											residence_pincode:user_detail.residence_pincode?user_detail.residence_pincode:'',
+											residence_pincode_true:user_detail.residence_pincode?true:false,
+											employer_name: user_detail.employer_name?user_detail.employer_name:'',
+											employer_name_true: user_detail.employer_name?true:false,
+											designation:user_detail.designation?user_detail.designation:'',
+											designation_true:user_detail.designation?true:false,
+											organization:user_detail.organization?user_detail.organization:'',
+											organization_true:user_detail.organization?true:false,
+											organization_type: user_detail.organization_type?user_detail.organization_type:'',
+											organization_type_true: user_detail.organization_type?true:false,
+											total_experience:user_detail.total_experience?user_detail.total_experience:'',
+											total_experience_true:user_detail.total_experience?true:false,
+											required_amount: user_detail.required_amount?user_detail.required_amount:'',
+											required_amount_true: user_detail.required_amount?true:false,
+											company_building: user_detail.company_building?user_detail.company_building:'',
+											company_building_true: user_detail.company_building?true:false,
+											company_area: user_detail.company_area?user_detail.company_area:'',
+											company_area_true: user_detail.company_area?true:false,
+											company_state: user_detail.company_state?user_detail.company_state:'',
+											company_state_true: user_detail.company_state?true:false,
+											company_city: user_detail.company_city?user_detail.company_city:'',
+											company_city_true: user_detail.company_city?true:false,
+											company_pincode: user_detail.company_pincode?user_detail.company_pincode:'',
+											company_pincode_true: user_detail.company_pincode?true:false,
+											company_website: user_detail.company_website?user_detail.company_website:'',
+											company_website_true: user_detail.company_website?true:false,
+											company_email: user_detail.company_email?user_detail.company_email:'',
+											company_email_true: user_detail.company_email?true:false,
+											salery_inhand: user_detail.salery_inhand?user_detail.salery_inhand:'',
+											salery_inhand_true: user_detail.salery_inhand?true:false,
+											salary_mode: user_detail.salary_mode?user_detail.salary_mode:'',
+											salary_mode_true: user_detail.salary_mode?true:false,
+											bank_name: user_detail.bank?user_detail.bank:'',
+											bank_name_true: user_detail.bank?true:false,
+											pancard_image: user_detail.pancard_image?user_detail.pancard_image:'',
+											pancard_image_true: user_detail.pancard_image?true:false,
+											aadhar_image:user_detail.aadhar_image?user_detail.aadhar_image:'',
+											aadhar_image_true:user_detail.aadhar_image?true:false,
+											bank_statement: user_detail.bank_statement?user_detail.bank_statement:'',
+											bank_statement_true: user_detail.bank_statement?true:false,
+											salery_slip: user_detail.salery_slip?user_detail.salery_slip:'',
+											salery_slip_true: user_detail.salery_slip?true:false,
+											loan_purpose :user_detail.loan_purpose?user_detail.loan_purpose:'',
+											loan_purpose_true :user_detail.loan_purpose?true:false,
+										}
+									}
+									if(user_merchant_detail) {
+										props.data.business_info =  
+										{
+											email: user.email?user.email:'',
+											email_true: user.email?true:false,
+											first_name: first_name,
+											first_name_true: first_name?true:false,
+											last_name: last_name,
+											last_name_true: last_name?true:false,
+											gender:user_detail.gender?user_detail.gender:'',
+											gender_true:user_detail.gender?true:false,
+											date_of_birth: user_merchant_detail.date_of_birth?user_merchant_detail.date_of_birth:'',
+											date_of_birth_true: user_merchant_detail.date_of_birth?true:false,
+											company_name: user.company_name?user.company_name:'',
+											company_name_true: user.company_name?true:false,
+											legal_name: user.legal_name?user.legal_name:'', 
+											legal_name_true: user.legal_name?true:false,
+											state: user_merchant_detail.state?user_merchant_detail.state:'',
+											state_true: user_merchant_detail.state?true:false,
+											city:  user_merchant_detail.city?user_merchant_detail.city:'',
+											city_true:  user_merchant_detail.city?true:false,
+											houseno:  user_merchant_detail.houseno?user_merchant_detail.houseno:'',
+											houseno_true:  user_merchant_detail.houseno?true:false,
+											pincode:  user_merchant_detail.pincode?user_merchant_detail.pincode:'',
+											pincode_true:  user_merchant_detail.pincode?true:false,
+											business_type: user_merchant_detail.business_type?user_merchant_detail.business_type:'',
+											business_type_true: user_merchant_detail.business_type?true:false,
+											type_of_nature: user_merchant_detail.nature_of_business?user_merchant_detail.nature_of_business:'',
+											type_of_nature_true: user_merchant_detail.nature_of_business?true:false,
+											vintage:  user_merchant_detail.vintage?user_merchant_detail.vintage:'',
+											vintage_true:  user_merchant_detail.vintage?true:false,
+											turn_over:  user_merchant_detail.turn_over?user_merchant_detail.turn_over:'',
+											turn_over_true:  user_merchant_detail.turn_over?true:false,
+											desired_amount: user_merchant_detail.desired_amount?user_merchant_detail.desired_amount:'',
+											desired_amount_true: user_merchant_detail.desired_amount?true:false,
+											required_amount:  user_detail.required_amount?user_detail.required_amount:'',
+											required_amount_true:  user_detail.required_amount?true:false,
+											co_application: co_applicants && co_applicants.length ? co_applicants.map(item=> ({...item, name_true:item.name?true:false,relationship_true:item.relationship?true:false, pan_number_true:item.pan_number?true:false,pancard_image_true:item.pancard_image?true:false})) : [
+												{ id:0,name: "",name_true:false, relationship: "",relationship_true:false, pan_number: "", pan_number_true:false,pancard_image: "",pancard_image_true:false }
+
+											],
+											co_application_true:  co_applicants && co_applicants.length?true:false,
+											pan_number:  user_merchant_detail.pan_number?user_merchant_detail.pan_number:'',
+											pan_number_true:  user_merchant_detail.pan_number?true:false,
+											pancard_image:  user_merchant_detail.pancard_image?user_merchant_detail.pancard_image:'',
+											pancard_image_true:  user_merchant_detail.pancard_image?true:false,
+											gst_number:  user_merchant_detail.gst_number?user_merchant_detail.gst_number:'',
+											gst_number_true:  user_merchant_detail.gst_number?true:false,
+											gstproof_image:  user_merchant_detail.gstproof_image?user_merchant_detail.gstproof_image:'',
+											gstproof_image_true:  user_merchant_detail.gstproof_image?true:false,
+											business_address:  user_merchant_detail.business_address?user_merchant_detail.business_address:'',
+											business_address_true:  user_merchant_detail.business_address?true:false,
+											business_address_proof: user_merchant_detail.business_address_proof?user_merchant_detail.business_address_proof:'',
+											business_address_proof_true: user_merchant_detail.business_address_proof?true:false,
+											bank_statement: user_detail.bank_statement?user_detail.bank_statement:'',
+											bank_statement_true: user_detail.bank_statement?true:false,
+											itr_docs:  user_detail.itr_docs?user_detail.itr_docs:'',
+											itr_docs_true:  user_detail.itr_docs?true:false,
+											loan_purpose : user_merchant_detail.loan_purpose?user_merchant_detail.loan_purpose:'',
+											loan_purpose_true : user_merchant_detail.loan_purpose?true:false,
+										}
 									}
 
 									props.setData(props.data)
-									setCurrentStep(4)
+									user_detail.pan_number?setCurrentStep(3):setCurrentStep(3)
+									
 							} else {
 								setCurrentStep(currentStep + 1)
 								form.setFieldValue('wrong_otp',false)
@@ -443,6 +472,10 @@ const StepOne = (props) => {
 					}).catch(error => {
 
 					});
+				} else if (currentStep == 3) {
+					setCurrentStep(currentStep + 1)
+				} else if (currentStep == 4) {
+					setCurrentStep(currentStep + 1)
 				} else {
 					setCurrentStep(currentStep + 1)
 				}
@@ -458,6 +491,7 @@ const StepOne = (props) => {
 	}
 
 	const [show, setShow] = useState(false);
+	const [validId, setValidID] = useState('');
 
 	const [userResponse, setsUserResponse] = useState('');
 	const formStatus = useFormik({
@@ -470,16 +504,88 @@ const StepOne = (props) => {
 			password: yup.string().required('Please enter password')
 		}),
 		onSubmit: values => {
+			setValidID('')
 			api.postApi('check-user-status', values,false, props.header).then(response => {
 				if(response.status=='success') {
 					setsUserResponse(response)
+					setValidID('')
+				} else {
+					setValidID('Please enter valid ID and password')
 				}
+
 			}).catch(error => {
 
 			});
 		}
 	})
 
+	const acceptedFiles = (e, path, s3_path,co_index=0) => {
+		if(e.target.files.length) {
+			var formData;
+				formData = new FormData();
+				for (let i = 0; i < e.target.files.length; i++) {
+					formData.append('image', e.target.files[i])
+				}
+				formData.append('folder', s3_path)
+				setProgressName(path)
+				uploadBr[path] =0;
+				setUploadBr(uploadBr)
+				api.postApi('pan-verify',  formData, true, props.header,setProgress).then(response => {
+					if (response.status == 'success') {
+						form.setFieldValue(path,response.data.pancard_image)
+						form.setFieldValue(path+'_true',true);
+						let full_name = response.data.full_name? response.data.full_name.split(' ') : []
+						let first_name = full_name.length > 0 ? full_name[0] : '';
+						let last_name = full_name.length > 1 ? full_name[1] : '';
+						props.data.personal_info = 
+						{
+							...props.data.personal_info,
+							first_name: first_name,
+							first_name_true: first_name?true:false,
+							last_name: last_name,
+							last_name_true: last_name?true:false,
+							date_of_birth: response.data.date_of_birth?response.data.date_of_birth:'',
+							date_of_birth_true: response.data.date_of_birth?true:false,
+							father_name: response.data.father_name?response.data.father_name:'',
+							father_name_true: response.data.father_name?true:false,
+						}
+						props.data.business_info =  
+						{
+							...props.data.business_info,
+							first_name: first_name,
+							first_name_true: first_name?true:false,
+							last_name: last_name,
+							last_name_true: last_name?true:false,
+							date_of_birth: response.data.date_of_birth?response.data.date_of_birth:'',
+							date_of_birth_true: response.data.date_of_birth?true:false,
+							pan_number:   response.data.pan_number?response.data.pan_number:'',
+							pan_number_true: response.data.pan_number?true:false,
+							pancard_image:  response.data.pancard_image?response.data.pancard_image:'',
+							pancard_image_true: response.data.pancard_image?true:false,
+						}
+
+						props.setData(props.data)
+						console.log(props.data)
+						toast.success('Pancard is verified')
+					} else {
+						toast.error('Pancard is not verified')
+					}
+					e.target.value=''
+				}).catch(error => {
+
+				});
+		}
+	}
+	const removeImage = (e,index,path,co_index=0) => {
+		e.preventDefault()
+		var array;
+		array = form.values[path].split(',')
+		array.splice(index, 1)
+		if(array==''){
+			form.setFieldValue(path+'_true',false);
+		}
+		form.setFieldValue(path, array.join(','));
+	}
 	return (
 		<>
 		<div className={show ? "modal right display-block" : "modal display-none"}   tabIndex="-1" data-backdrop="static" data-keyboard="false">
@@ -529,7 +635,10 @@ const StepOne = (props) => {
 								</div>
 							))}
 							
-						</div>						
+						</div>	
+						{validId? 
+						<div className="text-danger" style={{textAlign: "center"}}>{validId}</div>
+						:''}				
 					</div>
 					{userResponse==''?
 					<div className="modal-footer" id="status-footer" style={{display: "unset"}} >
@@ -655,7 +764,7 @@ const StepOne = (props) => {
 								</fieldset>
 								<fieldset className="ui-step-content" style={currentStep == 3 ? { display: "block" } : { display: "none" }}>
 									{/* <button type="button" name="previous" className="previous action-button-previous" onClick={() =>setCurrentStep(currentStep-1) } ><i className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button> */}
-									<h1>Personal info</h1>
+									<h1>Verify Pancard</h1>
 									<div className="stepform-newdesign">
 										<div className="row">
 											{/* <div className="col-xs-12 col-md-5">
@@ -666,12 +775,89 @@ const StepOne = (props) => {
 								    <label>Last Name</label>
 								    <input type="text" className="" placeholder="Name as per PAN"/>
 								</div> */}
+								            {/* <div className="col-12 col-md-5">
+												<label>First Name</label>
+												<input type="text" name="first_name" {...form.getFieldProps("first_name")}  className="" placeholder="Enter first name" />
+											
+												{form.touched.first_name && Object.keys(form.errors)[0]=='first_name' && form.errors.first_name ? <div className="text-danger">{form.errors.first_name}</div> : ''}
+											</div>
+											<div className="col-12 col-md-5">
+												<label>Last Name</label>
+												<input type="text" name="last_name" {...form.getFieldProps("last_name")} className="" placeholder="Enter last name" />
+												
+												{form.touched.last_name && Object.keys(form.errors)[0]=='last_name' && form.errors.last_name ? <div className="text-danger">{form.errors.last_name}</div> : ''}
+											</div>
+
+											<div className="col-12 col-md-5"> 
+												<label>Date of birth</label>
+												
+												<input type="date" max="1999-12-31" {...form.getFieldProps("date_of_birth")}  name="date_of_birth" className="" placeholder="Enter Date of birth" />
+	                                         
+												{form.touched.date_of_birth && Object.keys(form.errors)[0]=='date_of_birth' && form.errors.date_of_birth ? <div className="text-danger">{form.errors.date_of_birth}</div> : ''}
+											</div>
 											<div className="col-xs-12 col-md-8"> 
 												<label>Pan Card Number</label>
 												<input type="text" className="mb-0" placeholder="Enter pan card number"  onChange={(e) => updateNumber(e.target.value,'pan_number',10) } value={form.values.pan_number} />
+												{form.touched.pan_number && Object.keys(form.errors)[0]=='pan_number' && form.errors.pan_number ? <div className="text-danger">{form.errors.pan_number}</div> : ''}
+
+											</div> */}
+{/* 
+<div className="col-xs-12 col-md-10 mb-3">
+												<label>Firm Pan Number </label>
+												<input type="text" name="pan_number"  onChange={(e) => updateRecord(e,'pan_number')} onBlur={(e) => updateAndSaveRecord(e,'pan_number')} value={form.values.pan_number} className="mb-0" placeholder="Enter Number" />
+												{form.values.pan_number_true?
+												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+												: '' }
 												{form.touched.pan_number && form.errors.pan_number ? <div className="text-danger">{form.errors.pan_number}</div> : ''}
 
+											</div> */}
+											<div className="col-12 col-md-6 col-lg-10">
+													<div className="upload__box">
+
+													    {form.values.pancard_image_true?
+															<p className="mb-0"><i className="fa-solid fa-check fa-fw checkgreen-upload"></i> </p>
+																: '' }
+														<div className="upload__btn-box">
+															<label className="upload__btn">
+															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
+															<p>Upload Pan Card <span className="addmore-plus"><i className="fa-solid fa-plus fa-fw"></i></span>  <small className="pdffile">(Only Jpg,Png,Pdf,Doc)</small></p>
+															<input type="file" accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'pancard_image', 'uploads/merchant/pancard')}  />
+															</label>
+														</div>
+														{form.values.pancard_image == '' && form.touched.pancard_image && Object.keys(form.errors)[0]=='pancard_image' && form.errors.pancard_image ? <div className="text-danger">{form.errors.pancard_image}</div> : ''} 
+
+													</div>
+													{form.values.pancard_image && form.values.pancard_image.split(',') && form.values.pancard_image.split(',').length > 0  ?
+													<>
+														<ul className="imgpreview-newbx">
+														{uploadBr['pancard_image'] > 0?
+														    <div className="progress-imgupload">
+																<div className="progress-value" style={{width: uploadBr['pancard_image']+'%'}}><span>{uploadBr['pancard_image']}%</span></div>
+															</div>
+															 :''} 
+																{form.values.pancard_image && form.values.pancard_image.split(',').map((option, index) => (
+																	<li key={index} >
+																		
+																		{checkURL(config.s3_url+'uploads/merchant/pancard/'+option) ? 
+																		    <>
+																			<img src={config.s3_url+'uploads/merchant/pancard/'+option} alt="" />
+																				<Link to="" onClick={(e) => {removeImage(e,index,'pancard_image')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																			<p>{option}</p>
+																			</>
+																		: 
+																		
+																		    <>
+																		     <Link to="" onClick={(e) => {removeImage(e,index,'pancard_image')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																		     <p>{option}</p>
+																		   </>
+																		}
+																	</li>
+																))}
+														</ul>
+													</>
+													: ''}
 											</div>
+										{/* </div> */}
 											{/* <div className="col-xs-12 col-md-5">
 								    <label>Date of birth</label>
 								    <input type="date" className="" placeholder="DOB as per PAN"/>
@@ -679,7 +865,7 @@ const StepOne = (props) => {
 
 										</div>
 									</div>
-									<input type="submit" name="next" className="next action-button apply-now-btn mt-5 ml-00" value="Submit" />
+									<input type="submit" name="next" className="next action-button apply-now-btn mt-5 ml-00" value="Continue" />
 								</fieldset>
 
 								{/* <fieldset className="ui-step-content" style={currentStep==4?{display:"block"}:{display:"none"}}>
@@ -813,40 +999,60 @@ const StepOne = (props) => {
 }
 
 const BusinessForm = (props) => {
+	const [uploadBr, setUploadBr] = 
+	useState({'pancard_image':0,'gstproof_image':0,'business_address_proof':0,'bank_statement':0,'itr_docs':0})
+	const [progress, setProgress] = useState(0)
+	const [progressName, setProgressName] = useState('')
+
+	useEffect(() => {
+		setuploadBr()
+	}, [progress])
+
+	// useEffect(() => {
+	// 	updatePanNumber()
+	// }, [])
+
+	// const updatePanNumber = () => {
+	// 	api.postApi('updateSingleKey-businessForm', { key: 'pan_number', value: props.data.info.pan_number}, false, props.header).then(response => {
+							
+	// 	}).catch(error => {
+	// 	});
+	// }
+	const setuploadBr = () => { 
+		uploadBr[progressName] =progress
+		setUploadBr(uploadBr)
+	}
 
 	const [cities, setCities] = useState([]);
 	const [pincode, setPincode] = useState([]);
-
 	const [pincodeOnload, setPincodeOnload] = useState(false);
 	useEffect(() => {
 		if (props.data.business_info.state) {
 			GetCities(props.data.business_info.state,true)
 		}
 	}, [])
-
 	useEffect(() => {
 		if (pincodeOnload) {
-			console.log(props.data.business_info.city)
 			GetPincode(props.data.business_info.city)
 		}
 	}, [pincodeOnload])
-
-
 	const [currentStep, setCurrentStep] = useState(0);
 	const form = useFormik({
 		initialValues: props.data.business_info,
 		enableReinitialize: true,
 		validationSchema: yup.object({
+			
+			// first_name: currentStep == 0 ? yup.string().required('Please enter your name').matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
+			// last_name: currentStep == 0 ? yup.string().required('Please enter your surname').matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
 			email: currentStep == 0 ? yup.string().email('Please enter valid email address').required('Please enter email address') : '',
-			first_name: currentStep == 0 ? yup.string().required('Please enter your name').matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
-			last_name: currentStep == 0 ? yup.string().required('Please enter your surname').matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
+			// date_of_birth: currentStep == 0 ? yup.string().required('Please enter dob') : '',
 			gender: currentStep == 0 ? yup.string().required('Please select gender') : '',
-			date_of_birth: currentStep == 0 ? yup.string().required('Please enter dob') : '',
+			
 			company_name: currentStep == 0 ? yup.string().required('Please enter business name').matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
 			legal_name: currentStep == 0 ? yup.string().required('Please enter legal name of your business').matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
 			state: currentStep == 0 ? yup.string().required('Please select state') : '',
 			city: currentStep == 0 ? yup.string().required('Please select city') : '',
-			houseno: currentStep == 0 ? yup.string().required('Please tnter building name/flat no') : '',
+			houseno: currentStep == 0 ? yup.string().required('Please enter building name/flat no') : '',
 			pincode: currentStep == 0 ? yup.string().required('Please select pincode') : '',
 			business_type: currentStep == 0 ? yup.string().required('Please select business type') : '',
 			type_of_nature: currentStep == 0 ? yup.string().required('Please select nature of your business') : '',
@@ -854,12 +1060,14 @@ const BusinessForm = (props) => {
 			turn_over: currentStep == 0 ? yup.string().required('Please select business turn over') : '',
 			desired_amount: currentStep == 0 ? yup.string().required('Please select desired loan amount') : '',
 			required_amount: currentStep == 0 ? yup.number().typeError('you must specify a number').required('please enter required amount') : '',
+			loan_purpose: currentStep == 0 ? yup.string().required('Please select loan purpose') : '',
 			co_application: currentStep == 1 ? yup.array().of(
 				yup.object({
 					name: yup.string().required("Please enter co-applicant name").matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
+					relationship: yup.string().required("Please enter co-applicant relationship").matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
 					pan_number: yup.string().required("Please enter co-applicant pan card number"),
 					pancard_image: yup.string().required("Please upload co-applicant pan card"),
-					relationship: yup.string().required("Please enter co-applicant relationship").matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field "),
+					
 				}),
 			) : '',
 			pan_number: currentStep == 2 ? yup.string().required('Please enter pan card number') : '',
@@ -870,7 +1078,7 @@ const BusinessForm = (props) => {
 			business_address_proof: currentStep == 2 ? yup.string().required('Please enter business address proof') : '',
 			bank_statement: currentStep == 2 ? yup.string().required('Please upload bank statement') : '',
 			itr_docs: currentStep == 2 ? yup.string().required('Please upload ITR') : '',
-			loan_purpose: currentStep == 0 ? yup.string().required('Please select loan purpose') : '',
+			
 
 		}),
 		onSubmit: values => {
@@ -896,73 +1104,220 @@ const BusinessForm = (props) => {
 					formData.append('image', e.target.files[i])
 				}
 				formData.append('folder', s3_path)
-				api.postApi('multipleImageUpload', formData, true, props.header).then(response => {
+				setProgressName(path)
+				uploadBr[path] =0;
+				setUploadBr(uploadBr)
+				api.uploadPostApi('multipleImageUpload', formData, true, props.header,setProgress).then(response => {
 					if(path=='co_application') {
 						let fileNew = form.values.co_application[co_index].pancard_image ?form.values.co_application[co_index].pancard_image +','+response.fileName  :response.fileName;
 						form.setFieldValue(`co_application.${co_index}.pancard_image`, fileNew);
+						let id = form.values['co_application'][co_index].id;
+						api.postApi('add-update-co_applicant', { id:id,key: 'pancard_image', value: fileNew}, false, props.header).then(co_response => {
+							if(id==0) {
+							  form.setFieldValue(`co_application.${co_index}.id`,co_response.data.id);
+							}
+							form.setFieldValue(`co_application.${co_index}.pancard_image_true`,true);
+							toast.success('Pancard is verified')
+						}).catch(error => {
+						});
 
 					} else {
-						form.setFieldValue(path, form.values[path]?form.values[path] +','+response.fileName : response.fileName);
-
+						form.setFieldValue(path, form.values[path]?form.values[path] +','+response.fileName : response.fileName).then(res => {
+							if(res[path]==undefined) {
+								api.postApi('updateSingleKey-businessForm', { key: path, value: form.values[path]?form.values[path] +','+response.fileName : response.fileName}, false, props.header).then(response => {
+									form.setFieldValue(path+'_true',true);
+									if(path=='pancard_image') {
+										toast.success('Pancard is verified')
+									 }
+								}).catch(error => {
+	
+								});
+							}
+						});
+						if(path!='pancard_image') {
+							toast.success('Upload Successful')
+						  }
 					}
-					toast.success('Upload Successful')
+					
 					e.target.value = '';
 				}).catch(error => {
 
 				});
 		}
 	}
-
 	const removeImage = (e,index,path,co_index=0) => {
 		e.preventDefault()
 		var array;
 		if(path=='co_application') {
 		    array =form.values.co_application[co_index].pancard_image.split(',')
 			array.splice(index, 1)
+			if(array==''){
+				form.setFieldValue(`co_application.${co_index}.pancard_image_true`,false);
+			}
 			form.setFieldValue(`co_application.${co_index}.pancard_image`, array.join(','));
 		} else {
 		    array = form.values[path].split(',')
 			array.splice(index, 1)
+			if(array==''){
+				form.setFieldValue(path+'_true',false);
+			}
 			form.setFieldValue(path, array.join(','));
 		}		
 	}
-
-	
 	const GetCities = (state_name,send=false) => {
-		var state = props.allStates.find(state => state.name == state_name);
-		api.postApi('cityList', { state_id: state.id }, false, props.header).then(response => {
-			form.setFieldValue('state', state_name)
-			
-			setCities(response.cities);
-			setPincodeOnload(send)
-			// if (props.data.business_info.city) {
-			// 	GetPincode(props.data.business_info.city)
-			// }
-		}).catch(error => {
-		});
+		if(state_name) {
+			var state = props.allStates.find(state => state.name == state_name);
+			api.postApi('cityList', { state_id: state.id }, false, props.header).then(response => {
+				// form.setFieldValue('state', state_name)
+				setCities(response.cities);
+				setPincodeOnload(send)
+			}).catch(error => {
+			});
+		} else {
+			setCities([])
+			setPincode([])
+			form.setFieldValue('pincode', '')
+			form.setFieldValue('pincode_true',false)
+			form.setFieldValue('city', '')
+			form.setFieldValue('city_true',false)
+		}
 
 	}
-
-	
-	
 	const GetPincode = (city_name) => {
-		var city = cities.find(city => city.name == city_name);
-		var state = props.allStates.find(state => state.name == form.values.state);
-		api.postApi('pincodeList', { city: city.name, state_id: state.id.toString()}, false, props.header).then(response => {
-			form.setFieldValue('city', city.name)
-			setPincode(response.pincode);
-		}).catch(error => {
-		});
-
+		if(city_name) {
+			var city = cities.find(city => city.name == city_name);
+			var state = props.allStates.find(state => state.name == form.values.state);
+			if(city && state) {
+				api.postApi('pincodeList', { city: city.name, state_id: state.id.toString()}, false, props.header).then(response => {
+					// form.setFieldValue('city', city.name)
+					setPincode(response.pincode);
+				}).catch(error => {
+				});
+			}
+		} else {
+			form.setFieldValue('pincode', '')
+			form.setFieldValue('pincode_true',false)
+			setPincode([])
+		}
 	}
 	const checkURL= (url) => {
 		return(url.match(/\.(jpeg|jpg|gif|png)$/) != null);
 	}
-
 	const  capitalName = (text) => {
 		text = text.toLowerCase();
 		return text.charAt(0).toUpperCase() + text.slice(1);
 	}
+ 
+	const updateRecord = (e,path) => {
+		if(e.target.value) {
+			form.setFieldValue(path+'_true',false);
+			form.setFieldValue(path,e.target.value)
+		} else {
+			form.setFieldValue(path+'_true',false);
+			form.setFieldValue(path,e.target.value);
+		}
+		
+	}
+
+	const updateAndSaveRecord = (e,path,table_name='',) => {
+		if(e.target.value || e.target.type=='file') {
+			form.setFieldValue(path+'_true',false);
+			if(e.target.type=='file') {
+				form.validateForm().then((res) => {
+					if(res[path]==undefined) {
+							form.setFieldValue(path+'_true',true);
+					}
+				})
+			} else {
+				form.setFieldValue(path,e.target.value).then((res) => {
+					if(res[path]==undefined) {
+						let value = path=='first_name' || path=='last_name'? form.values.first_name+' '+form.values.last_name : e.target.value;
+						let key = path=='first_name' || path=='last_name'? 'full_name' : path;
+						api.postApi('updateSingleKey-businessForm', { key: key, value: value}, false, props.header).then(response => {
+							
+							form.setFieldValue(path+'_true',true);
+						}).catch(error => {
+						});
+						
+					}
+				});
+			}
+		} else {
+			if(e.target.type=='file'){
+			} else {
+				form.setFieldValue(path,e.target.value);
+			}
+			form.setFieldValue(path+'_true',false);
+			
+		}
+	}
+
+
+	const updateCoAppRecord = (e,path,index,real_path) => {
+		if(e.target.value) {
+			form.setFieldValue(real_path,e.target.value)
+			form.setFieldValue(real_path+'_true',false);
+		} else {
+			form.setFieldValue(real_path,e.target.value)
+			form.setFieldValue(real_path+'_true',false);
+		}
+		
+	}
+
+	const updateCoAppAndSaveRecord = (e,path,index) => {
+		if(e.target.value || e.target.type=='file') {
+			form.setFieldValue(path+'_true',false);
+			if(e.target.type=='file') {
+				form.setFieldValue(`co_application.${index}.pancard_image_true`,true);
+			} else {
+				form.setFieldValue(`co_application.${index}.${path}`,e.target.value).then((res) => {
+					let id = form.values['co_application'][index].id;
+						api.postApi('add-update-co_applicant', { id:id,key: path, value: e.target.value}, false, props.header).then(response => {
+							if(id==0) {
+						    	form.setFieldValue(`co_application.${index}.id`,response.data.id);
+							}
+							form.setFieldValue(`co_application.${index}.${path}_true`,true);
+						}).catch(error => {
+						});
+				});
+			}
+		} else {
+			if(e.target.type=='file'){
+			} else {
+				form.setFieldValue(path,e.target.value);
+			}
+			form.setFieldValue(path+'_true',false);
+			
+		}
+	}
+    
+	const addCoApplication = () => {
+		form.values.co_application.push({ id:0, name: "", pan_number: "", pancard_image: "", relationship: "" })
+		form.validateForm()
+
+	}
+
+	const removeCoApplication = (index) => {
+		if(form.values.co_application.length) {
+			let lastElementIndex = index
+			const lastElement = form.values.co_application[index];
+			if(lastElement.id) {
+				api.postApi('delete-co_applicants', { co_applicant_id: lastElement.id.toString()}, false, props.header).then(response => {
+					form.values.co_application.splice(lastElementIndex, 1)
+					form.validateForm()
+					toast.success('Remove Successful')
+				}).catch(error => {
+
+				});
+			} else {
+				form.values.co_application.splice(lastElementIndex, 1)
+				form.validateForm()
+				toast.success('Remove Successful')
+			}
+		}
+		
+	}
+
 	return (
 		<>
 			<section className="newstep-form">
@@ -977,42 +1332,42 @@ const BusinessForm = (props) => {
 										<div className="row">
 										    <div className="col-12 col-md-5">
 												<label>First Name</label>
-												<input type="text" name="first_name" {...form.getFieldProps("first_name")} className="" placeholder="Enter first name" />
+												<input type="text" name="first_name" readOnly className="" placeholder="Enter first name" value={form.values.first_name}/>
 												{form.values.first_name_true?
 												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.first_name && form.errors.first_name ? <div className="text-danger">{form.errors.first_name}</div> : ''}
+												{form.touched.first_name && Object.keys(form.errors)[0]=='first_name' && form.errors.first_name ? <div className="text-danger">{form.errors.first_name}</div> : ''}
 											</div>
 											<div className="col-12 col-md-5">
 												<label>Last Name</label>
-												<input type="text" name="last_name" {...form.getFieldProps("last_name")} className="" placeholder="Enter last name" />
+												<input type="text" readOnly name="last_name" value={form.values.last_name} className="" placeholder="Enter last name" />
 												{form.values.last_name_true?
 												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.last_name && !form.errors.first_name && form.errors.last_name ? <div className="text-danger">{form.errors.last_name}</div> : ''}
+												{form.touched.last_name && Object.keys(form.errors)[0]=='last_name' && form.errors.last_name ? <div className="text-danger">{form.errors.last_name}</div> : ''}
 											</div>
 											<div className="col-12 col-md-5">
 												<label>Email Address</label>
-												<input type="text" name="email" {...form.getFieldProps("email")} className="" placeholder="Enter email" />
+												<input type="text" name="email" onChange={(e) => updateRecord(e,'email')} onBlur={(e) => updateAndSaveRecord(e,'email')} value={form.values.email} className="" placeholder="Enter email" />
 												{form.values.email_true?
 												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.email && !form.errors.last_name  && form.errors.email ? <div className="text-danger">{form.errors.email}</div> : ''}
+												{form.touched.email && Object.keys(form.errors)[0]=='email'   && form.errors.email ? <div className="text-danger">{form.errors.email}</div> : ''}
 											</div>
  
 											<div className="col-12 col-md-5"> 
 												<label>Date of birth</label>
 												
-												<input type="date" max="1999-12-31" name="date_of_birth" {...form.getFieldProps("date_of_birth")} className="" placeholder="Enter Date of birth" />
+												<input type="date" readOnly max="1999-12-31" name="date_of_birth"  value={form.values.date_of_birth} className="" placeholder="Enter Date of birth" />
 	                                            {form.values.date_of_birth_true?
 												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.date_of_birth && !form.errors.email && form.errors.date_of_birth ? <div className="text-danger">{form.errors.date_of_birth}</div> : ''}
+												{form.touched.date_of_birth && Object.keys(form.errors)[0]=='date_of_birth' && form.errors.date_of_birth ? <div className="text-danger">{form.errors.date_of_birth}</div> : ''}
 											</div>
 										    <div className="col-xs-12 col-md-10">
 												<label>Gender</label>
-												<select name="gender"  onChange={(e) => form.setFieldValue('gender', e.target.value)} value={form.values.gender} >
-													<option>Select One</option>
+												<select name="gender"  onChange={(e) => updateRecord(e,'gender')} onBlur={(e) => updateAndSaveRecord(e,'gender')} value={form.values.gender} >
+													<option value="">Select One</option>
 													<option value="Male" >Male</option>
 													<option value="Female">Female</option>
 													<option value="Other">Other</option>
@@ -1021,28 +1376,28 @@ const BusinessForm = (props) => {
 												{form.values.gender_true?
 												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.gender && !form.errors.date_of_birth && form.errors.gender ? <div className="text-danger">{form.errors.gender}</div> : ''}
+												{form.touched.gender && Object.keys(form.errors)[0]=='gender' && form.errors.gender ? <div className="text-danger">{form.errors.gender}</div> : ''}
 											</div>
 											<div className="col-12 col-md-10">
 												<label>Business Name</label>
-												<input type="text" name="company_name" {...form.getFieldProps("company_name")} className="" placeholder="Enter name" />
+												<input type="text" name="company_name" onChange={(e) => updateRecord(e,'company_name')}  onBlur={(e) => updateAndSaveRecord(e,'company_name')}  value={form.values.company_name} className="" placeholder="Enter name" />
 												{form.values.company_name_true?
 												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.company_name && !form.errors.gender && form.errors.company_name ? <div className="text-danger">{form.errors.company_name}</div> : ''}
+												{form.touched.company_name && Object.keys(form.errors)[0]=='company_name'  && form.errors.company_name ? <div className="text-danger">{form.errors.company_name}</div> : ''}
 											</div>
 											<div className="col-12 col-md-10">
 												<label>Legal Name</label>
-												<input type="text" name="legal_name" {...form.getFieldProps("legal_name")} className="" placeholder="Enter name" />
+												<input type="text" name="legal_name" onChange={(e) => updateRecord(e,'legal_name')} onBlur={(e) => updateAndSaveRecord(e,'legal_name')} value={form.values.legal_name} className="" placeholder="Enter name" />
 												{form.values.legal_name_true?
 												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.legal_name && !form.errors.company_name && form.errors.legal_name ? <div className="text-danger">{form.errors.legal_name}</div> : ''}
+												{form.touched.legal_name && Object.keys(form.errors)[0]=='legal_name' && form.errors.legal_name ? <div className="text-danger">{form.errors.legal_name}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
-												<label>State</label>
-												<select name="state" onChange={(e) => GetCities(e.target.value)} value={form.values.state}  >
-													<option>Select One</option>
+												<label>State</label> 
+												<select name="state" onChange={(e) => updateRecord(e,'state',GetCities(e.target.value))} onBlur={(e) => updateAndSaveRecord(e,'state')} value={form.values.state}  >
+													<option value="">Select One</option>
 													{props.allStates && props.allStates.length > 0 && props.allStates.map((option, index) => (
 														<option value={option.name} key={index}>{option.name}</option>
 													))}
@@ -1050,12 +1405,12 @@ const BusinessForm = (props) => {
 												{form.values.state_true?
 												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.state && !form.errors.legal_name && form.errors.state ? <div className="text-danger">{form.errors.state}</div> : ''}
+												{form.touched.state  && Object.keys(form.errors)[0]=='state' && form.errors.state ? <div className="text-danger">{form.errors.state}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>City</label>
-												<select name="city" onChange={(e) => GetPincode(e.target.value)} value={form.values.city}  >
-													<option>Select One</option>
+												<select name="city" onChange={(e) => updateRecord(e,'city',GetPincode(e.target.value)) } onBlur={(e) => updateAndSaveRecord(e,'city')} value={form.values.city}  >
+													<option value="">Select One</option>
 													{cities.length > 0 && cities.map((option, index) => (
 														<option value={option.name} key={index}>{capitalName(option.name)}</option>
 													))}
@@ -1063,20 +1418,20 @@ const BusinessForm = (props) => {
 												{form.values.city_true?
 												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.city && !form.errors.state && form.errors.city ? <div className="text-danger">{form.errors.city}</div> : ''}
+												{form.touched.city  && Object.keys(form.errors)[0]=='city' && form.errors.city ? <div className="text-danger">{form.errors.city}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
-												<label>Flat No./building no./street no.</label>
-												<input type="text" name="houseno" {...form.getFieldProps("houseno")} className="" placeholder="Enter House No." />
+												<label>Flat/Building/Street No.</label>
+												<input type="text" name="houseno" onChange={(e) => updateRecord(e,'houseno')} onBlur={(e) => updateAndSaveRecord(e,'houseno')} value={form.values.houseno} className="" placeholder="Enter House No." />
 												{form.values.houseno_true?
 												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.houseno && !form.errors.city && form.errors.houseno ? <div className="text-danger">{form.errors.houseno}</div> : ''}
+												{form.touched.houseno && Object.keys(form.errors)[0]=='houseno' && form.errors.houseno ? <div className="text-danger">{form.errors.houseno}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Pin Code</label>
-												<select name="pincode" onChange={(e) => form.setFieldValue('pincode', e.target.value)} value={form.values.pincode}  >
-													<option>Select One</option>
+												<select name="pincode" onChange={(e) => updateRecord(e,'pincode')} onBlur={(e) => updateAndSaveRecord(e,'pincode')} value={form.values.pincode}  >
+													<option value="">Select One</option>
 													{pincode.length > 0 && pincode.map((option, index) => (
 														<option value={option.pincode} key={index}>{option.pincode}</option>
 													))}
@@ -1084,12 +1439,12 @@ const BusinessForm = (props) => {
 												{form.values.pincode_true?
 												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.pincode && !form.errors.houseno && form.errors.pincode ? <div className="text-danger">{form.errors.pincode}</div> : ''}
+												{form.touched.pincode && Object.keys(form.errors)[0]=='pincode' && form.errors.pincode ? <div className="text-danger">{form.errors.pincode}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Type of Firm</label>
-												<select name="business_type" onChange={(e) => form.setFieldValue('business_type', e.target.value)} value={form.values.business_type} >
-													<option>Select One</option>
+												<select name="business_type" onChange={(e) => updateRecord(e,'business_type')} onBlur={(e) => updateAndSaveRecord(e,'business_type')}  value={form.values.business_type} >
+													<option value="">Select One</option>
 													<option value="Individual">Individual</option>
 													<option value="Proprietorship">Proprietorship</option>
 													<option value="Partnership">Partnership</option>
@@ -1098,12 +1453,12 @@ const BusinessForm = (props) => {
 												{form.values.business_type_true?
 												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.business_type && !form.errors.pincode && form.errors.business_type ? <div className="text-danger">{form.errors.business_type}</div> : ''}
+												{form.touched.business_type && Object.keys(form.errors)[0]=='business_type' && form.errors.business_type ? <div className="text-danger">{form.errors.business_type}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Nature of Business</label>
-												<select name="type_of_nature"  value={form.values.type_of_nature}  onChange={(e) => form.setFieldValue('type_of_nature', e.target.value)}>
-													<option>Select One</option>
+												<select name="type_of_nature"  value={form.values.type_of_nature}  onChange={(e) => updateRecord(e,'type_of_nature')} onBlur={(e) => updateAndSaveRecord(e,'type_of_nature')} >
+													<option value="">Select One</option>
 													<option value="Retail">Retail</option>
 													<option value="Manufacturing">Manufacturing</option>
 													<option value="Service">Service</option>
@@ -1112,20 +1467,20 @@ const BusinessForm = (props) => {
 												{form.values.type_of_nature_true?
 												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.type_of_nature && !form.errors.business_type && form.errors.type_of_nature ? <div className="text-danger">{form.errors.type_of_nature}</div> : ''}
+												{form.touched.type_of_nature && Object.keys(form.errors)[0]=='type_of_nature'  && form.errors.type_of_nature ? <div className="text-danger">{form.errors.type_of_nature}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>No. of years in Business</label>
-												<input type="number" min="0" name="vintage" {...form.getFieldProps("vintage")} className="" placeholder="Enter year" />
+												<input type="number" min="0" name="vintage" value={form.values.vintage}  onChange={(e) => updateRecord(e,'vintage')} onBlur={(e) => updateAndSaveRecord(e,'vintage')} className="" placeholder="Enter year" />
 												{form.values.vintage_true?
 												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.vintage && !form.errors.type_of_nature && form.errors.vintage ? <div className="text-danger">{form.errors.vintage}</div> : ''}
+												{form.touched.vintage && Object.keys(form.errors)[0]=='vintage' && form.errors.vintage ? <div className="text-danger">{form.errors.vintage}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Monthly Turnover</label>
-												<select name="turn_over"   value={form.values.turn_over}  onChange={(e) => form.setFieldValue('turn_over', e.target.value)}>
-													<option>Select One</option>
+												<select name="turn_over"   value={form.values.turn_over}  onChange={(e) => updateRecord(e,'turn_over')} onBlur={(e) => updateAndSaveRecord(e,'turn_over')} >
+													<option value="">Select One</option>
 													<option value="0.5 - 0.75 lac">0.5 - 0.75 lac</option>
 													<option value="0.75 - 1 lac">0.75 - 1 lac</option>
 													<option value="1 - 5 lac">1 - 5 lac</option>
@@ -1153,12 +1508,12 @@ const BusinessForm = (props) => {
 												{form.values.turn_over_true?
 												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.turn_over && !form.errors.vintage && form.errors.turn_over ? <div className="text-danger">{form.errors.turn_over}</div> : ''}
+												{form.touched.turn_over && Object.keys(form.errors)[0]=='turn_over' && form.errors.turn_over ? <div className="text-danger">{form.errors.turn_over}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Desired Loan Amount</label>
-												<select name="desired_amount"  value={form.values.desired_amount} onChange={(e) => form.setFieldValue('desired_amount', e.target.value)}>
-													<option>Select One</option>
+												<select name="desired_amount"  value={form.values.desired_amount} onChange={(e) => updateRecord(e,'desired_amount')} onBlur={(e) => updateAndSaveRecord(e,'desired_amount')}>
+													<option value="">Select One</option>
 													<option value="0.5 - 0.75 lac">0.5 - 0.75 lac</option>
 													<option value="0.75 - 1 lac">0.75 - 1 lac</option>
 													<option value="1 - 5 lac">1 - 5 lac</option>
@@ -1186,20 +1541,20 @@ const BusinessForm = (props) => {
 												{form.values.desired_amount_true?
 												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.desired_amount && !form.errors.turn_over && form.errors.desired_amount ? <div className="text-danger">{form.errors.desired_amount}</div> : ''}
+												{form.touched.desired_amount && Object.keys(form.errors)[0]=='desired_amount' && form.errors.desired_amount ? <div className="text-danger">{form.errors.desired_amount}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Required Amount</label>
-												<input type="text" name="required_amount" {...form.getFieldProps("required_amount")} className="" placeholder="Enter amount" />
+												<input type="text" name="required_amount" value={form.values.required_amount} onChange={(e) => updateRecord(e,'required_amount')} onBlur={(e) => updateAndSaveRecord(e,'required_amount')} className="" placeholder="Enter amount" />
 												{form.values.required_amount_true?
 												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.required_amount && !form.errors.desired_amount && form.errors.required_amount ? <div className="text-danger">{form.errors.required_amount}</div> : ''}
+												{form.touched.required_amount && Object.keys(form.errors)[0]=='required_amount' && form.errors.required_amount ? <div className="text-danger">{form.errors.required_amount}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-10">
 												    <label>Loan purpose </label>
-												    <select name="loan_purpose" value={form.values.loan_purpose} onChange={(e) => form.setFieldValue('loan_purpose', e.target.value)}>
-														<option>Select One</option>
+												    <select name="loan_purpose" value={form.values.loan_purpose}  onChange={(e) => updateRecord(e,'loan_purpose')}  onBlur={(e) => updateAndSaveRecord(e,'loan_purpose')}  >
+														<option value="">Select One</option>
 														<option value="90000111" >Business Funding</option>
 														<option value="90133283">Business working capital</option>
 														<option value="1367">Education</option>
@@ -1212,7 +1567,7 @@ const BusinessForm = (props) => {
 													{form.values.loan_purpose_true?
 												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-													{form.touched.loan_purpose && !form.errors.required_amount && form.errors.loan_purpose ? <div className="text-danger">{form.errors.loan_purpose}</div> : ''}
+													{form.touched.loan_purpose && Object.keys(form.errors)[0]=='loan_purpose' && form.errors.loan_purpose ? <div className="text-danger">{form.errors.loan_purpose}</div> : ''}
 
 											</div>
 										</div>
@@ -1222,38 +1577,58 @@ const BusinessForm = (props) => {
 								<fieldset className="ui-step-content" style={currentStep == 1 ? { display: "block" } : { display: "none" }}>
 									<button type="button" name="previous" className="previous action-button-previous" onClick={() => setCurrentStep(currentStep - 1)} ><i className="fa-solid fa-arrow-left-long fa-fw"></i> Back</button>
 									<h1 className="mb-0 mt-1">Co-Applicants</h1>
-									<p className="mt-1">Instant Business & Personal Loan </p>
+									<p className="mt-1">Instant Business & Personal Loan 
+									
+									</p>
+									
+
 									<div className="stepform-newdesign">
+									<div className="row">
+									   <div className="col-12 col-md-10" style={{textAlign:"right",cursor:"pointer"}}>
+									<span className="add-btn" onClick={() => addCoApplication()} style={{float:"unset"}}>Add</span>
+									</div>
+									</div>
 										{form.values.co_application.length > 0 && form.values.co_application.map((co, index) =>
 
 											<div className="row" key={index}>
 												<div className="col-12 col-md-5">
 													<label>Name</label>
-													<input type="text" name={`form.values.co_application.${index}.name`}  {...form.getFieldProps(`co_application.${index}.name`)} className="" placeholder="Enter name" />
-													{/* {form.values.loan_purpose_true?
+													<input type="text" 
+													onChange={(e) => updateCoAppRecord(e,'name',index,`co_application.${index}.name`)} onBlur={(e) => updateCoAppAndSaveRecord(e,'name',index,`co_application.${index}.name`)} 
+													className="" placeholder="Enter name" value={form.values['co_application']?.[index]?.['name']} />
+													{form.values['co_application']?.[index]?.['name_true']?
 													<i className="fa-solid fa-check fa-fw checkgreen"></i> 
-													: '' } */}
+													: '' }
 													{form.touched['co_application']?.[index]?.['name'] && form.errors['co_application']?.[index]?.['name'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['name']}</div> : ''}
 												</div>
 												<div className="col-12 col-md-5">
 													<label>Relationship</label>
-													<input type="text" name={`form.values..co_application.${index}.relationship`} {...form.getFieldProps(`co_application.${index}.relationship`)} className="" placeholder="Enter relationship" />
+													<input type="text" value={form.values['co_application']?.[index]?.['relationship']}  onChange={(e) => updateCoAppRecord(e,'relationship',index,`co_application.${index}.relationship`)} onBlur={(e) => updateCoAppAndSaveRecord(e,'relationship',index,`co_application.${index}.relationship`)}  className="" placeholder="Enter relationship" />
+													{form.values['co_application']?.[index]?.['relationship_true']?
+													<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+													: '' }
 													{form.touched['co_application']?.[index]?.['relationship'] && !form.errors['co_application']?.[index]?.['name'] && form.errors['co_application']?.[index]?.['relationship'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['relationship']}</div> : ''}
 												</div>
 												<div className="col-xs-12 col-md-10 mb-3">
 													<label>Pan Card Number </label>
-													<input type="text" name={`form.values..co_application.${index}.pan_number`}  {...form.getFieldProps(`co_application.${index}.pan_number`)} className="mb-0" placeholder="Enter Number" />
+													<input type="text" value={form.values['co_application']?.[index]?.['pan_number']}  onChange={(e) => updateCoAppRecord(e,'pan_number',index,`co_application.${index}.pan_number`)} onBlur={(e) => updateCoAppAndSaveRecord(e,'pan_number',index,`co_application.${index}.pan_number`)} className="mb-0" placeholder="Enter Number" />
+													{form.values['co_application']?.[index]?.['pan_number_true']?
+													<i className="fa-solid fa-check fa-fw checkgreen"></i> 
+													: '' }
 													{form.touched['co_application']?.[index]?.['pan_number'] && !form.errors['co_application']?.[index]?.['relationship']  && form.errors['co_application']?.[index]?.['pan_number'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['pan_number']}</div> : ''}
 												</div>
 												<div className="col-12 col-md-6 col-lg-10">
 													<div className="upload__box">
+													{form.values['co_application']?.[index]?.['pancard_image_true']?
+															<p className="mb-0"><i className="fa-solid fa-check fa-fw checkgreen-upload"></i> </p>
+															: '' }
 														<div className="upload__btn-box">
 															<label className="upload__btn">
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p>Upload Co-Applicants Pan Card 
+															<p>Upload Co-Applicants Pan Card <span className="addmore-plus"><i className="fa-solid fa-plus fa-fw"></i></span> 
 															<small className="pdffile">(Only Jpg,Png,Pdf,Doc)</small></p>
 															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e,'co_application', 'uploads/merchant/pancard',index)} />
-
+															
 															</label>
 														</div>
 														{form.values['co_application']?.[index]?.['pancard_image'] == '' && form.touched['co_application']?.[index]?.['pancard_image'] && !form.errors['co_application']?.[index]?.['pan_number'] && form.errors['co_application']?.[index]?.['pancard_image'] ? <div className="text-danger">{form.errors['co_application']?.[index]?.['pancard_image']}</div> : ''}
@@ -1283,8 +1658,16 @@ const BusinessForm = (props) => {
 														</ul>
 													</>
 													: ''}
+													
 												</div>
+												{index>0 ? 
+													<div className="col-12 col-md-6 col-lg-10" style={{textAlign: "end",cursor:"pointer"}}>
+													<span className="remove-btn" onClick={() => removeCoApplication(index)}>Remove</span>
+													</div>
+												:''	}
 											</div>
+											
+
 										)}
 									</div>
 									<input type="submit" name="next" className="next action-button apply-now-btn ml-00" value="Continue" />
@@ -1296,8 +1679,8 @@ const BusinessForm = (props) => {
 									<div className="stepform-newdesign">
 										<div className="row md-4">
 											<div className="col-xs-12 col-md-10 mb-3">
-												<label>Firm Pan Number </label>
-												<input type="text" name="pan_number" {...form.getFieldProps('pan_number')} className="mb-0" placeholder="Enter Number" />
+												<label>Firm Pan Number</label>
+												<input type="text" name="pan_number"  readOnly value={form.values.pan_number} className="mb-0" placeholder="Enter Number" />
 												{form.values.pan_number_true?
 												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
@@ -1305,36 +1688,42 @@ const BusinessForm = (props) => {
 
 											</div>
 											<div className="col-12 col-md-6 col-lg-10">
-													<div className="upload__box">
+													{/* <div className="upload__box">
+
+													    {form.values.pancard_image_true?
+															<p className="mb-0"><i className="fa-solid fa-check fa-fw checkgreen-upload"></i> </p>
+																: '' }
 														<div className="upload__btn-box">
 															<label className="upload__btn">
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p>Upload Pan Card <small className="pdffile">(Only Jpg,Png,Pdf,Doc)</small></p>
-															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'pancard_image', 'uploads/merchant/pancard')} />
-															{form.values.pancard_image_true?
-																<i className="fa-solid fa-check fa-fw checkgreen"></i> 
-																: '' }
+															<p>Upload Pan Card <span className="addmore-plus"><i className="fa-solid fa-plus fa-fw"></i></span>  <small className="pdffile">(Only Jpg,Png,Pdf,Doc)</small></p>
+															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'pancard_image', 'uploads/merchant/pancard')} onBlur={(e) => updateAndSaveRecord(e,'pancard_image')} />
 															</label>
 														</div>
-														{form.values.pancard_image == '' && form.touched.pancard_image && !form.errors.pan_number && form.errors.pancard_image ? <div className="text-danger">{form.errors.pancard_image}</div> : ''} 
+														{form.values.pancard_image == '' && form.touched.pancard_image && Object.keys(form.errors)[0]=='pancard_image' && form.errors.pancard_image ? <div className="text-danger">{form.errors.pancard_image}</div> : ''} 
 
-													</div>
+													</div> */}
 													{form.values.pancard_image && form.values.pancard_image.split(',') && form.values.pancard_image.split(',').length > 0  ?
 													<>
 														<ul className="imgpreview-newbx">
+														{uploadBr['pancard_image'] > 0?
+														    <div className="progress-imgupload">
+																<div className="progress-value" style={{width: uploadBr['pancard_image']+'%'}}><span>{uploadBr['pancard_image']}%</span></div>
+															</div>
+															 :''} 
 																{form.values.pancard_image && form.values.pancard_image.split(',').map((option, index) => (
 																	<li key={index} >
 																		
 																		{checkURL(config.s3_url+'uploads/merchant/pancard/'+option) ? 
 																		    <>
 																			<img src={config.s3_url+'uploads/merchant/pancard/'+option} alt="" />
-																				<Link to="" onClick={(e) => {removeImage(e,index,'pancard_image')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																				{/* <Link to="" onClick={(e) => {removeImage(e,index,'pancard_image')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link> */}
 																			<p>{option}</p>
 																			</>
 																		: 
 																		
 																		    <>
-																		     <Link to="" onClick={(e) => {removeImage(e,index,'pancard_image')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link>
+																		     {/* <Link to="" onClick={(e) => {removeImage(e,index,'pancard_image')}} className="upload__img-close" ><i className="fa-solid fa-close fa-fw"></i></Link> */}
 																		     <p>{option}</p>
 																		   </>
 																		}
@@ -1348,32 +1737,39 @@ const BusinessForm = (props) => {
 										<div className="row">
 											<div className="col-xs-12 col-md-10 mb-3">
 												<label>Firm GST Number </label>
-												<input type="text" name="gst_number" {...form.getFieldProps('gst_number')} className="" placeholder="Enter Number" />
+												<input type="text" name="gst_number" onChange={(e) => updateRecord(e,'gst_number')} onBlur={(e) => updateAndSaveRecord(e,'gst_number')} value={form.values.gst_number} className="" placeholder="Enter Number" />
 												{form.values.gst_number_true?
 												<i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.gst_number && !form.errors.pancard_image && form.errors.gst_number ? <div className="text-danger">{form.errors.gst_number}</div> : ''}
+												{form.touched.gst_number && Object.keys(form.errors)[0]=='gst_number' && form.errors.gst_number ? <div className="text-danger">{form.errors.gst_number}</div> : ''}
 
 											</div>
 											<div className="col-12 col-md-6 col-lg-10">
 													<div className="upload__box">
+													{form.values.gstproof_image_true?
+															<p className="mb-0"><i className="fa-solid fa-check fa-fw checkgreen-upload"></i> </p>
+															: '' }
 														<div className="upload__btn-box">
 															<label className="upload__btn">
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p>Upload GST Registration <small className="pdffile">(Only Jpg,Png,Pdf,Doc)</small></p>
-															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'gstproof_image', 'uploads/merchant/gst')} />
-															{form.values.gstproof_image_true?
-															<i className="fa-solid fa-check fa-fw checkgreen"></i> 
-															: '' }
+															<p>Upload GST Registration  <span className="addmore-plus"><i className="fa-solid fa-plus fa-fw"></i></span> <small className="pdffile">(Only Jpg,Png,Pdf,Doc)</small></p>
+															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'gstproof_image', 'uploads/merchant/gst')} onBlur={(e) => updateAndSaveRecord(e,'gstproof_image')}  />
 
 															</label>
 														</div>
-														{form.values.gstproof_image == '' && !form.errors.gst_number && form.touched.gstproof_image && !form.errors.gst_number && form.errors.gstproof_image ? <div className="text-danger">{form.errors.gstproof_image}</div> : ''} 
+														{form.values.gstproof_image == '' && Object.keys(form.errors)[0]=='gstproof_image' && form.touched.gstproof_image && !form.errors.gst_number && form.errors.gstproof_image ? <div className="text-danger">{form.errors.gstproof_image}</div> : ''} 
 
 													</div>
 													{form.values.gstproof_image && form.values.gstproof_image.split(',') && form.values.gstproof_image.split(',').length > 0  ?
 													<>
 														<ul className="imgpreview-newbx">
+															{uploadBr['gstproof_image'] > 0?
+														    <div className="progress-imgupload">
+																<div className="progress-value" style={{width: uploadBr['gstproof_image']+'%'}}>
+																<span>{uploadBr['gstproof_image']}%</span>
+																</div>
+															</div>
+															 :''} 
 																{form.values.gstproof_image && form.values.gstproof_image.split(',').map((option, index) => (
 																	<li key={index} >
 																		
@@ -1400,31 +1796,38 @@ const BusinessForm = (props) => {
 										<div className="row md-4">
 											<div className="col-xs-12 col-md-10 mb-3">
 												<label>Business Address </label>
-												<input type="text" name="business_address"  {...form.getFieldProps('business_address')} className="mb-0" placeholder="Enter address" />
+												<input type="text" name="business_address"  onChange={(e) => updateRecord(e,'business_address')} onBlur={(e) => updateAndSaveRecord(e,'business_address')}  value={form.values.business_address}  className="mb-0" placeholder="Enter address" />
 												{form.values.business_address_true?
 															<i className="fa-solid fa-check fa-fw checkgreen"></i> 
 															: '' }
-												{form.values.business_address == '' &&  form.touched.business_address && !form.values.gstproof_image && form.errors.business_address ? <div className="text-danger">{form.errors.business_address}</div> : ''}
+												{form.values.business_address == '' &&  form.touched.business_address && Object.keys(form.errors)[0]=='business_address' && form.errors.business_address ? <div className="text-danger">{form.errors.business_address}</div> : ''}
 
 											</div>
 											<div className="col-12 col-md-6 col-lg-10">
 													<div className="upload__box">
+													{form.values.business_address_proof_true?
+															<p className="mb-0"><i className="fa-solid fa-check fa-fw checkgreen-upload"></i> </p>
+															: '' }
 														<div className="upload__btn-box">
 															<label className="upload__btn">
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p>Upload Address Proof <small className="pdffile">(Only Jpg,Png,Pdf,Doc)</small></p>
-															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'business_address_proof', 'uploads/merchant/business')} />
-															{form.values.business_address_proof_true?
-															<i className="fa-solid fa-check fa-fw checkgreen"></i> 
-															: '' }
+															<p>Upload Address Proof  <span className="addmore-plus"><i className="fa-solid fa-plus fa-fw"></i></span> <small className="pdffile">(Only Jpg,Png,Pdf,Doc)</small></p>
+															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'business_address_proof', 'uploads/merchant/business')} onBlur={(e) => updateAndSaveRecord(e,'business_address_proof')}  />
 															</label>
 														</div>
-														{form.values.business_address_proof == '' && form.touched.business_address_proof && !form.errors.business_address && form.errors.business_address_proof ? <div className="text-danger">{form.errors.business_address_proof}</div> : ''} 
+														{form.values.business_address_proof == '' && form.touched.business_address_proof && Object.keys(form.errors)[0]=='business_address_proof' && form.errors.business_address_proof ? <div className="text-danger">{form.errors.business_address_proof}</div> : ''} 
 
 													</div>
 													{form.values.business_address_proof && form.values.business_address_proof.split(',') && form.values.business_address_proof.split(',').length > 0  ?
 													<>
 														<ul className="imgpreview-newbx">
+														{uploadBr['business_address_proof'] > 0?
+														    <div className="progress-imgupload">
+																<div className="progress-value" style={{width: uploadBr['business_address_proof']+'%'}}>
+																<span>{uploadBr['business_address_proof']}%</span>
+																</div>
+															</div>
+															 :''} 
 																{form.values.business_address_proof && form.values.business_address_proof.split(',').map((option, index) => (
 																	<li key={index} >
 																		
@@ -1452,22 +1855,29 @@ const BusinessForm = (props) => {
 												<div className="col-12 col-md-6 col-lg-10">
 													{/* <p>One Year Latest Bank Statement</p> */}
 													<div className="upload__box">
+													{form.values.bank_statement_true?
+															<p className="mb-0"><i className="fa-solid fa-check fa-fw checkgreen-upload"></i> </p>
+															: '' }
 														<div className="upload__btn-box">
 															<label className="upload__btn">
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p>Upload One Year Latest Bank Statement <small className="pdffile">(Only Pdf)</small></p>
-															<input type="file" multiple accept=".pdf" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e,'bank_statement', 'uploads/merchant/bankstatement')} />
-															{form.values.bank_statement_true?
-															<i className="fa-solid fa-check fa-fw checkgreen"></i> 
-															: '' }
+															<p>Upload One Year Latest Bank Statement  <span className="addmore-plus"><i className="fa-solid fa-plus fa-fw"></i></span>  <small className="pdffile">(Only Pdf)</small></p>
+															<input type="file" multiple accept=".pdf" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e,'bank_statement', 'uploads/merchant/bankstatement')} onBlur={(e) => updateAndSaveRecord(e,'bank_statement')} />
 															</label>
 														</div>
-														{form.values.bank_statement == '' && form.touched.bank_statement && !form.errors.business_address_proof && form.errors.bank_statement ? <div className="text-danger">{form.errors.bank_statement}</div> : ''} 
+														{form.values.bank_statement == '' && form.touched.bank_statement && Object.keys(form.errors)[0]=='bank_statement' && form.errors.bank_statement ? <div className="text-danger">{form.errors.bank_statement}</div> : ''} 
 
 													</div>
 													{form.values.bank_statement && form.values.bank_statement.split(',') && form.values.bank_statement.split(',').length > 0  ?
 													<>
 														<ul className="imgpreview-newbx">
+														{uploadBr['bank_statement'] > 0?
+														    <div className="progress-imgupload">
+																<div className="progress-value" style={{width: uploadBr['bank_statement']+'%'}}>
+																<span>{uploadBr['bank_statement']}%</span>
+																</div>
+															</div>
+															 :''} 
 																{form.values.bank_statement && form.values.bank_statement.split(',').map((option, index) => (
 																	<li key={index} >
 																		
@@ -1493,22 +1903,29 @@ const BusinessForm = (props) => {
 												<div className="col-12 col-md-6 col-lg-10">
 													{/* <p>Upload ITR (Optional)</p> */}
 													<div className="upload__box">
+													{form.values.itr_docs_true?
+															<p className="mb-0"><i className="fa-solid fa-check fa-fw checkgreen-upload"></i> </p>
+															: '' }
 														<div className="upload__btn-box">
 															<label className="upload__btn">
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p>Upload ITR <small className="pdffile">(Only Jpg,Png,Pdf,Doc)</small></p>
-															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e,'itr_docs', 'uploads/merchant/business')} />
-															{form.values.itr_docs_true?
-															<i className="fa-solid fa-check fa-fw checkgreen"></i> 
-															: '' }
+															<p>Upload ITR  <span className="addmore-plus"><i className="fa-solid fa-plus fa-fw"></i></span>  <small className="pdffile">(Only Jpg,Png,Pdf,Doc)</small></p>
+															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e,'itr_docs', 'uploads/merchant/business')} onBlur={(e) => updateAndSaveRecord(e,'itr_docs')} />
 															</label>
 														</div>
-														{form.values.itr_docs == '' && form.touched.itr_docs && !form.errors.bank_statement && form.errors.itr_docs ? <div className="text-danger">{form.errors.itr_docs}</div> : ''} 
+														{form.values.itr_docs == '' && form.touched.itr_docs && Object.keys(form.errors)[0]=='itr_docs' && form.errors.itr_docs ? <div className="text-danger">{form.errors.itr_docs}</div> : ''} 
 
 													</div>
 													{form.values.itr_docs && form.values.itr_docs.split(',') && form.values.itr_docs.split(',').length > 0  ?
 													<>
 														<ul className="imgpreview-newbx">
+														{uploadBr['itr_docs'] > 0?
+														    <div className="progress-imgupload">
+																<div className="progress-value" style={{width: uploadBr['itr_docs']+'%'}}>
+																<span>{uploadBr['itr_docs']}%</span>
+																</div>
+															</div>
+															 :''} 
 																{form.values.itr_docs && form.values.itr_docs.split(',').map((option, index) => (
 																	<li key={index} >
 																		
@@ -1561,6 +1978,31 @@ const BusinessForm = (props) => {
 
 const PersonalForm = (props) => {
 
+	const [uploadBr, setUploadBr] = 
+	useState({'pancard_image':0,'aadhar_image':0,'bank_statement':0,'salery_slip':0})
+	const [progress, setProgress] = useState(0)
+	const [progressName, setProgressName] = useState('')
+
+	useEffect(() => {
+		setuploadBr()
+	}, [progress])
+
+	// useEffect(() => {
+	// 	updatePanNumber()
+	// }, [])
+
+	// const updatePanNumber = () => {
+	// 	api.postApi('updateSingleKey-personalForm', { key: 'pan_number', value: props.data.info.pan_number}, false, props.header).then(response => {
+			
+	// 	}).catch(error => {
+	// 	});
+	// }
+	
+	const setuploadBr = () => { 
+		uploadBr[progressName] =progress
+		setUploadBr(uploadBr)
+	}
+
 	const [currentStep, setCurrentStep] = useState(0);
 	const [cities, setCities] = useState([]);
 	const [residence_cities, setresidence_cities] = useState([]);
@@ -1596,18 +2038,19 @@ const PersonalForm = (props) => {
 		validationSchema: yup.object({
 			first_name: currentStep == 0 ? yup.string().required('Please enter your name').matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
 			last_name: currentStep == 0 ? yup.string().required('Please enter your surname').matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
-			date_of_birth: currentStep == 0 ? yup.string().required('Please enter dob') : '',
 			email: currentStep == 0 ? yup.string().email('Please enter valid email address').required('Please enter email address') : '',
+			date_of_birth: currentStep == 0 ? yup.string().required('Please enter dob') : '',
 			father_name: currentStep == 0 ? yup.string().required(`Please enter father's name`).matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
 			gender: currentStep == 0 ? yup.string().required('Please select gender') : '',
 			qualification: currentStep == 0 ? yup.string().required('Please select qualification') : '',
 			marital_status: currentStep == 0 ? yup.string().required('Please select marital status') : '',
 			number_of_kids: currentStep == 0 ? yup.number().typeError('you must specify a number') : '',
 			vehicle_type: currentStep == 0 ? yup.string().required('Please select vehicle type') : '',
-			residence_building: currentStep == 0 ? yup.string().required('Please enter Flat No./Building No./Street No') : '',
-			residence_area: currentStep == 0 ? yup.string().required('Please enter residence area') : '',
+			residence_building: currentStep == 0 ? yup.string().required('Please enter Flat/Building/Street No') : '',
+			
 			residence_state: currentStep == 0 ? yup.string().required('Please select state') : '',
 			residence_city: currentStep == 0 ? yup.string().required('Please select city') : '',
+			residence_area: currentStep == 0 ? yup.string().required('Please enter residence area') : '',
 			residence_pincode: currentStep == 0 ? yup.string().required('Please select pincode') : '',
 
 			employer_name: currentStep == 1 ? yup.string().required('Please enter employer name').matches(/^[aA-zZ\s]+$/, "Only alphabets are allowed for this field ") : '',
@@ -1617,10 +2060,11 @@ const PersonalForm = (props) => {
 			total_experience: currentStep == 1 ? yup.string().required('Please select total experience') : '',
 			required_amount: currentStep == 1 ? yup.number().typeError('you must specify a number').required('Please enter required amount') : '',
 			loan_purpose: currentStep == 1 ? yup.string().required('Please select loan purpose') : '',
-			company_building: currentStep == 1 ? yup.string().required('Please enter Flat No./Building No./Street No') : '',
-			company_area: currentStep == 1 ? yup.string().required('Please enter area') : '',
+			company_building: currentStep == 1 ? yup.string().required('Please enter Flat/Building/Street No') : '',
+			
 			company_state: currentStep == 1 ? yup.string().required('Please select state') : '',
 			company_city: currentStep == 1 ? yup.string().required('Please select city') : '',
+			company_area: currentStep == 1 ? yup.string().required('Please enter area') : '',
 			company_pincode: currentStep == 1 ? yup.string().required('Please select pincode') : '',
 			company_website: currentStep == 1 ? yup.string().matches(
 				/((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
@@ -1659,59 +2103,104 @@ const PersonalForm = (props) => {
 					formData.append('image', e.target.files[i])
 				}
 				formData.append('folder', s3_path)
-				api.postApi('multipleImageUpload', formData, true, props.header).then(response => {
-					form.setFieldValue(path, form.values[path]?form.values[path] +','+response.fileName : response.fileName);
-					e.target.value='';
-					toast.success('Upload Successful')
+				setProgressName(path)
+				uploadBr[path] =0;
+				setUploadBr(uploadBr)
+				api.uploadPostApi('multipleImageUpload', formData, true, props.header,setProgress).then(response => {
+					form.setFieldValue(path, form.values[path]?form.values[path] +','+response.fileName : response.fileName).then(res => {
+						if(res[path]==undefined) {
+							api.postApi('updateSingleKey-personalForm', { key: path, value: form.values[path]?form.values[path] +','+response.fileName : response.fileName}, false, props.header).then(response => {
+								form.setFieldValue(path+'_true',true);
+								if(path=='pancard_image') {
+									toast.success('Pancard is verified')
+								 }
+								
+							}).catch(error => {
+
+							});
+						}
+				    });
 					e.target.value = '';
+					if(path!='pancard_image') {
+					  toast.success('Upload Successful')
+					}
 				}).catch(error => {
 
 				});
 		}
 	}
-
-
-
 	const GetCities = (state_name, path = '') => {
-		var state = props.allStates.find(state => state.name == state_name);
-		api.postApi('cityList', { state_id: state.id }, false, props.header).then(response => {
-			if (path == 'residence_state') {
-				form.setFieldValue('residence_state', state_name)
-				setresidence_cities(response.cities);
-			} else {
-				form.setFieldValue('company_state', state_name)
-				setCities(response.cities);
-			}
-		}).catch(error => {
-		});
-	}
-	
-	const GetPincode = (city_name, path = '') => {
-		var city;
-		var state_id;
-		var state
-		
-		if (path == 'residence_city') {
-			city = residence_cities.find(city => city.name == city_name);
-			state = props.allStates.find(state => state.name == form.values.residence_state);
-			state_id = state.id.toString()
+		if(state_name) {
+			var state = props.allStates.find(state => state.name == state_name);
+			api.postApi('cityList', { state_id: state.id }, false, props.header).then(response => {
+				if (path == 'residence_state') {
+					// form.setFieldValue('residence_state', state_name)
+					setresidence_cities(response.cities);
+				} else {
+					// form.setFieldValue('company_state', state_name)
+					setCities(response.cities);
+				}
+			}).catch(error => {
+			});
 		} else {
-			city = cities.find(city => city.id == city_name);
-			state = props.allStates.find(state => state.name == form.values.company_state);
-			state_id = state.id.toString()
-		}
 
-		api.postApi('pincodeList', { city: city_name, state_id: state_id }, false, props.header).then(response => {
-			console.log(response.pincode)
-			if (path == 'residence_city') {
-				form.setFieldValue('residence_city', city_name)
-				setresidence_pincode(response.pincode);
+			if (path == 'residence_state') {
+				setresidence_cities([])
+				setresidence_pincode([])
+				form.setFieldValue('residence_city', '')
+				form.setFieldValue('residence_city_true',false)
+				form.setFieldValue('residence_pincode', '')
+				form.setFieldValue('residence_pincode_true',false)
 			} else {
-				form.setFieldValue('company_city', city_name)
-				setPincode(response.pincode);
+				setCities([])
+				setPincode([])
+				form.setFieldValue('company_city', '')
+				form.setFieldValue('company_city_true',false)
+				form.setFieldValue('company_pincode', '')
+				form.setFieldValue('company_pincode_true',false)
 			}
-		}).catch(error => {
-		});
+			
+		}
+	}
+	const GetPincode = (city_name, path = '') => {
+		if(city_name) {
+			var city;
+			var state_id;
+			var state
+			
+			if (path == 'residence_city') {
+				city = residence_cities.find(city => city.name == city_name);
+				state = props.allStates.find(state => state.name == form.values.residence_state);
+				state_id = state.id.toString()
+			} else {
+				city = cities.find(city => city.id == city_name);
+				state = props.allStates.find(state => state.name == form.values.company_state);
+				state_id = state.id.toString()
+			}
+
+			api.postApi('pincodeList', { city: city_name, state_id: state_id }, false, props.header).then(response => {
+				
+				if (path == 'residence_city') {
+					// form.setFieldValue('residence_city', city_name)
+					setresidence_pincode(response.pincode);
+				} else {
+					// form.setFieldValue('company_city', city_name)
+					setPincode(response.pincode);
+				}
+			}).catch(error => {
+			});
+
+		} else {
+			if (path == 'residence_state') {
+				setresidence_pincode([])
+				form.setFieldValue('residence_pincode', '')
+				form.setFieldValue('residence_pincode_true',false)
+			} else {
+				setPincode([])
+				form.setFieldValue('company_pincode', '')
+				form.setFieldValue('company_pincode_true',false)
+			}
+		}
 
 	}
 	const removeImage = (e,index,path,co_index=0) => {
@@ -1720,10 +2209,16 @@ const PersonalForm = (props) => {
 		if(path=='co_application') {
 		    array =form.values.co_application[co_index].pancard_image.split(',')
 			array.splice(index, 1)
+			if(array==''){
+				// form.setFieldValue(path+'_true',false);
+			}
 			form.setFieldValue(`co_application.${co_index}.pancard_image`, array.join(','));
 		} else {
 		    array = form.values[path].split(',')
 			array.splice(index, 1)
+			if(array==''){
+				form.setFieldValue(path+'_true',false);
+			}
 			form.setFieldValue(path, array.join(','));
 		}		
 	}
@@ -1735,6 +2230,49 @@ const PersonalForm = (props) => {
 	const  capitalName = (text) => {
 		text = text.toLowerCase();
 		return text.charAt(0).toUpperCase() + text.slice(1);
+	}
+
+	const updateRecord = (e,path) => {
+		if(e.target.value) {
+			form.setFieldValue(path+'_true',false);
+			form.setFieldValue(path,e.target.value)
+		} else {
+			form.setFieldValue(path+'_true',false);
+			form.setFieldValue(path,e.target.value);
+		}
+	}
+
+	const updateAndSaveRecord = (e,path,table_name='',) => {
+		if(e.target.value || e.target.type=='file') {
+			form.setFieldValue(path+'_true',false);
+			if(e.target.type=='file') {
+				form.validateForm().then((res) => {
+					if(res[path]==undefined) {
+						form.setFieldValue(path+'_true',true);
+					}
+				})
+			} else {
+				form.setFieldValue(path,e.target.value).then((res) => {
+					if(res[path]==undefined) {
+						
+						let value = path=='first_name' || path=='last_name'? form.values.first_name+' '+form.values.last_name : e.target.value;
+						let key = path=='first_name' || path=='last_name'? 'full_name' : path;
+						api.postApi('updateSingleKey-personalForm', { key: key, value: value}, false, props.header).then(response => {
+							form.setFieldValue(path+'_true',true);
+						}).catch(error => {
+						});
+						
+					}
+				});
+			}
+		} else {
+			if(e.target.type=='file'){
+			} else {
+				form.setFieldValue(path,e.target.value);
+			}
+			form.setFieldValue(path+'_true',false);
+			
+		}
 	}
 	return (
 		<>
@@ -1751,7 +2289,7 @@ const PersonalForm = (props) => {
 										<div className="row">
 										    <div className="col-12 col-md-5">
 												<label>First Name</label>
-												<input type="text" name="first_name" {...form.getFieldProps("first_name")} className="" placeholder="Enter first name" />
+												<input type="text" name="first_name" readOnly value={form.values.first_name} className="" placeholder="Enter first name" />
 												{form.values.first_name_true?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
@@ -1759,40 +2297,40 @@ const PersonalForm = (props) => {
 											</div>
 											<div className="col-12 col-md-5">
 												<label>Last Name</label>
-												<input type="text" name="last_name" {...form.getFieldProps("last_name")} className="" placeholder="Enter last name" />
+												<input type="text" name="last_name" readOnly value={form.values.last_name} className="" placeholder="Enter last name" />
 												{form.values.last_name_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.last_name && !form.errors.first_name && form.errors.last_name ? <div className="text-danger">{form.errors.last_name}</div> : ''}
+												{form.touched.last_name && Object.keys(form.errors)[0]=='last_name' && form.errors.last_name ? <div className="text-danger">{form.errors.last_name}</div> : ''}
 											</div>
 											<div className="col-12 col-md-5">
 												<label>Email Address{form.values.email_true}</label>
-												<input type="text" name="email" {...form.getFieldProps("email")} className="" placeholder="Enter email" />
+												<input type="text" name="email" onChange={(e) => updateRecord(e,'email')} onBlur={(e) => updateAndSaveRecord(e,'email')} value={form.values.email} className="" placeholder="Enter email" />
 												{form.values.email_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.email && !form.errors.last_name && form.errors.email ? <div className="text-danger">{form.errors.email}</div> : ''}
+												{form.touched.email && Object.keys(form.errors)[0]=='email' && form.errors.email ? <div className="text-danger">{form.errors.email}</div> : ''}
 											</div>
 											<div className="col-12 col-md-5">
 												<label>Date of birth</label>
-												<input type="date"   max="1999-12-31" name="date_of_birth" {...form.getFieldProps("date_of_birth")} className="" placeholder="Enter Date of birth" />
+												<input type="date"   max="1999-12-31" name="date_of_birth" readOnly value={form.values.date_of_birth} className="" placeholder="Enter Date of birth" />
 												{form.values.date_of_birth_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.date_of_birth && !form.errors.email && form.errors.date_of_birth ? <div className="text-danger">{form.errors.date_of_birth}</div> : ''}
+												{form.touched.date_of_birth && Object.keys(form.errors)[0]=='date_of_birth' && form.errors.date_of_birth ? <div className="text-danger">{form.errors.date_of_birth}</div> : ''}
 											</div>
-											<div className="col-12 col-md-10">
+											<div className="col-12 col-md-5">
 												<label>Father's Name</label>
-												<input type="text" name="father_name" {...form.getFieldProps("father_name")} className="" placeholder="Enter father name" />
+												<input type="text" name="father_name" readOnly value={form.values.father_name} className="" placeholder="Enter father name" />
 												{form.values.father_name_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.father_name && !form.errors.date_of_birth && form.errors.father_name ? <div className="text-danger">{form.errors.father_name}</div> : ''}
+												{form.touched.father_name && Object.keys(form.errors)[0]=='father_name' && form.errors.father_name ? <div className="text-danger">{form.errors.father_name}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Gender</label>
-												<select name="gender" value={form.values.gender} onChange={(e) => form.setFieldValue('gender', e.target.value)} >
-													<option>Select One</option>
+												<select name="gender" onChange={(e) => updateRecord(e,'gender')} onBlur={(e) => updateAndSaveRecord(e,'gender')} value={form.values.gender} >
+													<option value="">Select One</option>
 													<option value="Male" >Male</option>
 													<option value="Female">Female</option>
 													<option value="Other">Other</option>
@@ -1801,12 +2339,12 @@ const PersonalForm = (props) => {
 												{form.values.gender_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.gender && !form.errors.father_name && form.errors.gender ? <div className="text-danger">{form.errors.gender}</div> : ''}
+												{form.touched.gender && Object.keys(form.errors)[0]=='gender' && form.errors.gender ? <div className="text-danger">{form.errors.gender}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Qualification</label>
-												<select name="qualification" value={form.values.qualification} onChange={(e) => form.setFieldValue('qualification', e.target.value)}>
-													<option>Select One</option>
+												<select name="qualification" onChange={(e) => updateRecord(e,'qualification')} onBlur={(e) => updateAndSaveRecord(e,'qualification')} value={form.values.qualification}>
+													<option value="">Select One</option>
 													<option value="Under Graduate" >Under Graduate</option>
 													<option value="Graduate">Graduate</option>
 													<option value="Post Graduate">Post Graduate</option>
@@ -1814,11 +2352,11 @@ const PersonalForm = (props) => {
 												{form.values.qualification_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.qualification && !form.errors.gender && form.errors.qualification ? <div className="text-danger">{form.errors.qualification}</div> : ''}
+												{form.touched.qualification  && Object.keys(form.errors)[0]=='qualification' && form.errors.qualification ? <div className="text-danger">{form.errors.qualification}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Marital Status</label>
-												<select name="marital_status" value={form.values.marital_status} onChange={(e) => form.setFieldValue('marital_status', e.target.value)} >
+												<select name="marital_status" onChange={(e) => updateRecord(e,'marital_status')} onBlur={(e) => updateAndSaveRecord(e,'marital_status')} value={form.values.marital_status} >
 													<option value="">Select One</option>
 													<option value="Married" >Married</option>
 													<option value="Single">Single</option>
@@ -1827,20 +2365,20 @@ const PersonalForm = (props) => {
 												{form.values.marital_status_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.marital_status && !form.errors.qualification && form.errors.marital_status ? <div className="text-danger">{form.errors.marital_status}</div> : ''}
+												{form.touched.marital_status && Object.keys(form.errors)[0]=='marital_status' && form.errors.marital_status ? <div className="text-danger">{form.errors.marital_status}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Number of Kids</label>
-												<input type="number" min="0" name="number_of_kids" {...form.getFieldProps("number_of_kids")} className="" placeholder="Enter kids number" />
+												<input type="number" min="0" name="number_of_kids" onChange={(e) => updateRecord(e,'number_of_kids')} onBlur={(e) => updateAndSaveRecord(e,'number_of_kids')} value={form.values.number_of_kids} className="" placeholder="Enter kids number" />
 												{form.values.number_of_kids_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.number_of_kids && !form.errors.marital_status && form.errors.number_of_kids ? <div className="text-danger">{form.errors.number_of_kids}</div> : ''}
+												{form.touched.number_of_kids && Object.keys(form.errors)[0]=='number_of_kids' && form.errors.number_of_kids ? <div className="text-danger">{form.errors.number_of_kids}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Vehicle Type</label>
-												<select name="vehicle_type" value={form.values.vehicle_type} onChange={(e) => form.setFieldValue('vehicle_type', e.target.value)} >
-													<option>Select One</option>
+												<select name="vehicle_type" onChange={(e) => updateRecord(e,'vehicle_type')} onBlur={(e) => updateAndSaveRecord(e,'vehicle_type')} value={form.values.vehicle_type}>
+													<option value="">Select One</option>
 													<option value="2 wheeler">2 wheeler</option>
 													<option value="4 wheeler" >4 wheeler</option>
 													<option value="None">None</option>
@@ -1848,20 +2386,20 @@ const PersonalForm = (props) => {
 												{form.values.vehicle_type_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.vehicle_type  && !form.errors.marital_status  && form.errors.vehicle_type ? <div className="text-danger">{form.errors.vehicle_type}</div> : ''}
+												{form.touched.vehicle_type  && Object.keys(form.errors)[0]=='vehicle_type'  && form.errors.vehicle_type ? <div className="text-danger">{form.errors.vehicle_type}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
-												<label>Flat No./Building No./Street No.</label>
-												<input type="text" name="residence_building" {...form.getFieldProps("residence_building")} className="" placeholder="Enter House No." />
+												<label>Flat/Building/Street No.</label>
+												<input type="text" name="residence_building" onChange={(e) => updateRecord(e,'residence_building')} onBlur={(e) => updateAndSaveRecord(e,'residence_building')} value={form.values.residence_building} className="" placeholder="Enter House No." />
 												{form.values.residence_building_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.residence_building && !form.errors.vehicle_type && form.errors.residence_building ? <div className="text-danger">{form.errors.residence_building}</div> : ''}
+												{form.touched.residence_building   && Object.keys(form.errors)[0]=='residence_building' && form.errors.residence_building ? <div className="text-danger">{form.errors.residence_building}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>State</label>
-												<select name="residence_state" value={form.values.residence_state}  onChange={(e) => GetCities(e.target.value, 'residence_state')} >
-													<option>Select One</option>
+												<select name="residence_state" value={form.values.residence_state}  onChange={(e) => updateRecord(e,'residence_state',GetCities(e.target.value, 'residence_state'))} onBlur={(e) => updateAndSaveRecord(e,'residence_state')}>
+													<option value="">Select One</option>
 													{props.allStates.length > 0 && props.allStates.map((option, index) => (
 														<option value={option.name} key={index}>{option.name}</option>
 													))}
@@ -1869,13 +2407,12 @@ const PersonalForm = (props) => {
 												{form.values.residence_state_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.residence_state && !form.errors.residence_building  && form.errors.residence_state ? <div className="text-danger">{form.errors.residence_state}</div> : ''}
+												{form.touched.residence_state && Object.keys(form.errors)[0]=='residence_state'   && form.errors.residence_state ? <div className="text-danger">{form.errors.residence_state}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>City</label>
-												<select name="residence_city" value={form.values.residence_city}  onChange={(e) => GetPincode(e.target.value, 'residence_city')}  >
-													{/* <option>Select City</option> */}
-													<option >Select One</option>
+												<select name="residence_city" value={form.values.residence_city}   onChange={(e) => updateRecord(e,'residence_city',GetPincode(e.target.value, 'residence_city'))}  onBlur={(e) => updateAndSaveRecord(e,'residence_city')}>
+													<option value="" >Select One</option>
 													{residence_cities.length > 0 && residence_cities.map((option, index) => (
 														<option value={option.name} key={index}>{capitalName(option.name)}</option>
 													))}
@@ -1883,20 +2420,20 @@ const PersonalForm = (props) => {
 												{form.values.residence_city_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.residence_city && !form.errors.residence_state && form.errors.residence_city ? <div className="text-danger">{form.errors.residence_city}</div> : ''}
+												{form.touched.residence_city && Object.keys(form.errors)[0]=='residence_city'  && form.errors.residence_city ? <div className="text-danger">{form.errors.residence_city}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Locality/Area</label>
-												<input type="text" name="residence_area" {...form.getFieldProps("residence_area")} className="" placeholder="Enter Locality/Area" />
+												<input type="text" name="residence_area" onChange={(e) => updateRecord(e,'residence_area')} onBlur={(e) => updateAndSaveRecord(e,'residence_area')} value={form.values.residence_area}  className="" placeholder="Enter Locality/Area" />
 												{form.values.residence_area_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.residence_area && !form.errors.residence_city && form.errors.residence_area ? <div className="text-danger">{form.errors.residence_area}</div> : ''}
+												{form.touched.residence_area && Object.keys(form.errors)[0]=='residence_area' && form.errors.residence_area ? <div className="text-danger">{form.errors.residence_area}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Pincode</label>
-												<select name="residence_pincode" value={form.values.residence_pincode}   onChange={(e) => form.setFieldValue('residence_pincode', e.target.value)} >
-													<option>Select One</option>
+												<select name="residence_pincode" value={form.values.residence_pincode}   onChange={(e) => updateRecord(e,'residence_pincode')} onBlur={(e) => updateAndSaveRecord(e,'residence_pincode')}  >
+													<option value="">Select One</option>
 													{residence_pincode.length > 0 && residence_pincode.map((option, index) => (
 														<option value={option.pincode} key={index}>{option.pincode}</option>
 													))}
@@ -1904,7 +2441,7 @@ const PersonalForm = (props) => {
 												{form.values.residence_pincode_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.residence_pincode && !form.errors.residence_area && form.errors.residence_pincode ? <div className="text-danger">{form.errors.residence_pincode}</div> : ''}
+												{form.touched.residence_pincode && Object.keys(form.errors)[0]=='residence_pincode' && form.errors.residence_pincode ? <div className="text-danger">{form.errors.residence_pincode}</div> : ''}
 											</div>
 										</div>
 									</div>
@@ -1919,7 +2456,7 @@ const PersonalForm = (props) => {
 										<div className="row">
 											<div className="col-12 col-md-5">
 												<label>Name of current employer</label>
-												<input type="text" name="employer_name"  {...form.getFieldProps("employer_name")} className="" placeholder="Enter name" />
+												<input type="text" name="employer_name"  onChange={(e) => updateRecord(e,'employer_name')} onBlur={(e) => updateAndSaveRecord(e,'employer_name')} value={form.values.employer_name}  className="" placeholder="Enter name" />
 												{form.values.employer_name_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
@@ -1928,26 +2465,26 @@ const PersonalForm = (props) => {
 											</div>
 											<div className="col-12 col-md-5">
 												<label>Designation</label>
-												<input type="text" className="" name="designation"  {...form.getFieldProps("designation")} placeholder="Enter designation" />
+												<input type="text" className="" name="designation" onChange={(e) => updateRecord(e,'designation')} onBlur={(e) => updateAndSaveRecord(e,'designation')} value={form.values.designation}  placeholder="Enter designation" />
 												{form.values.designation_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.designation && !form.errors.employer_name && form.errors.designation ? <div className="text-danger">{form.errors.designation}</div> : ''}
+												{form.touched.designation && Object.keys(form.errors)[0]=='designation' && form.errors.designation ? <div className="text-danger">{form.errors.designation}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>No. of years in organization</label>
-												<input type="number" min="0" className="" name="organization"  {...form.getFieldProps("organization")} placeholder="Enter year" />
+												<input type="number" min="0" className="" name="organization" onChange={(e) => updateRecord(e,'organization')} onBlur={(e) => updateAndSaveRecord(e,'organization')} value={form.values.organization}  placeholder="Enter year" />
 												{form.values.organization_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.organization && !form.errors.designation && form.errors.organization ? <div className="text-danger">{form.errors.organization}</div> : ''}
+												{form.touched.organization && Object.keys(form.errors)[0]=='organization' && form.errors.organization ? <div className="text-danger">{form.errors.organization}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Type of organization </label>
-												<select name="organization_type" value={form.values.organization_type} onChange={(e) => form.setFieldValue('organization_type', e.target.value)}  >
-													<option >Select One</option>
+												<select name="organization_type" onChange={(e) => updateRecord(e,'organization_type')} onBlur={(e) => updateAndSaveRecord(e,'organization_type')} value={form.values.organization_type}   >
+													<option value="" >Select One</option>
 													<option value="Proprietorship" >Proprietorship</option>
 													<option value="Partnership">Partnership</option>
 													<option value="Private Limited">Private Limited</option>
@@ -1958,13 +2495,13 @@ const PersonalForm = (props) => {
 												{form.values.organization_type_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.organization_type && !form.errors.organization && form.errors.organization_type ? <div className="text-danger">{form.errors.organization_type}</div> : ''}
+												{form.touched.organization_type && Object.keys(form.errors)[0]=='organization_type' && form.errors.organization_type ? <div className="text-danger">{form.errors.organization_type}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Total Experience (In Year) </label>
-												<select name="total_experience"   value={form.values.total_experience}  onChange={(e) => form.setFieldValue('total_experience', e.target.value)}  >
-													<option >Select One</option>
+												<select name="total_experience"  onChange={(e) => updateRecord(e,'total_experience')} onBlur={(e) => updateAndSaveRecord(e,'total_experience')} value={form.values.total_experience}   >
+													<option value="" >Select One</option>
 													<option value="Less than 1">Less than Year</option>
 													<option value="1">1</option>
 													<option value="2">2</option>
@@ -2001,21 +2538,21 @@ const PersonalForm = (props) => {
 												{form.values.total_experience_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.total_experience && !form.errors.organization_type  && form.errors.total_experience ? <div className="text-danger">{form.errors.total_experience}</div> : ''}
+												{form.touched.total_experience && Object.keys(form.errors)[0]=='total_experience'  && form.errors.total_experience ? <div className="text-danger">{form.errors.total_experience}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Required Amount</label>
-												<input type="text" name="required_amount"  {...form.getFieldProps("required_amount")} className="" placeholder="Enter amount" />
+												<input type="text" name="required_amount"  onChange={(e) => updateRecord(e,'required_amount')} onBlur={(e) => updateAndSaveRecord(e,'required_amount')} value={form.values.required_amount}  className="" placeholder="Enter amount" />
 												{form.values.required_amount_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.required_amount && !form.errors.total_experience && form.errors.required_amount ? <div className="text-danger">{form.errors.required_amount}</div> : ''}
+												{form.touched.required_amount && Object.keys(form.errors)[0]=='required_amount' && form.errors.required_amount ? <div className="text-danger">{form.errors.required_amount}</div> : ''}
 											</div>
 											<div className="col-xs-12 col-md-10">
 												<label>Loan purpose </label>
-												<select name="loan_purpose" value={form.values.loan_purpose}  onChange={(e) => form.setFieldValue('loan_purpose', e.target.value)}>
-														<option >Select One</option>
+												<select name="loan_purpose" onChange={(e) => updateRecord(e,'loan_purpose')} onBlur={(e) => updateAndSaveRecord(e,'loan_purpose')} value={form.values.loan_purpose} >
+														<option value="" >Select One</option>
 														<option value="1364">Appliance purchase</option>
 														<option value="1365" >Car 2 wheeler</option>
 														<option value="1367" >Education</option>
@@ -2033,22 +2570,22 @@ const PersonalForm = (props) => {
 													{form.values.loan_purpose_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-													{form.touched.loan_purpose && !form.errors.required_amount && form.errors.loan_purpose ? <div className="text-danger">{form.errors.loan_purpose}</div> : ''}
+													{form.touched.loan_purpose && Object.keys(form.errors)[0]=='loan_purpose' && form.errors.loan_purpose ? <div className="text-danger">{form.errors.loan_purpose}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Building No./Plot No.</label>
-												<input type="text" name="company_building"  {...form.getFieldProps("company_building")} className="" placeholder="Enter house no." />
+												<input type="text" name="company_building"  onChange={(e) => updateRecord(e,'company_building')} onBlur={(e) => updateAndSaveRecord(e,'company_building')} value={form.values.company_building}  className="" placeholder="Enter house no." />
 												{form.values.company_building_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.company_building && !form.errors.loan_purpose && form.errors.company_building ? <div className="text-danger">{form.errors.company_building}</div> : ''}
+												{form.touched.company_building && Object.keys(form.errors)[0]=='company_building' && form.errors.company_building ? <div className="text-danger">{form.errors.company_building}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>State</label>
-												<select name="company_state" value={form.values.company_state} onChange={(e) => GetCities(e.target.value, 'company_state')} >
-													<option>Select One</option>
+												<select name="company_state" value={form.values.company_state} onChange={(e) => updateRecord(e,'company_state',GetCities(e.target.value, 'company_state'))} onBlur={(e) => updateAndSaveRecord(e,'company_state')} >
+													<option value="">Select One</option>
 													{props.allStates.length > 0 && props.allStates.map((option, index) => (
 														<option value={option.name} key={index}>{option.name}</option>
 													))}
@@ -2056,13 +2593,13 @@ const PersonalForm = (props) => {
 												{form.values.company_state_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.company_state && !form.errors.company_building  && form.errors.company_state ? <div className="text-danger">{form.errors.company_state}</div> : ''}
+												{form.touched.company_state && Object.keys(form.errors)[0]=='company_state'  && form.errors.company_state ? <div className="text-danger">{form.errors.company_state}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>City</label>
-												<select name="company_city" value={form.values.company_city} onChange={(e) => GetPincode(e.target.value, 'company_city')} >
-													<option>Select One</option>
+												<select name="company_city" value={form.values.company_city} onChange={(e) => updateRecord(e,'company_city',GetPincode(e.target.value, 'company_city'))} onBlur={(e) => updateAndSaveRecord(e,'company_city')}  >
+													<option value="">Select One</option>
 													{cities.length > 0 && cities.map((option, index) => (
 														<option value={option.name} key={index}>{capitalName(option.name)}</option>
 													))}
@@ -2070,22 +2607,22 @@ const PersonalForm = (props) => {
 												{form.values.company_city_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.company_city && !form.errors.company_state && form.errors.company_city ? <div className="text-danger">{form.errors.company_city}</div> : ''}
+												{form.touched.company_city && Object.keys(form.errors)[0]=='company_city'  && form.errors.company_city ? <div className="text-danger">{form.errors.company_city}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Locality/Area </label>
-												<input type="text" name="company_area"  {...form.getFieldProps("company_area")} className="" placeholder="Enter area." />
+												<input type="text" name="company_area"  onChange={(e) => updateRecord(e,'company_area')} onBlur={(e) => updateAndSaveRecord(e,'company_area')} value={form.values.company_area} className="" placeholder="Enter area." />
 												{form.values.company_area_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.company_area && !form.errors.company_city  && form.errors.company_area ? <div className="text-danger">{form.errors.company_area}</div> : ''}
+												{form.touched.company_area && Object.keys(form.errors)[0]=='company_area' && form.errors.company_area ? <div className="text-danger">{form.errors.company_area}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Pincode </label>
-												<select name="company_pincode" value={form.values.company_pincode}  onChange={(e) => form.setFieldValue('company_pincode', e.target.value)} >
-													<option>Select One</option>
+												<select name="company_pincode" onChange={(e) => updateRecord(e,'company_pincode')} onBlur={(e) => updateAndSaveRecord(e,'company_pincode')} value={form.values.company_pincode} >
+													<option value="">Select One</option>
 													{pincode.length > 0 && pincode.map((option, index) => (
 														<option value={option.pincode} key={index}>{option.pincode}</option>
 													))}
@@ -2093,40 +2630,40 @@ const PersonalForm = (props) => {
 												{form.values.company_pincode_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.company_pincode && !form.errors.company_area && form.errors.company_pincode ? <div className="text-danger">{form.errors.company_pincode}</div> : ''}
+												{form.touched.company_pincode && Object.keys(form.errors)[0]=='company_pincode'  && form.errors.company_pincode ? <div className="text-danger">{form.errors.company_pincode}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Company Website</label>
-												<input type="text" name="company_website"  {...form.getFieldProps("company_website")} className="" placeholder="Enter website URL" />
+												<input type="text" name="company_website"  onChange={(e) => updateRecord(e,'company_website')} onBlur={(e) => updateAndSaveRecord(e,'company_website')} value={form.values.company_website} className="" placeholder="Enter website URL" />
 												{form.values.company_website_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.company_website && !form.errors.company_pincode && form.errors.company_website ? <div className="text-danger">{form.errors.company_website}</div> : ''}
+												{form.touched.company_website && Object.keys(form.errors)[0]=='company_website' && form.errors.company_website ? <div className="text-danger">{form.errors.company_website}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Official Email Address</label>
-												<input type="text" name="company_email"  {...form.getFieldProps("company_email")} className="" placeholder="Enter official email" />
+												<input type="text" name="company_email"  onChange={(e) => updateRecord(e,'company_email')} onBlur={(e) => updateAndSaveRecord(e,'company_email')} value={form.values.company_email} className="" placeholder="Enter official email" />
 												{form.values.company_email_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.company_email && !form.errors.company_website && form.errors.company_email ? <div className="text-danger">{form.errors.company_email}</div> : ''}
+												{form.touched.company_email  && Object.keys(form.errors)[0]=='company_email' && form.errors.company_email ? <div className="text-danger">{form.errors.company_email}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Monthly take home</label>
-												<input type="text" name="salery_inhand"  {...form.getFieldProps("salery_inhand")} className="" placeholder="Enter monthly income" />
+												<input type="text" name="salery_inhand"  onChange={(e) => updateRecord(e,'salery_inhand')} onBlur={(e) => updateAndSaveRecord(e,'salery_inhand')} value={form.values.salery_inhand} className="" placeholder="Enter monthly income" />
 												{form.values.salery_inhand_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.salery_inhand && !form.errors.company_email && form.errors.salery_inhand ? <div className="text-danger">{form.errors.salery_inhand}</div> : ''}
+												{form.touched.salery_inhand && Object.keys(form.errors)[0]=='salery_inhand' && form.errors.salery_inhand ? <div className="text-danger">{form.errors.salery_inhand}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Mode of receiving salary</label>
-												<select name="salary_mode" value={form.values.salary_mode}  onChange={(e) => form.setFieldValue('salary_mode', e.target.value)} >
-													<option>Select One</option>
+												<select name="salary_mode" onChange={(e) => updateRecord(e,'salary_mode')} onBlur={(e) => updateAndSaveRecord(e,'salary_mode')} value={form.values.salary_mode} >
+													<option value="">Select One</option>
 													<option value="Bank account transfer">Bank account transfer</option>
 													<option value="Cheque" >Cheque</option>
 													<option value="Cash">Cash</option>
@@ -2134,16 +2671,16 @@ const PersonalForm = (props) => {
 												{form.values.salary_mode_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.salary_mode && !form.errors.salery_inhand && form.errors.salary_mode ? <div className="text-danger">{form.errors.salary_mode}</div> : ''}
+												{form.touched.salary_mode && Object.keys(form.errors)[0]=='salary_mode' && form.errors.salary_mode ? <div className="text-danger">{form.errors.salary_mode}</div> : ''}
 
 											</div>
 											<div className="col-xs-12 col-md-5">
 												<label>Bank Name</label>
-												<input type="text" name="bank_name"  {...form.getFieldProps("bank_name")} className="" placeholder="Enter your bank name" />
+												<input type="text" name="bank_name"  onChange={(e) => updateRecord(e,'bank_name')} onBlur={(e) => updateAndSaveRecord(e,'bank_name')} value={form.values.bank_name} className="" placeholder="Enter your bank name" />
 												{form.values.bank_name_true ?
 												 <i className="fa-solid fa-check fa-fw checkgreen"></i> 
 												: '' }
-												{form.touched.bank_name && !form.errors.salary_mode  && form.errors.bank_name ? <div className="text-danger">{form.errors.bank_name}</div> : ''}
+												{form.touched.bank_name && Object.keys(form.errors)[0]=='bank_name'  && form.errors.bank_name ? <div className="text-danger">{form.errors.bank_name}</div> : ''}
 
 											</div>
 										</div>
@@ -2159,14 +2696,14 @@ const PersonalForm = (props) => {
 										<div className="row">
 										    <div className="col-12 col-md-6 col-lg-10">
 													<div className="upload__box">
+													{form.values.pancard_image_true ?
+																<p className="mb-0"><i className="fa-solid fa-check fa-fw checkgreen-upload"></i> </p>
+																: '' }
 														<div className="upload__btn-box">
 															<label className="upload__btn">
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p>Upload Pan Card <small style={{display:"block",color: "#a5a5a5"}}>(Only Jpg,Png,Pdf,Doc)</small></p>
-															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'pancard_image', 'uploads/merchant/pancard')} />
-															{form.values.pancard_image_true ?
-																<i className="fa-solid fa-check fa-fw checkgreen"></i> 
-																: '' }
+															<p>Upload Pan Card  <span className="addmore-plus"><i className="fa-solid fa-plus fa-fw"></i></span>  <small style={{display:"block",color: "#a5a5a5"}}>(Only Jpg,Png,Pdf,Doc)</small></p>
+															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'pancard_image', 'uploads/merchant/pancard')} onBlur={(e) => updateAndSaveRecord(e,'pancard_image')} />
 															</label>
 														</div>
 														{form.values.pancard_image == '' && form.touched.pancard_image && form.errors.pancard_image ? <div className="text-danger">{form.errors.pancard_image}</div> : ''} 
@@ -2175,6 +2712,13 @@ const PersonalForm = (props) => {
 													{form.values.pancard_image && form.values.pancard_image.split(',') && form.values.pancard_image.split(',').length > 0  ?
 													<>
 														<ul className="imgpreview-newbx">
+														{uploadBr['pancard_image'] > 0?
+														    <div className="progress-imgupload">
+																<div className="progress-value" style={{width: uploadBr['pancard_image']+'%'}}>
+																<span>{uploadBr['pancard_image']}%</span>
+																</div>
+															</div>
+															 :''} 
 																{form.values.pancard_image && form.values.pancard_image.split(',').map((option, index) => (
 																	<li key={index} >
 																		
@@ -2200,23 +2744,30 @@ const PersonalForm = (props) => {
 
 											<div className="col-12 col-md-6 col-lg-10">
 													<div className="upload__box">
+													{form.values.aadhar_image_true?
+																<p className="mb-0"><i className="fa-solid fa-check fa-fw checkgreen-upload"></i> </p>
+																: '' }
 														<div className="upload__btn-box">
 															<label className="upload__btn">
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p>Upload Aadhar Card 
+															<p>Upload Aadhar Card  <span className="addmore-plus"><i className="fa-solid fa-plus fa-fw"></i></span> 
 															<small style={{display: "block",color: "#a5a5a5"}}>(Only Jpg,Png,Pdf,Doc)</small></p>
-															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'aadhar_image', 'uploads/merchant/aadharcard')} />
-															{form.values.aadhar_image_true?
-																<i className="fa-solid fa-check fa-fw checkgreen"></i> 
-																: '' }
+															<input type="file" multiple accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'aadhar_image', 'uploads/merchant/aadharcard')} onBlur={(e) => updateAndSaveRecord(e,'aadhar_image')} />
 															</label>
 														</div>
-														{form.values.aadhar_image == '' && form.touched.aadhar_image && !form.touched.pancard_image && form.errors.aadhar_image ? <div className="text-danger">{form.errors.aadhar_image}</div> : ''} 
+														{form.values.aadhar_image == '' && form.touched.aadhar_image && Object.keys(form.errors)[0]=='aadhar_image'  && form.errors.aadhar_image ? <div className="text-danger">{form.errors.aadhar_image}</div> : ''} 
 
 													</div>
 													{form.values.aadhar_image && form.values.aadhar_image.split(',') && form.values.aadhar_image.split(',').length > 0  ?
 													<>
 														<ul className="imgpreview-newbx">
+														{uploadBr['aadhar_image'] > 0?
+														    <div className="progress-imgupload">
+																<div className="progress-value" style={{width: uploadBr['aadhar_image']+'%'}}>
+																<span>{uploadBr['aadhar_image']}%</span>
+																</div>
+															</div>
+															 :''} 
 																{form.values.aadhar_image && form.values.aadhar_image.split(',').map((option, index) => (
 																	<li key={index} >
 																		
@@ -2244,22 +2795,29 @@ const PersonalForm = (props) => {
 										<div className="row">
 										    <div className="col-12 col-md-6 col-lg-10">
 													<div className="upload__box">
+													{form.values.bank_statement_true?
+																<p className="mb-0"><i className="fa-solid fa-check fa-fw checkgreen-upload"></i> </p>
+																: '' }
 														<div className="upload__btn-box">
 															<label className="upload__btn">
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p>Upload One Year Latest Bank Statement <small style={{display: "block",color: "#a5a5a5"}}>(Only PDF)</small></p>
-															<input type="file" multiple accept=".pdf" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e,'bank_statement', 'uploads/merchant/bankstatement')} />
-															{form.values.bank_statement_true?
-																<i className="fa-solid fa-check fa-fw checkgreen"></i> 
-																: '' }
+															<p>Upload One Year Latest Bank Statement  <span className="addmore-plus"><i className="fa-solid fa-plus fa-fw"></i></span> <small style={{display: "block",color: "#a5a5a5"}}>(Only PDF)</small></p>
+															<input type="file" multiple accept=".pdf" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e,'bank_statement', 'uploads/merchant/bankstatement')} onBlur={(e) => updateAndSaveRecord(e,'bank_statement')}  />
 															</label>
 														</div>
-														{form.values.bank_statement == '' && form.touched.bank_statement && !form.errors.aadhar_image && form.errors.bank_statement ? <div className="text-danger">{form.errors.bank_statement}</div> : ''} 
+														{form.values.bank_statement == '' && form.touched.bank_statement && Object.keys(form.errors)[0]=='bank_statement'  && form.errors.bank_statement ? <div className="text-danger">{form.errors.bank_statement}</div> : ''} 
 
 													</div>
 													{form.values.bank_statement && form.values.bank_statement.split(',') && form.values.bank_statement.split(',').length > 0  ?
 													<>
 														<ul className="imgpreview-newbx">
+														{uploadBr['bank_statement'] > 0?
+														    <div className="progress-imgupload">
+																<div className="progress-value" style={{width: uploadBr['bank_statement']+'%'}}>
+																<span>{uploadBr['bank_statement']}%</span>
+																</div>
+															</div>
+															 :''} 
 																{form.values.bank_statement && form.values.bank_statement.split(',').map((option, index) => (
 																	<li key={index} >
 																		
@@ -2285,23 +2843,30 @@ const PersonalForm = (props) => {
 
 											<div className="col-12 col-md-6 col-lg-10">
 													<div className="upload__box">
+													{form.values.salery_slip_true?
+																<p className="mb-0"><i className="fa-solid fa-check fa-fw checkgreen-upload"></i> </p>
+																: '' }
 														<div className="upload__btn-box">
 															<label className="upload__btn">
 															<i className="fa-solid fa-arrow-up-from-bracket fa-fw"></i>
-															<p>Upload latest 3 months salary slips 
+															<p>Upload latest 3 months salary slips  <span className="addmore-plus"><i className="fa-solid fa-plus fa-fw"></i></span> 
 															<small style={{display: "block",color: "#a5a5a5"}}>(Only Jpg,Png,Pdf,Doc)</small></p>
-															<input type="file" multiple  accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'salery_slip', 'uploads/merchant/salery_slip')} />
-															{form.values.salery_slip_true?
-																<i className="fa-solid fa-check fa-fw checkgreen"></i> 
-																: '' }
+															<input type="file" multiple  accept=".png, .jpeg, .jpg, .pdf, .doc, .docx" data-max_length="20" className="upload__inputfile"  onChange={(e) => acceptedFiles(e, 'salery_slip', 'uploads/merchant/salery_slip')} onBlur={(e) => updateAndSaveRecord(e,'salery_slip')}   />
 															</label>
 														</div>
-														{form.values.salery_slip == '' && form.touched.salery_slip && !form.errors.bank_statement && form.errors.salery_slip ? <div className="text-danger">{form.errors.salery_slip}</div> : ''} 
+														{form.values.salery_slip == '' && form.touched.salery_slip && Object.keys(form.errors)[0]=='salery_slip' && form.errors.salery_slip ? <div className="text-danger">{form.errors.salery_slip}</div> : ''} 
 
 													</div>
 													{form.values.salery_slip && form.values.salery_slip.split(',') && form.values.salery_slip.split(',').length > 0  ?
 													<>
 														<ul className="imgpreview-newbx">
+														{uploadBr['salery_slip'] > 0?
+														    <div className="progress-imgupload">
+																<div className="progress-value" style={{width: uploadBr['salery_slip']+'%'}}>
+																<span>{uploadBr['salery_slip']}%</span>
+																</div>
+															</div>
+															 :''} 
 																{form.values.salery_slip && form.values.salery_slip.split(',').map((option, index) => (
 																	<li key={index} >
 																		
@@ -2383,56 +2948,50 @@ const LenderListForm = (props) => {
 
 	return (
 		<>
-		<section className="newstep-form">
+		<section className="leanderlist-padding">
 		{/* <form id="msform" onSubmit={form.handleSubmit}> */}
 		<div className="container">		
 			<div className="row d-flex flexwrap">			
-				<div className="col-md-12">
+				{/* <div className="col-md-12"> */}
 					{lenderList.length > 0 && lenderList.map((co, index) => (		
 						
-						<div className="col-md-6"  key={index}>
-							<div className="landerlist-loan">
-									<div className="review-body">
-										<div className="review-right">
-											<label className="control control--checkbox">  <span className="pdlrft"> {co.company_name} </span>
-												<input className="mlrft-15" type="checkbox" id={co.user_id+"_lender_error"} value={co.user_id}  onChange={(e) => lenderPushArray(e)} />
-											  <div className="control__indicator"></div>
-											  
-											  <div className="review-table">
-												<table>
-													<thead>
-														<tr>
-															<th>Min-Max Rate Of Interest</th>
-															<th>Min-max Loan Range</th>
-															<th>Min-Max Tenure</th>
-														</tr>
-													</thead>
-													<tbody>
-														<tr>
-														<td>{co.mini_rate_of_intrest}% - {co.max_rate_of_intrest}%</td>
-														<td>{co.mini_loan_range}-{co.max_loan_range}</td>
-														<td>{co.mini_tenure} Month - {co.max_tenure} Month</td>
-														</tr>
-													</tbody>
-												</table>
+						<div className="col-6 col-sm-6 mb-5"  key={index}>
+							<input className="checkbox-tools" type="checkbox" name="tools" id={index+"_lender_error"} value={co.user_id}  onChange={(e) => lenderPushArray(e)}/>
+							    <label className="for-checkbox-tools" htmlFor={index+"_lender_error"}>
+									<div className="card profile-card-2">
+										<div className="card-body">
+											<div className="leanderlogo">
+												{/* <img src={config.s3_url+'uploads/profile/'+co.profile_pic} alt="profile-imagex" className="profile"/> */}
+												<h5 className="card-title">{co.company_name}</h5>
 											</div>
-											  
-											</label>
+											<div className="lander-rate">
+												<ul className="listlander">
+													<li><b>Min-Max Rate Of Interest</b></li>
+													<li>{co.mini_rate_of_intrest}% - {co.max_rate_of_intrest}%</li>
+												</ul>
+												<ul className="listlander">
+													<li><b>Min-max Loan Range</b></li>
+													<li>{co.mini_loan_range}-{co.max_loan_range}</li>
+												</ul>
+												<ul className="listlander bornoe">
+													<li><b>Min-Max Tenure</b></li>
+													<li>{co.mini_tenure} Month - {co.max_tenure} Month</li>
+												</ul>
+											</div>		
 										</div>
 									</div>
-									
-							</div>			
+								</label>
 						</div>
 					))}
 						
 						{errorMassege? <div className="text-danger" style={{textAlign:"end"}}>{errorMassege}</div> :''}
 
-						<div className="col-md-12">
+						<div className="col-md-12 w-100per">
 							<button type="button" id="lender_detail"  onClick={() => submitForm() } className="sb-btn">SUBMIT</button>
 						</div>
 				</div>
 			</div>			
-		</div>
+		{/* </div> */}
 		{/* </form> */}
   </section>
   </>
@@ -2455,7 +3014,25 @@ const ThankYouForm = (props) => {
 									<h6 className="mb-0">Your application has been successfully received. You may choose to note down the file number for further tracking of the case!</h6>&nbsp;
 									<p><b>File ID:</b> : {props.formResponse && props.formResponse.file_id}</p>
 									<p><b>Password:</b> {props.formResponse && props.formResponse.password}</p>
-									{/* <input type="submit" name="submit" className="submit action-button apply-now-btn" value="Continue" /> */}
+									<p><b>Lenders:</b></p>
+									<table className="table">
+										<thead>
+											<tr>
+												<th>Name</th>
+												<th>Status</th>
+											</tr>
+										</thead>
+										<tbody>
+										    {props.formResponse && props.formResponse.AllLenders && props.formResponse.AllLenders.length && props.formResponse.AllLenders.map((option, index) => (
+												<tr key={index}>
+													<td>{option.company_name}</td>
+													<td>{option.status}</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+									
+
 								</fieldset>
 							{/* </form> */}
 						</div>
